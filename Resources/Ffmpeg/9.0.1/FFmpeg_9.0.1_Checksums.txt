@@ -7,14 +7,14 @@
 # - Windows arm64: BtbN FFmpeg Builds
 # - Linux x86_64: BtbN FFmpeg Builds
 # - Linux arm64: BtbN FFmpeg Builds
-# - macOS x86_64: Martin Riedl release build
-# - macOS arm64: Martin Riedl release build
+# - Mac x86_64: Martin Riedl release build
+# - Mac arm64: Martin Riedl release build
 
 4b9c814cb07a1f90d05b768ef4eb2abbf89af94bbb924df5b7dbd6e64e1e2b96  Windows/x86_64/ffmpeg-9.0.1-full_build.7z
 01e75dd9efb9b1e03d7d4e21980dd1f7e5c73f6c98120a8b04a1dd358da7ab2d  Windows/arm64/ffmpeg-n9.0-latest-winarm64-gpl-9.0.zip
 e65e4c3765b4bd1bf2d8597700a1e2fa26dc9a809143227ea64572151642a5cc  Linux/x86_64/ffmpeg-n9.0-latest-linux64-gpl-9.0.tar.xz
 313f6f36bcf7e48656414d346ecb3ec0ec4a7b78b0367cc2e64fa714fe24334a  Linux/arm64/ffmpeg-n9.0-latest-linuxarm64-gpl-9.0.tar.xz
-5bdead62ff504ab9b447cc72b212c4fb481e3f7de5877d427a51bee8136dda40  macOS/x86_64/ffmpeg.zip
-34511bbcf1988ad2886023bf5ace4f44cf62e6defeb3d194d6f7619e5b061f7f  macOS/x86_64/ffprobe.zip
-8287a1b2229e05eb41859f073e18e6c52c60a778f2f5e6881070fe51b79407fe  macOS/arm64/ffmpeg.zip
-102a26b8940a053298d9929bfaae71e4b6ef65ba5f19a99a88c433108560741a  macOS/arm64/ffprobe.zip
+5bdead62ff504ab9b447cc72b212c4fb481e3f7de5877d427a51bee8136dda40  Mac/x86_64/ffmpeg.zip
+34511bbcf1988ad2886023bf5ace4f44cf62e6defeb3d194d6f7619e5b061f7f  Mac/x86_64/ffprobe.zip
+8287a1b2229e05eb41859f073e18e6c52c60a778f2f5e6881070fe51b79407fe  Mac/arm64/ffmpeg.zip
+102a26b8940a053298d9929bfaae71e4b6ef65ba5f19a99a88c433108560741a  Mac/arm64/ffprobe.zip
