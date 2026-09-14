@@ -1,0 +1,8 @@
+# SmartMonTools 7.5
+# SHA-256
+#
+# Windows x86_64: official smartmontools 7.5 installer
+# Mac universal: official smartmontools 7.5 DMG
+
+896337fcc253220614cf8cdbd5cf2321c5aa326a37a04160a672a281e6104c70  Windows/x86_64/smartmontools-7.5.win32-setup.exe
+4aa176c161612488f3db053fdf3eee47bbc5178c8fe46afb2002d8dbdf563cc5  Mac/universal/smartmontools-7.5.dmg
