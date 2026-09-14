@@ -1,1 +1,2 @@
 dependencies/EmuKit/EmuKitResources/MelonDS/NintendoDSi/dsinand.bin filter=lfs diff=lfs merge=lfs -text
+Resources/EmuKit/Nintendo/Nintendo[[:space:]]DSi/NAND/dsinand.bin filter=lfs diff=lfs merge=lfs -text

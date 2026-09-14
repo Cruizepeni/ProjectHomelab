@@ -1,0 +1,595 @@
+{
+  "SchemaVersion": 1,
+  "Layout": "Brand/System/ResourceType",
+  "HashAlgorithms": [
+    "MD5",
+    "SHA256"
+  ],
+  "Resources": [
+    {
+      "Path": "Atari/Atari Lynx/BIOS/lynxboot.img",
+      "Size": 512,
+      "MD5": "fcd403db69f54290b51035d82f835e7b",
+      "SHA256": "c26a36c1990bcf841155e5a6fea4d2ee1a4d53b3cc772e70f257a962ad43b383",
+      "Sources": [
+        "Mednafen/BIOS/Atari Lynx/lynxboot.img"
+      ]
+    },
+    {
+      "Path": "Coleco/ColecoVision/BIOS/Coleco_Bios.bin",
+      "Size": 8192,
+      "MD5": "2c66f5911e5b42b8ebe113403548eee7",
+      "SHA256": "990bf1956f10207d8781b619eb74f89b00d921c8d45c95c334c16c8cceca09ad",
+      "Sources": [
+        "Ares/BIOS/ColecoVision/Coleco_Bios.bin",
+        "MesenCE/BIOS/ColecoVision/Coleco_Bios.bin"
+      ]
+    },
+    {
+      "Path": "Microsoft/Xbox/BIOS/Complex_4627.bin",
+      "Size": 1048576,
+      "MD5": "ec00e31e746de2473acfe7903c5a4cb7",
+      "SHA256": "34f1c8ded59116436065783f8ad2ef0939df3cbfc76277ec9e5c41bf9ccb93cd",
+      "Sources": [
+        "Xemu/BIOS/Complex_4627.bin"
+      ]
+    },
+    {
+      "Path": "Microsoft/Xbox/BIOS/Complex_4627v1.03.bin",
+      "Size": 1048576,
+      "MD5": "21445c6f28fca7285b0f167ea770d1e5",
+      "SHA256": "1de4c87effe40d44f95581d204f9fa0600fbd5fe2171692316dcf97af0f4113f",
+      "Sources": [
+        "Xemu/BIOS/Complex_4627v1.03.bin"
+      ]
+    },
+    {
+      "Path": "Microsoft/Xbox/Boot ROM/mcpx_1.0.bin",
+      "Size": 512,
+      "MD5": "d49c52a4102f6df7bcf8d0617ac475ed",
+      "SHA256": "e99e3a772bf5f5d262786aee895664eb96136196e37732fe66e14ae062f20335",
+      "Sources": [
+        "Xemu/Boot ROM Image/mcpx_1.0.bin"
+      ]
+    },
+    {
+      "Path": "Microsoft/Xbox/Hard Disk Image/xbox_hdd.qcow2",
+      "Size": 4521984,
+      "MD5": "8cd18e1748114b3b019aed171cac2ee0",
+      "SHA256": "eb35d069715dfc0d37cfac086a0b73a89a02e8f12519cd8eda82ad479d1a4eed",
+      "Sources": [
+        "Xemu/Xbox Hard Disk Image/xbox_hdd.qcow2"
+      ]
+    },
+    {
+      "Path": "NEC/PC Engine CD - TurboGrafx-CD/BIOS/games_express.pce",
+      "Size": 32768,
+      "MD5": "6d2cb14fc3e1f65ceb135633d1694122",
+      "SHA256": "4b86bb96a48a4ca8375fc0109631d0b1d64f255a03b01de70594d40788ba6c3d",
+      "Sources": [
+        "Ares/BIOS/NEC/PC Engine CD - TurboGrafx-CD/games_express.pce.pce"
+      ]
+    },
+    {
+      "Path": "NEC/PC Engine CD - TurboGrafx-CD/BIOS/syscard1.pce",
+      "Size": 262144,
+      "MD5": "2b7ccb3d86baa18f6402c176f3065082",
+      "SHA256": "afe9f27f91ac918348555b86298b4f984643eafa2773196f2c5441ea84f0c3bb",
+      "Sources": [
+        "Ares/BIOS/NEC/PC Engine CD - TurboGrafx-CD/syscard1.pce"
+      ]
+    },
+    {
+      "Path": "NEC/PC Engine CD - TurboGrafx-CD/BIOS/syscard3.pce",
+      "Size": 262144,
+      "MD5": "38179df8f4ac870017db21ebcbf53114",
+      "SHA256": "e11527b3b96ce112a037138988ca72fd117a6b0779c2480d9e03eaebece3d9ce",
+      "Sources": [
+        "Ares/BIOS/NEC/PC Engine CD - TurboGrafx-CD/syscard3.pce",
+        "Mednafen/BIOS/NEC/PC Engine CD - TurboGrafx-CD/syscard3.pce",
+        "MesenCE/BIOS/NEC/PC Engine CD - TurboGrafx-CD/syscard3.pce"
+      ]
+    },
+    {
+      "Path": "NEC/PC Engine CD - TurboGrafx-CD/BIOS/syscard3u.pce",
+      "Size": 262144,
+      "MD5": "0754f903b52e3b3342202bdafb13efa5",
+      "SHA256": "cadac2725711b3c442bcf237b02f5a5210c96f17625c35fa58f009e0ed39e4db",
+      "Sources": [
+        "Ares/BIOS/NEC/PC Engine CD - TurboGrafx-CD/syscard3u.pce"
+      ]
+    },
+    {
+      "Path": "NEC/PC-FX/BIOS/pcfx.rom",
+      "Size": 1048576,
+      "MD5": "08e36edbea28a017f79f8d4f7ff9b6d7",
+      "SHA256": "4b44ccf5d84cc83daa2e6a2bee00fdafa14eb58bdf5859e96d8861a891675417",
+      "Sources": [
+        "Mednafen/BIOS/PC-FX/pcfx.rom"
+      ]
+    },
+    {
+      "Path": "Nintendo/Famicom Disk System/BIOS/Disksys.rom",
+      "Size": 8192,
+      "MD5": "ca30b50f880eb660a320674ed365ef7a",
+      "SHA256": "99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b0178",
+      "Sources": [
+        "MesenCE/BIOS/Famicom Disk System/Disksys.rom",
+        "MesenCE/BIOS/Famicom/Disksys.rom"
+      ]
+    },
+    {
+      "Path": "Nintendo/Famicom Disk System/BIOS/FDS_disksys-nintendo.rom",
+      "Size": 8192,
+      "MD5": "ca30b50f880eb660a320674ed365ef7a",
+      "SHA256": "99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b0178",
+      "Sources": [
+        "Ares/BIOS/Famicom Disk System/FDS_disksys-nintendo.rom"
+      ]
+    },
+    {
+      "Path": "Nintendo/Game Boy Advance/BIOS/gba_bios.bin",
+      "Size": 16384,
+      "MD5": "a860e8c0b6d573d191e4ec7db1b1e4f6",
+      "SHA256": "fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570",
+      "Sources": [
+        "Ares/BIOS/Game Boy Advanced/gba_bios.bin",
+        "MesenCE/BIOS/Game Boy Advanced/gba_bios.bin",
+        "MesenCE/BIOS/Gameboy Advanced/gba_bios.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/GameCube/BIOS/iplusa.bin",
+      "Size": 2097152,
+      "MD5": "019e39822a9ca3029124f74dd4d55ac4",
+      "SHA256": "92f1411fb2c3e6c37bb6a5819d01f84f945fda31cfe26db8c81d997ed471a62e",
+      "Sources": [
+        "Dolphan/BIOS/GameCube/iplusa.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo 64DD/BIOS/64DD_IPL_DEV.bin",
+      "Size": 4194304,
+      "MD5": "aad37b1492886b892f1821f37fd3ae34",
+      "SHA256": "9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44",
+      "Sources": [
+        "Ares/BIOS/Nintendo 64DD/64DD_IPL_DEV.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo 64DD/BIOS/64DD_IPL_USA.bin",
+      "Size": 4194304,
+      "MD5": "37c36e4286d36892a9fc70eafe4104be",
+      "SHA256": "e9fec87a45fba02399e88064b9e2f8cf0f2106e351c58279a87f05da5bc984ad",
+      "Sources": [
+        "Ares/BIOS/Nintendo 64DD/64DD_IPL_USA.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo 64DD/BIOS/64DD_IPL_v12_JPN.bin",
+      "Size": 4194304,
+      "MD5": "8d3d9f294b6e174bc7b1d2fd1c727530",
+      "SHA256": "806400ec0df94b0755de6c5b8249d6b6a9866124c5ddbdac198bde22499bfb8b",
+      "Sources": [
+        "Ares/BIOS/Nintendo 64DD/64DD_IPL_v12_JPN.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo DS/BIOS/biosnds7.bin",
+      "Size": 16384,
+      "MD5": "df692a80a5b1bc90728bc3dfc76cd948",
+      "SHA256": "ba65f690eb04ec92db67c0e299e21ad71de087d6d5de8a9cb17a62eaab563c17",
+      "Sources": [
+        "MelonDS/NintendoDS/biosnds7.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo DS/BIOS/biosnds9.bin",
+      "Size": 4096,
+      "MD5": "a392174eb3e572fed6447e956bde4b25",
+      "SHA256": "1693983a7707ae394786fa526c0552457888a51d4e410d715ef07acd5a540555",
+      "Sources": [
+        "MelonDS/NintendoDS/biosnds9.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo DS/Firmware/dsfirmware.bin",
+      "Size": 262144,
+      "MD5": "94bc5094607c5e6598d50472c52f27f2",
+      "SHA256": "b5f5913048244b60f67a58eeac13ca48c1878dcb2aed3ab4fc874b098438ab34",
+      "Sources": [
+        "MelonDS/NintendoDS/dsfirmware.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo DSi/BIOS/biosdsi7.bin",
+      "Size": 65536,
+      "MD5": "559dae4ea78eb9d67702c56c1d791e81",
+      "SHA256": "2946281e730e71f7cafdb125f5cb60fed944ca5d610ee1e082c441b602b5f4e2",
+      "Sources": [
+        "MelonDS/NintendoDSi/biosdsi7.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo DSi/BIOS/biosdsi9.bin",
+      "Size": 65536,
+      "MD5": "87b665fce118f76251271c3732532777",
+      "SHA256": "47538922a8e8a8e79b922ff1203863ef5c40d9c54656a8d2c89c56ece52029ce",
+      "Sources": [
+        "MelonDS/NintendoDSi/biosdsi9.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo DSi/Firmware/dsifirmware.bin",
+      "Size": 131072,
+      "MD5": "74f23348012d7b3e1cc216c47192ffeb",
+      "SHA256": "a52e281c4dfc8f2da61e7a193d0f40e15eff6f6142ba80bf48ffe755624e2017",
+      "Sources": [
+        "MelonDS/NintendoDSi/dsifirmware.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Nintendo DSi/NAND/dsinand.bin",
+      "Size": 251658304,
+      "MD5": "d71edf897ddd06bf335feeb68edeb272",
+      "SHA256": "eb8960711bb99c11d1c92de195c29c8e1bf927e8e1a5d134155fd69a9a11134e",
+      "Sources": [
+        "MelonDS/NintendoDSi/dsinand.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Satellaview/BIOS/BS-X.bin",
+      "Size": 1048576,
+      "MD5": "fed4d8242cfbed61343d53d48432aced",
+      "SHA256": "3ce321496edc5d77038de2034eb3fb354d7724afd0bc7fd0319f3eb5d57b984d",
+      "Sources": [
+        "Ares/BIOS/Satellaview/BS-X.bin",
+        "MesenCE/BIOS/Satellaview/BS-X.bin"
+      ]
+    },
+    {
+      "Path": "Nintendo/Super Game Boy/BIOS/SGB1.sfc",
+      "Size": 262144,
+      "MD5": "b15ddb15721c657d82c5bab6db982ee9",
+      "SHA256": "a75160f7b89b1f0e20fd2f6441bb86285c7378db5035ef6885485eaff6059376",
+      "Sources": [
+        "Ares/BIOS/Super Game Boy/SGB1.sfc",
+        "MesenCE/BIOS/Super Game Boy/SGB1.sfc"
+      ]
+    },
+    {
+      "Path": "Nintendo/Super Game Boy/BIOS/SGB2.sfc",
+      "Size": 524288,
+      "MD5": "8ecd73eb4edf7ed7e81aef1be80031d5",
+      "SHA256": "c172498a23d1176672931bab33b629c7d28f914a43dca9e540b8af1b37ccf2c6",
+      "Sources": [
+        "Ares/BIOS/Super Game Boy/SGB2.sfc",
+        "MesenCE/BIOS/Super Game Boy/SGB2.sfc"
+      ]
+    },
+    {
+      "Path": "SNK/Neo Geo Pocket Color/BIOS/SNK Neo Geo Pocket Color BIOS (1999)(SNK)(en-ja).bin",
+      "Size": 65536,
+      "MD5": "3655aacebb43a963607d4cf821fc1301",
+      "SHA256": "8fb845a2f71514cec20728e2f0fecfade69444f8d50898b92c2259f1ba63e10d",
+      "Sources": [
+        "Ares/BIOS/SNK Neo Geo Pocket Color/SNK Neo Geo Pocket Color BIOS (1999)(SNK)(en-ja).bin"
+      ]
+    },
+    {
+      "Path": "SNK/Neo Geo Pocket/BIOS/SNK Neo-Geo Pocket BIOS (1998)(SNK)(en-ja).bin",
+      "Size": 65536,
+      "MD5": "d87d876c4391935c9d48ef352a3ff02d",
+      "SHA256": "0293555b21c4fac516d25199df7809b26beeae150e1d4504a050db32264a6ad7",
+      "Sources": [
+        "Ares/BIOS/SNK Neo-Geo Pocket/SNK Neo-Geo Pocket BIOS (1998)(SNK)(en-ja).bin"
+      ]
+    },
+    {
+      "Path": "Sammy/Atomiswave/BIOS/awbios.zip",
+      "Size": 34598,
+      "MD5": "59889f03e09c1d4246b7874096a3201c",
+      "SHA256": "2ca2b5334929339e8d67e21c189b801274f626f0c75ded81fff07bc3f308c8a3",
+      "Sources": [
+        "Flycast/BIOS/Atomiswave/awbios.zip"
+      ]
+    },
+    {
+      "Path": "Sega/Dreamcast/BIOS/dc_boot.bin",
+      "Size": 2097152,
+      "MD5": "e10c53c2f8b90bab96ead2d368858623",
+      "SHA256": "88d6a666495ad14ab5988d8cb730533cfc94ec2cfd53a7eeda14642ab0d4abf9",
+      "Sources": [
+        "Flycast/BIOS/Dreamcast/dc_boot.bin"
+      ]
+    },
+    {
+      "Path": "Sega/Dreamcast/BIOS/dc_flash.bin",
+      "Size": 131072,
+      "MD5": "0a93f7940c455905bea6e392dfde92a4",
+      "SHA256": "dd8b365521a9c08bb4c170da3592212580f7251f35a45d6083774d1c030bc3e3",
+      "Sources": [
+        "Flycast/BIOS/Dreamcast/dc_flash.bin"
+      ]
+    },
+    {
+      "Path": "Sega/Game Gear/BIOS/GG_majesco.gg",
+      "Size": 1024,
+      "MD5": "672e104c3be3a238301aceffc3b23fd6",
+      "SHA256": "8c8a21335038285cfa03dc076100c1f0bfadf3e4ff70796f11f3dfaaab60eee2",
+      "Sources": [
+        "Ares/BIOS/Sega Game Gear/GG_majesco.gg"
+      ]
+    },
+    {
+      "Path": "Sega/Master System/BIOS/[BIOS] Sega Master System (Japan) (v2.1).sms",
+      "Size": 8192,
+      "MD5": "24a519c53f67b00640d0048ef7089105",
+      "SHA256": "67846e26764bd862f19179294347f7353a4166b62ac4198a5ec32933b7da486e",
+      "Sources": [
+        "Ares/BIOS/Sega Master System/[BIOS] Sega Master System (Japan) (v2.1).sms"
+      ]
+    },
+    {
+      "Path": "Sega/Master System/BIOS/[BIOS] Sega Master System (USA, Europe) (v1.3).sms",
+      "Size": 8192,
+      "MD5": "840481177270d5642a14ca71ee72844c",
+      "SHA256": "477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50",
+      "Sources": [
+        "Ares/BIOS/Sega Master System/[BIOS] Sega Master System (USA, Europe) (v1.3).sms"
+      ]
+    },
+    {
+      "Path": "Sega/Mega CD - Sega CD/BIOS/bios_CD_E.bin",
+      "Size": 131072,
+      "MD5": "e66fa1dc5820d254611fdcdba0662372",
+      "SHA256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "Sources": [
+        "Ares/BIOS/Mega CD/bios_CD_E.bin"
+      ]
+    },
+    {
+      "Path": "Sega/Mega CD - Sega CD/BIOS/bios_CD_J.bin",
+      "Size": 131072,
+      "MD5": "278a9397d192149e84e820ac621a8edd",
+      "SHA256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "Sources": [
+        "Ares/BIOS/Mega CD/bios_CD_J.bin"
+      ]
+    },
+    {
+      "Path": "Sega/Mega CD - Sega CD/BIOS/bios_CD_U.bin",
+      "Size": 131072,
+      "MD5": "2efd74e3232ff260e371b99f84024f7f",
+      "SHA256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "Sources": [
+        "Ares/BIOS/Mega CD/bios_CD_U.bin"
+      ]
+    },
+    {
+      "Path": "Sega/NAOMI 2/BIOS/naomi2.zip",
+      "Size": 5935567,
+      "MD5": "cd22cb9ddc3f3f1fbe8183a5148f003c",
+      "SHA256": "879a31a70a7c87fe41554b6358d1d25db09c20cf9505d1c3abad13abee334e3e",
+      "Sources": [
+        "Flycast/BIOS/Naomi2/naomi2.zip"
+      ]
+    },
+    {
+      "Path": "Sega/NAOMI/BIOS/airlbios.zip",
+      "Size": 702615,
+      "MD5": "fd2e341c88542a5e71509a4e89cbb283",
+      "SHA256": "f4c734fc4a56a8894bacea9408408d0d27d9339711702f4840665fa4bf099d90",
+      "Sources": [
+        "Flycast/BIOS/Naomi/airlbios.zip"
+      ]
+    },
+    {
+      "Path": "Sega/NAOMI/BIOS/f355bios.zip",
+      "Size": 920869,
+      "MD5": "eca5bec5f7df321684ef2842f2603a03",
+      "SHA256": "74e809bb3bc24a866c792365745f4054f99eaed00d2877a62562f977b788a661",
+      "Sources": [
+        "Flycast/BIOS/Naomi/f355bios.zip"
+      ]
+    },
+    {
+      "Path": "Sega/NAOMI/BIOS/hod2bios.zip",
+      "Size": 816543,
+      "MD5": "b774da637c800ab485f9b0a9df1706a4",
+      "SHA256": "cada5d5e8cf24c2b095db875c4ecefe849c95323afe476d7fe2876148541f6f6",
+      "Sources": [
+        "Flycast/BIOS/Naomi/hod2bios.zip"
+      ]
+    },
+    {
+      "Path": "Sega/NAOMI/BIOS/naomi.zip",
+      "Size": 9308440,
+      "MD5": "eb4099aeb42ef089cfe94f8fe95e51f6",
+      "SHA256": "a062f1242e1dc08a2a9faf07a073cdd7e2d836823f9d01aff5cd0a36482032db",
+      "Sources": [
+        "Flycast/BIOS/Naomi/naomi.zip"
+      ]
+    },
+    {
+      "Path": "Sega/NAOMI/BIOS/naomigd.zip",
+      "Size": 4972898,
+      "MD5": "a3c74748f4b1d08f2247b16099db372d",
+      "SHA256": "793db2a859be2d814d334ab511811c42c6727a16841e7627fa7c33171c3de441",
+      "Sources": [
+        "Flycast/BIOS/Naomi/naomigd.zip"
+      ]
+    },
+    {
+      "Path": "Sega/Saturn/BIOS/mpr-17933.bin",
+      "Size": 524288,
+      "MD5": "3240872c70984b6cbfda1586cab68dbe",
+      "SHA256": "96e106f740ab448cf89f0dd49dfbac7fe5391cb6bd6e14ad5e3061c13330266f",
+      "Sources": [
+        "YabaSanshiro2/BIOS/mpr-17933.bin"
+      ]
+    },
+    {
+      "Path": "Sega/Saturn/BIOS/sega_101.bin",
+      "Size": 524288,
+      "MD5": "85ec9ca47d8f6807718151cbcca8b964",
+      "SHA256": "dcfef4b99605f872b6c3b6d05c045385cdea3d1b702906a0ed930df7bcb7deac",
+      "Sources": [
+        "YabaSanshiro2/BIOS/sega_101.bin"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.BIN",
+      "Size": 4194304,
+      "MD5": "acf4730ceb38ac9d8c7d8e21f2614600",
+      "SHA256": "c4dad3b5c6ad58bce70a47fc332602880f041c0338ac6be89061c928f6919ab1",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.BIN"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.MEC",
+      "Size": 4,
+      "MD5": "3faf7c064a4984f53e2ef5e80ed543bc",
+      "SHA256": "fbbfc6c156266ac7e9afb37f0cc53fb78fadf2f09f580e56b2da57e6539e463b",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.MEC"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.NVM",
+      "Size": 1024,
+      "MD5": "b48ece50052b927bd085eda0d11ca782",
+      "SHA256": "cd1db18f0b51dfc32bd68f92f2eff9d5ef6c926a41e0d81962b8bd43f37fd124",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.NVM"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-50000_BIOS_V9_JAP_170_(NTSC)/SCPH-50000_BIOS_Vx_JAP_170.bin",
+      "Size": 4194304,
+      "MD5": "312ad4816c232a9606e56f946bc0678a",
+      "SHA256": "6c003a0ca1beb501fba2063b12573521c9b3ec8cdcfb7f5e6a310771ebf166da",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-50000_BIOS_V9_JAP_170_(NTSC)/SCPH-50000_BIOS_Vx_JAP_170.bin"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.BIN",
+      "Size": 4194304,
+      "MD5": "dc752f160044f2ed5fc1f4964db2a095",
+      "SHA256": "d6653f4e93be2f6f9e9d690a934f26cf0f6ad4e348b69f41ef736732c3a6685b",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.BIN"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.EROM",
+      "Size": 3145728,
+      "MD5": "9feb1fdeadd6232a13b95e60b34ccef9",
+      "SHA256": "e5bcd5925c1f22de48d49c3895dd421d167faddc033aac628f5facfba90ceef3",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.EROM"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.NVM",
+      "Size": 1024,
+      "MD5": "5195b9111609959d3a20e2fb9527edbd",
+      "SHA256": "5c3c7a9493f2adddb1fa79218f42132f5f0a4807e8d7b5b1baa1b7ecc9b0c39b",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.NVM"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.ROM1",
+      "Size": 524288,
+      "MD5": "82dc50fa18e636850f557c4ea66c7bfd",
+      "SHA256": "b86fbccaa111ca7497630337dafea7da7320fc4f924ada22b92145ef806e7b42",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.ROM1"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.ROM2",
+      "Size": 524288,
+      "MD5": "82dc50fa18e636850f557c4ea66c7bfd",
+      "SHA256": "b86fbccaa111ca7497630337dafea7da7320fc4f924ada22b92145ef806e7b42",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.ROM2"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_PAL_200.MEC",
+      "Size": 4,
+      "MD5": "3faf7c064a4984f53e2ef5e80ed543bc",
+      "SHA256": "fbbfc6c156266ac7e9afb37f0cc53fb78fadf2f09f580e56b2da57e6539e463b",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_PAL_200.MEC"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.BIN",
+      "Size": 4194304,
+      "MD5": "d333558cc14561c1fdc334c75d5f37b7",
+      "SHA256": "6d23d001daf2a0fa8b381a5d49f51753c36e3622d0f04be46af1a0c548be4744",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.BIN"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.MEC",
+      "Size": 4,
+      "MD5": "3faf7c064a4984f53e2ef5e80ed543bc",
+      "SHA256": "fbbfc6c156266ac7e9afb37f0cc53fb78fadf2f09f580e56b2da57e6539e463b",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.MEC"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation 2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.NVM",
+      "Size": 1024,
+      "MD5": "96eb2436e1f6be60ab897ecbab72f407",
+      "SHA256": "5ec0f857bdcf888a9bbda0641d97066abaa286b6604d38afd51ed857c9e086e5",
+      "Sources": [
+        "PCSX2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.NVM"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation/BIOS/SCPH1001.BIN",
+      "Size": 524288,
+      "MD5": "924e392ed05558ffdb115408c263dccf",
+      "SHA256": "71af94d1e47a68c11e8fdb9f8368040601514a42a5a399cda48c7d3bff1e99d3",
+      "Sources": [
+        "DuckStation/BIOS/SCPH1001.BIN"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation/BIOS/SCPH5500.BIN",
+      "Size": 524288,
+      "MD5": "8dd7d5296a650fac7319bce665a6a53c",
+      "SHA256": "9c0421858e217805f4abe18698afea8d5aa36ff0727eb8484944e00eb5e7eadb",
+      "Sources": [
+        "DuckStation/BIOS/SCPH5500.BIN"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation/BIOS/SCPH7003.bin",
+      "Size": 524288,
+      "MD5": "490f666e1afb15b7362b406ed1cea246",
+      "SHA256": "11052b6499e466bbf0a709b1f9cb6834a9418e66680387912451e971cf8a1fef",
+      "Sources": [
+        "DuckStation/BIOS/SCPH7003.bin"
+      ]
+    },
+    {
+      "Path": "Sony/PlayStation/BIOS/SCPH7502.bin",
+      "Size": 524288,
+      "MD5": "b9d9a0286c33dc6b7237bb13cd46fdee",
+      "SHA256": "5e84a94818cf5282f4217591fefd88be36b9b174b3cc7cb0bcd75199beb450f1",
+      "Sources": [
+        "DuckStation/BIOS/SCPH7502.bin"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+fcd403db69f54290b51035d82f835e7b  Atari/Atari Lynx/BIOS/lynxboot.img
+2c66f5911e5b42b8ebe113403548eee7  Coleco/ColecoVision/BIOS/Coleco_Bios.bin
+ec00e31e746de2473acfe7903c5a4cb7  Microsoft/Xbox/BIOS/Complex_4627.bin
+21445c6f28fca7285b0f167ea770d1e5  Microsoft/Xbox/BIOS/Complex_4627v1.03.bin
+d49c52a4102f6df7bcf8d0617ac475ed  Microsoft/Xbox/Boot ROM/mcpx_1.0.bin
+8cd18e1748114b3b019aed171cac2ee0  Microsoft/Xbox/Hard Disk Image/xbox_hdd.qcow2
+6d2cb14fc3e1f65ceb135633d1694122  NEC/PC Engine CD - TurboGrafx-CD/BIOS/games_express.pce
+2b7ccb3d86baa18f6402c176f3065082  NEC/PC Engine CD - TurboGrafx-CD/BIOS/syscard1.pce
+38179df8f4ac870017db21ebcbf53114  NEC/PC Engine CD - TurboGrafx-CD/BIOS/syscard3.pce
+0754f903b52e3b3342202bdafb13efa5  NEC/PC Engine CD - TurboGrafx-CD/BIOS/syscard3u.pce
+08e36edbea28a017f79f8d4f7ff9b6d7  NEC/PC-FX/BIOS/pcfx.rom
+ca30b50f880eb660a320674ed365ef7a  Nintendo/Famicom Disk System/BIOS/Disksys.rom
+ca30b50f880eb660a320674ed365ef7a  Nintendo/Famicom Disk System/BIOS/FDS_disksys-nintendo.rom
+a860e8c0b6d573d191e4ec7db1b1e4f6  Nintendo/Game Boy Advance/BIOS/gba_bios.bin
+019e39822a9ca3029124f74dd4d55ac4  Nintendo/GameCube/BIOS/iplusa.bin
+aad37b1492886b892f1821f37fd3ae34  Nintendo/Nintendo 64DD/BIOS/64DD_IPL_DEV.bin
+37c36e4286d36892a9fc70eafe4104be  Nintendo/Nintendo 64DD/BIOS/64DD_IPL_USA.bin
+8d3d9f294b6e174bc7b1d2fd1c727530  Nintendo/Nintendo 64DD/BIOS/64DD_IPL_v12_JPN.bin
+df692a80a5b1bc90728bc3dfc76cd948  Nintendo/Nintendo DS/BIOS/biosnds7.bin
+a392174eb3e572fed6447e956bde4b25  Nintendo/Nintendo DS/BIOS/biosnds9.bin
+94bc5094607c5e6598d50472c52f27f2  Nintendo/Nintendo DS/Firmware/dsfirmware.bin
+559dae4ea78eb9d67702c56c1d791e81  Nintendo/Nintendo DSi/BIOS/biosdsi7.bin
+87b665fce118f76251271c3732532777  Nintendo/Nintendo DSi/BIOS/biosdsi9.bin
+74f23348012d7b3e1cc216c47192ffeb  Nintendo/Nintendo DSi/Firmware/dsifirmware.bin
+d71edf897ddd06bf335feeb68edeb272  Nintendo/Nintendo DSi/NAND/dsinand.bin
+fed4d8242cfbed61343d53d48432aced  Nintendo/Satellaview/BIOS/BS-X.bin
+b15ddb15721c657d82c5bab6db982ee9  Nintendo/Super Game Boy/BIOS/SGB1.sfc
+8ecd73eb4edf7ed7e81aef1be80031d5  Nintendo/Super Game Boy/BIOS/SGB2.sfc
+3655aacebb43a963607d4cf821fc1301  SNK/Neo Geo Pocket Color/BIOS/SNK Neo Geo Pocket Color BIOS (1999)(SNK)(en-ja).bin
+d87d876c4391935c9d48ef352a3ff02d  SNK/Neo Geo Pocket/BIOS/SNK Neo-Geo Pocket BIOS (1998)(SNK)(en-ja).bin
+59889f03e09c1d4246b7874096a3201c  Sammy/Atomiswave/BIOS/awbios.zip
+e10c53c2f8b90bab96ead2d368858623  Sega/Dreamcast/BIOS/dc_boot.bin
+0a93f7940c455905bea6e392dfde92a4  Sega/Dreamcast/BIOS/dc_flash.bin
+672e104c3be3a238301aceffc3b23fd6  Sega/Game Gear/BIOS/GG_majesco.gg
+24a519c53f67b00640d0048ef7089105  Sega/Master System/BIOS/[BIOS] Sega Master System (Japan) (v2.1).sms
+840481177270d5642a14ca71ee72844c  Sega/Master System/BIOS/[BIOS] Sega Master System (USA, Europe) (v1.3).sms
+e66fa1dc5820d254611fdcdba0662372  Sega/Mega CD - Sega CD/BIOS/bios_CD_E.bin
+278a9397d192149e84e820ac621a8edd  Sega/Mega CD - Sega CD/BIOS/bios_CD_J.bin
+2efd74e3232ff260e371b99f84024f7f  Sega/Mega CD - Sega CD/BIOS/bios_CD_U.bin
+cd22cb9ddc3f3f1fbe8183a5148f003c  Sega/NAOMI 2/BIOS/naomi2.zip
+fd2e341c88542a5e71509a4e89cbb283  Sega/NAOMI/BIOS/airlbios.zip
+eca5bec5f7df321684ef2842f2603a03  Sega/NAOMI/BIOS/f355bios.zip
+b774da637c800ab485f9b0a9df1706a4  Sega/NAOMI/BIOS/hod2bios.zip
+eb4099aeb42ef089cfe94f8fe95e51f6  Sega/NAOMI/BIOS/naomi.zip
+a3c74748f4b1d08f2247b16099db372d  Sega/NAOMI/BIOS/naomigd.zip
+3240872c70984b6cbfda1586cab68dbe  Sega/Saturn/BIOS/mpr-17933.bin
+85ec9ca47d8f6807718151cbcca8b964  Sega/Saturn/BIOS/sega_101.bin
+acf4730ceb38ac9d8c7d8e21f2614600  Sony/PlayStation 2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.BIN
+3faf7c064a4984f53e2ef5e80ed543bc  Sony/PlayStation 2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.MEC
+b48ece50052b927bd085eda0d11ca782  Sony/PlayStation 2/BIOS/SCPH-10000_BIOS_V1_JAP_100_(NTSC)/SCPH-10000_BIOS_V1_JAP_100.NVM
+312ad4816c232a9606e56f946bc0678a  Sony/PlayStation 2/BIOS/SCPH-50000_BIOS_V9_JAP_170_(NTSC)/SCPH-50000_BIOS_Vx_JAP_170.bin
+dc752f160044f2ed5fc1f4964db2a095  Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.BIN
+9feb1fdeadd6232a13b95e60b34ccef9  Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.EROM
+5195b9111609959d3a20e2fb9527edbd  Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.NVM
+82dc50fa18e636850f557c4ea66c7bfd  Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.ROM1
+82dc50fa18e636850f557c4ea66c7bfd  Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_EUR_200.ROM2
+3faf7c064a4984f53e2ef5e80ed543bc  Sony/PlayStation 2/BIOS/SCPH-70004_BIOS_V12_EUR_200_(PAL)/SCPH-70004_BIOS_V12_PAL_200.MEC
+d333558cc14561c1fdc334c75d5f37b7  Sony/PlayStation 2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.BIN
+3faf7c064a4984f53e2ef5e80ed543bc  Sony/PlayStation 2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.MEC
+96eb2436e1f6be60ab897ecbab72f407  Sony/PlayStation 2/BIOS/SCPH-70012_BIOS_V12_USA_200_(NTSC)/SCPH-70012_BIOS_V12_USA_200.NVM
+924e392ed05558ffdb115408c263dccf  Sony/PlayStation/BIOS/SCPH1001.BIN
+8dd7d5296a650fac7319bce665a6a53c  Sony/PlayStation/BIOS/SCPH5500.BIN
+490f666e1afb15b7362b406ed1cea246  Sony/PlayStation/BIOS/SCPH7003.bin
+b9d9a0286c33dc6b7237bb13cd46fdee  Sony/PlayStation/BIOS/SCPH7502.bin
