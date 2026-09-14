@@ -1,0 +1,10 @@
+# Calibre 9.13.0
+# SHA-256
+
+d7e6cd5e7975aa348c8f5a213ac6b93bf51a635ffa58b6614d78eb9b2a94931f  Windows/x86_64/calibre-portable-installer-9.13.0.exe
+
+d664fe74953463f1b679945a5460234b61cbf539da48fc78f2111ff8d9503cc0  Linux/x86_64/calibre-9.13.0-x86_64.txz
+
+a700fd765309b5b0fe5725ad907159fe77832f4a78fee59e34eeb31b8002cb7a  Linux/arm64/calibre-9.13.0-arm64.txz
+
+001be6ed70d8acfd793fa7d8c95ea50045abedaf0e756b20e564275a0b0a7667  macOS/universal/calibre-9.13.0.dmg
