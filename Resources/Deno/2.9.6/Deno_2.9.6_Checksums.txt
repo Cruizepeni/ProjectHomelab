@@ -1,0 +1,9 @@
+# Deno 2.9.6
+# SHA-256
+
+15e5300b0ba3c3695a7621d90160a746ec9e710228cee639afa9d580f6e3cd11  Windows/x86_64/deno-x86_64-pc-windows-msvc.zip
+acb014afe2299847764e232b4993e162e3946cdeec36603e3f1a0b548cd1ea55  Windows/arm64/deno-aarch64-pc-windows-msvc.zip
+394f07f4da2bebe6ce6f1e7ce0fa16429b29b08c35e3fac3fe25972676dff4b2  Linux/x86_64/deno-x86_64-unknown-linux-gnu.zip
+9a46afc6c392c7cd2ff71a31558935545b46408d0e87f7a86908c712721c046e  Linux/arm64/deno-aarch64-unknown-linux-gnu.zip
+7d4524b82bcc557fe020a1a5b56956ed42b992ae5b28026e8ad5d17329533f5f  Mac/x86_64/deno-x86_64-apple-darwin.zip
+213a2f304f04d3c9cb5220669afad138f60a5aab1fe80962abdeb8f35807a472  Mac/arm64/deno-aarch64-apple-darwin.zip
