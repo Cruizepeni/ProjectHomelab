@@ -1,0 +1,50 @@
+{
+  "schema_version": 1,
+  "resource_id": "smartmontools",
+  "name": "SmartMonTools",
+  "version": "7.5",
+  "checksum_file": "SmartMonTools_7.5_Checksums.txt",
+  "targets": {
+    "windows-x86_64": {
+      "os": "Windows",
+      "architecture": "x86_64",
+      "artifact": "Windows/x86_64/smartmontools-7.5.win32-setup.exe",
+      "sha256": "896337fcc253220614cf8cdbd5cf2321c5aa326a37a04160a672a281e6104c70",
+      "artifact_type": "installer",
+      "install": {
+        "method": "exe"
+      },
+      "provides": [
+        "smartctl.exe"
+      ]
+    },
+    "mac-x86_64": {
+      "os": "Mac",
+      "architecture": "x86_64",
+      "artifact_architecture": "universal",
+      "artifact": "Mac/universal/smartmontools-7.5.dmg",
+      "sha256": "4aa176c161612488f3db053fdf3eee47bbc5178c8fe46afb2002d8dbdf563cc5",
+      "artifact_type": "dmg",
+      "install": {
+        "method": "dmg"
+      },
+      "provides": [
+        "smartctl"
+      ]
+    },
+    "mac-arm64": {
+      "os": "Mac",
+      "architecture": "arm64",
+      "artifact_architecture": "universal",
+      "artifact": "Mac/universal/smartmontools-7.5.dmg",
+      "sha256": "4aa176c161612488f3db053fdf3eee47bbc5178c8fe46afb2002d8dbdf563cc5",
+      "artifact_type": "dmg",
+      "install": {
+        "method": "dmg"
+      },
+      "provides": [
+        "smartctl"
+      ]
+    }
+  }
+}

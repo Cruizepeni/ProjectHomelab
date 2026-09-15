@@ -1,0 +1,83 @@
+{
+  "schema_version": 1,
+  "resource_id": "calibre",
+  "name": "Calibre",
+  "version": "9.13.0",
+  "checksum_file": "Calibre_9.13.0_Checksums.txt",
+  "targets": {
+    "windows-x86_64": {
+      "os": "Windows",
+      "architecture": "x86_64",
+      "artifact": "Windows/x86_64/calibre-portable-installer-9.13.0.exe",
+      "sha256": "d7e6cd5e7975aa348c8f5a213ac6b93bf51a635ffa58b6614d78eb9b2a94931f",
+      "artifact_type": "portable_installer",
+      "install": {
+        "method": "portable_installer"
+      },
+      "provides": [
+        "calibre",
+        "ebook-convert"
+      ]
+    },
+    "linux-x86_64": {
+      "os": "Linux",
+      "architecture": "x86_64",
+      "artifact": "Linux/x86_64/calibre-9.13.0-x86_64.txz",
+      "sha256": "d664fe74953463f1b679945a5460234b61cbf539da48fc78f2111ff8d9503cc0",
+      "artifact_type": "archive",
+      "install": {
+        "method": "extract",
+        "archive_format": "txz"
+      },
+      "provides": [
+        "calibre",
+        "ebook-convert"
+      ]
+    },
+    "linux-arm64": {
+      "os": "Linux",
+      "architecture": "arm64",
+      "artifact": "Linux/arm64/calibre-9.13.0-arm64.txz",
+      "sha256": "a700fd765309b5b0fe5725ad907159fe77832f4a78fee59e34eeb31b8002cb7a",
+      "artifact_type": "archive",
+      "install": {
+        "method": "extract",
+        "archive_format": "txz"
+      },
+      "provides": [
+        "calibre",
+        "ebook-convert"
+      ]
+    },
+    "mac-x86_64": {
+      "os": "Mac",
+      "architecture": "x86_64",
+      "artifact_architecture": "universal",
+      "artifact": "Mac/universal/calibre-9.13.0.dmg",
+      "sha256": "001be6ed70d8acfd793fa7d8c95ea50045abedaf0e756b20e564275a0b0a7667",
+      "artifact_type": "dmg",
+      "install": {
+        "method": "dmg"
+      },
+      "provides": [
+        "calibre",
+        "ebook-convert"
+      ]
+    },
+    "mac-arm64": {
+      "os": "Mac",
+      "architecture": "arm64",
+      "artifact_architecture": "universal",
+      "artifact": "Mac/universal/calibre-9.13.0.dmg",
+      "sha256": "001be6ed70d8acfd793fa7d8c95ea50045abedaf0e756b20e564275a0b0a7667",
+      "artifact_type": "dmg",
+      "install": {
+        "method": "dmg"
+      },
+      "provides": [
+        "calibre",
+        "ebook-convert"
+      ]
+    }
+  }
+}

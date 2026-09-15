@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "resource_id": "emukit",
+  "name": "EmuKit Resources",
+  "resource_type": "resource_catalog",
+  "status": "supported",
+  "layout": "Brand/System/ResourceType",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/EmuKit",
+  "resource_manifest": "EmuKit_Resources_Manifest.json",
+  "checksum_file": "EmuKit_Checksums.txt",
+  "hash_algorithm": "SHA256",
+  "resource_count": 64,
+  "distribution": {
+    "mode": "individual_resources",
+    "platform_independent": true
+  }
+}

@@ -1,3 +1,7 @@
+# EmuKit Resources
+# SHA-256
+# Paths are relative to Resources/EmuKit
+
 c26a36c1990bcf841155e5a6fea4d2ee1a4d53b3cc772e70f257a962ad43b383  Atari/Atari Lynx/BIOS/lynxboot.img
 990bf1956f10207d8781b619eb74f89b00d921c8d45c95c334c16c8cceca09ad  Coleco/ColecoVision/BIOS/Coleco_Bios.bin
 34f1c8ded59116436065783f8ad2ef0939df3cbfc76277ec9e5c41bf9ccb93cd  Microsoft/Xbox/BIOS/Complex_4627.bin

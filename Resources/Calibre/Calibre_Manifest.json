@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "resource_id": "calibre",
+  "name": "Calibre",
+  "latest": "9.13.0",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/Calibre",
+  "versions": {
+    "9.13.0": {
+      "manifest": "9.13.0/Calibre_9.13.0_Manifest.json",
+      "status": "supported"
+    }
+  }
+}

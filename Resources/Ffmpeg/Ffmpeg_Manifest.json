@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "resource_id": "ffmpeg",
+  "name": "FFmpeg",
+  "latest": "9.0.1",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/Ffmpeg",
+  "versions": {
+    "9.0.1": {
+      "manifest": "9.0.1/Ffmpeg_9.0.1_Manifest.json",
+      "status": "supported"
+    }
+  }
+}
