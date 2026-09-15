@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "resource_id": "<resource_id>",
+  "name": "<Resource Name>",
+  "documentation": "Documentation/Resources/<Resource>.md",
+  "layout": "<catalog layout>",
+  "checksum_file": "<Resource>_Checksums.txt",
+  "hash_algorithms": [
+    "MD5",
+    "SHA256"
+  ],
+  "resource_count": 1,
+  "resources": [
+    {
+      "path": "<relative/path/to/resource>",
+      "size": 0,
+      "md5": "<md5-if-applicable>",
+      "sha256": "<sha256>",
+      "sources": [
+        "<source or provenance reference>"
+      ]
+    }
+  ]
+}

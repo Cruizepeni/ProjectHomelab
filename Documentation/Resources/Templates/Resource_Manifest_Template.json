@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "resource_id": "<resource_id>",
+  "name": "<Resource Name>",
+  "documentation": "Documentation/Resources/<Resource>.md",
+  "latest": "<version>",
+  "raw_base_url": "https://raw.githubusercontent.com/<owner>/<repository>/<branch>/Resources/<Resource>",
+  "versions": {
+    "<version>": {
+      "manifest": "<version>/<Resource>_<version>_Manifest.json",
+      "status": "supported"
+    }
+  }
+}

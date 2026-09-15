@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "resource_id": "<resource_id>",
+  "name": "<Resource Name>",
+  "resource_type": "resource_catalog",
+  "status": "supported",
+  "layout": "<catalog layout>",
+  "documentation": "Documentation/Resources/<Resource>.md",
+  "raw_base_url": "https://raw.githubusercontent.com/<owner>/<repository>/<branch>/Resources/<Resource>",
+  "resource_manifest": "<Resource>_Resources_Manifest.json",
+  "checksum_file": "<Resource>_Checksums.txt",
+  "hash_algorithm": "SHA256",
+  "resource_count": 0,
+  "distribution": {
+    "mode": "individual_resources",
+    "platform_independent": true
+  }
+}

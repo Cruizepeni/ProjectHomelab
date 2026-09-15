@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "resource_id": "<resource_id>",
+  "name": "<Resource Name>",
+  "version": "<version>",
+  "documentation": "Documentation/Resources/<Resource>.md",
+  "checksum_file": "<Resource>_<version>_Checksums.txt",
+  "targets": {
+    "<target_id>": {
+      "os": "<Windows|Linux|Mac>",
+      "architecture": "<x86_64|arm64>",
+      "artifact": "<OS>/<architecture>/<artifact_filename>",
+      "sha256": "<sha256>",
+      "artifact_type": "<archive|executable|installer|dmg|other>",
+      "install": {
+        "method": "<extract|copy|exe|dmg|other>"
+      },
+      "provides": [
+        "<provided executable or capability>"
+      ]
+    }
+  }
+}
