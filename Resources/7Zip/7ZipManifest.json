@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "resource_id": "7zip",
+  "name": "7-Zip",
+  "latest": "26.03",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/7Zip",
+  "versions": {
+    "26.03": {
+      "manifest": "26.03/7Zip_26.03_Manifest.json",
+      "status": "supported"
+    }
+  }
+}
