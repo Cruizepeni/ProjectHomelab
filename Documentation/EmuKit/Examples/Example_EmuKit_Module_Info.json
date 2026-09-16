@@ -1,0 +1,40 @@
+{
+  "Version": 1,
+  "Id": "exampleemu",
+  "Name": "ExampleEmu",
+  "Aliases": [
+    "Example Emulator"
+  ],
+  "ModuleVersion": "1.0.0",
+  "EmulatorVersion": "4.2.0",
+  "Manager": "ExampleEmuManager.py",
+  "DependencyPath": "dependencies/EmuKit/ExampleEmu",
+  "LaunchPath": "dependencies/EmuKit/ExampleEmu/exampleemu.exe",
+  "WorkingDirectory": "dependencies/EmuKit/ExampleEmu",
+  "EmulatorLaunchArguments": [],
+  "DefaultInstalled": false,
+  "Systems": {
+    "example-console": {
+      "Name": "Example Console",
+      "Aliases": [
+        "EC"
+      ],
+      "Brand": {
+        "Id": "example-company",
+        "Name": "Example Company",
+        "Aliases": []
+      },
+      "Platform": {
+        "Id": "example-console",
+        "Name": "Example Console",
+        "Aliases": []
+      },
+      "LaunchArguments": [
+        "--fullscreen",
+        "{game}"
+      ],
+      "FullscreenArgument": "--fullscreen",
+      "Default": true
+    }
+  }
+}

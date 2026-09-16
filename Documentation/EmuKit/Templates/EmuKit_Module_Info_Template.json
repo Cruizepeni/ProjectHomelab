@@ -1,0 +1,35 @@
+{
+  "Version": 1,
+  "Id": "replace-with-module-id",
+  "Name": "Replace With Emulator Name",
+  "Aliases": [],
+  "ModuleVersion": "1.0.0",
+  "EmulatorVersion": "replace-with-tested-emulator-version",
+  "Manager": "ReplaceManager.py",
+  "DependencyPath": "dependencies/EmuKit/ReplaceModule",
+  "LaunchPath": "dependencies/EmuKit/ReplaceModule/replace-executable",
+  "WorkingDirectory": "dependencies/EmuKit/ReplaceModule",
+  "EmulatorLaunchArguments": [],
+  "DefaultInstalled": false,
+  "Systems": {
+    "replace-system-id": {
+      "Name": "Replace System Name",
+      "Aliases": [],
+      "Brand": {
+        "Id": "replace-brand-id",
+        "Name": "Replace Brand Name",
+        "Aliases": []
+      },
+      "Platform": {
+        "Id": "replace-platform-id",
+        "Name": "Replace Platform Name",
+        "Aliases": []
+      },
+      "LaunchArguments": [
+        "{game}"
+      ],
+      "FullscreenArgument": null,
+      "Default": true
+    }
+  }
+}
