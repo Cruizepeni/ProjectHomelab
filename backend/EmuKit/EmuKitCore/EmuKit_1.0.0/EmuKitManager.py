@@ -61,10 +61,11 @@ class EmuKitManager:
         self.settings = settings
         self.project_root = Path(project_root).resolve()
         self.emukit_root = Path(emukit_root).resolve()
-        self.module_root = self.emukit_root
+        self.module_root = self.emukit_root / "EmuKitModules"
+        self.emulators_root = self.project_root / "Emulators"
+        self.dependencies_root = self.project_root / "dependencies"
 
         self.registry_path = self.project_root / "appdata" / "registry" / "EmuKitRegistry.json"
-        self.dependencies_root = self.project_root / "dependencies" / "EmuKit"
         self.staging_root = self.project_root / "appdata" / "cache" / "EmuKit" / "ModuleStaging"
 
         self.host_platform = self._canonical_platform()
@@ -450,6 +451,21 @@ class EmuKitManager:
         for key in ("Name", "Manager", "DependencyPath", "LaunchPath"):
             if not self._valid_string(info.get(key)):
                 return False, f'Missing or invalid required field "{key}".'
+
+        dependency_path = Path(info["DependencyPath"])
+        if dependency_path.is_absolute():
+            return False, 'Module "DependencyPath" must be relative to the resolved ROOT.'
+        resolved_dependency = (self.project_root / dependency_path).resolve()
+        try:
+            resolved_dependency.relative_to(self.emulators_root.resolve())
+        except ValueError:
+            return False, (
+                'Module "DependencyPath" must resolve inside ROOT/Emulators.'
+            )
+        if resolved_dependency == self.emulators_root.resolve():
+            return False, (
+                'Module "DependencyPath" must identify a child directory inside ROOT/Emulators.'
+            )
 
         if not self._valid_aliases(info.get("Aliases")):
             return False, 'Module "Aliases" must be a list of non-empty strings.'
@@ -2301,6 +2317,10 @@ class EmuKitManager:
 
 
     def initialize(self) -> dict[str, Any]:
+        self.module_root.mkdir(parents=True, exist_ok=True)
+        self.emulators_root.mkdir(parents=True, exist_ok=True)
+        self.dependencies_root.mkdir(parents=True, exist_ok=True)
+
         core = self.check_core_dependencies()
         registry = self.sync_registry()
         settings = self.sync_settings()
@@ -2357,6 +2377,9 @@ class EmuKitManager:
             "initialized": self._initialized,
             "project_root": str(self.project_root),
             "emukit_root": str(self.emukit_root),
+            "module_root": str(self.module_root),
+            "emulators_root": str(self.emulators_root),
+            "dependencies_root": str(self.dependencies_root),
             "channel": self.channel,
             "platform": self.host_platform,
             "architecture": self.host_architecture,

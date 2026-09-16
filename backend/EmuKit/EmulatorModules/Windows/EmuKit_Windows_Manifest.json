@@ -1,5 +1,15 @@
 {
   "SchemaVersion": 1,
   "Platform": "Windows",
-  "Modules": {}
+  "Modules": {
+    "xemu": {
+      "Name": "Xemu",
+      "Aliases": [
+        "Original Xbox"
+      ],
+      "Version": "1.0.0",
+      "Package": "Xemu/Xemu_1.0.0.zip",
+      "SHA256": "2165f8e3e3119e42b753273a940dae506918f56258ec4b9164a664e99288bdf7"
+    }
+  }
 }
