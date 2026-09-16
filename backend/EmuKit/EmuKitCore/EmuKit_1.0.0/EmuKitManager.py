@@ -1481,7 +1481,7 @@ class EmuKitManager:
                                 shutil.rmtree(backup, ignore_errors=True)
                             shutil.move(str(destination), str(backup))
 
-                        shutil.move(str(module_dir), str(destination))
+                        shutil.copytree(module_dir, destination)
                         self._module_import_cache.pop(remote_id, None)
 
                         registry_result = self.sync_registry()
