@@ -107,9 +107,6 @@ class EmuKitManager:
         self._remote_manifest_error: dict[str, Any] | None = None
         self._remote_manifest_loaded = False
 
-    # ------------------------------------------------------------------
-    # Host / channel
-    # ------------------------------------------------------------------
 
     @staticmethod
     def _canonical_platform() -> str:
@@ -143,9 +140,6 @@ class EmuKitManager:
             raise ValueError(f'Unsupported EmuKit channel "{value}".')
         return "release" if getattr(sys, "frozen", False) else "development"
 
-    # ------------------------------------------------------------------
-    # Shared helpers
-    # ------------------------------------------------------------------
 
     def set_progress_callback(
         self,
@@ -228,9 +222,6 @@ class EmuKitManager:
             return path.resolve()
         return (self.project_root / path).resolve()
 
-    # ------------------------------------------------------------------
-    # Core dependencies
-    # ------------------------------------------------------------------
 
     @staticmethod
     def _read_7zip_version(executable: Path) -> str | None:
@@ -395,9 +386,6 @@ class EmuKitManager:
                 "details": str(exc),
             }
 
-    # ------------------------------------------------------------------
-    # Registry and local discovery
-    # ------------------------------------------------------------------
 
     def _empty_registry_document(self) -> dict[str, Any]:
         return {
@@ -846,9 +834,6 @@ class EmuKitManager:
     def resolve_system_id(self, query: str) -> str | None:
         return self._resolve_from_records(query, self.get_registry()["Systems"])
 
-    # ------------------------------------------------------------------
-    # Remote manifest
-    # ------------------------------------------------------------------
 
     def _validate_remote_manifest(
         self,
@@ -1034,9 +1019,6 @@ class EmuKitManager:
                 result.append(info)
         return result
 
-    # ------------------------------------------------------------------
-    # Settings sync and catalogue reads
-    # ------------------------------------------------------------------
 
     def get_supported_modules(self) -> list[dict[str, Any]]:
         return self.get_available_modules()
@@ -1192,9 +1174,6 @@ class EmuKitManager:
             },
         }
 
-    # ------------------------------------------------------------------
-    # Module package acquisition
-    # ------------------------------------------------------------------
 
     @staticmethod
     def _sha256_file(path: Path) -> str:
@@ -1679,9 +1658,6 @@ class EmuKitManager:
 
         return self.acquire_module(remote_id, force_replace=True)
 
-    # ------------------------------------------------------------------
-    # Module lifecycle invocation
-    # ------------------------------------------------------------------
 
     def _manager_entry_path(self, module_id: str) -> Path:
         info = self.get_modules()[module_id]
@@ -2100,7 +2076,6 @@ class EmuKitManager:
                         )
                     )
                 elif not desired and state in {"installed", "broken"}:
-                    # Preserve previous EmuKit desired-state semantics.
                     results.append(
                         self._invoke_module_manager_unlocked(
                             module_id,
@@ -2121,9 +2096,6 @@ class EmuKitManager:
             "details": results,
         }
 
-    # ------------------------------------------------------------------
-    # Assignment and launching
-    # ------------------------------------------------------------------
 
     def assign_system(
         self,
@@ -2327,9 +2299,6 @@ class EmuKitManager:
             registry=self.get_registry(),
         )
 
-    # ------------------------------------------------------------------
-    # Initialization and status
-    # ------------------------------------------------------------------
 
     def initialize(self) -> dict[str, Any]:
         core = self.check_core_dependencies()

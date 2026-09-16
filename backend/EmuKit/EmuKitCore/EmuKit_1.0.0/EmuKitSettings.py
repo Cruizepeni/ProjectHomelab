@@ -47,8 +47,6 @@ class EmuKitSettings:
                 if isinstance(entry.get("Enabled"), bool):
                     enabled = entry["Enabled"]
                 elif isinstance(entry.get("Installed"), bool):
-                    # Settings v1 compatibility. "Installed" represented the
-                    # desired emulator-management state, not physical module presence.
                     enabled = entry["Installed"]
             normalized_modules[module_id] = {"Enabled": enabled}
 
@@ -197,7 +195,6 @@ class EmuKitSettings:
                 self._data["Modules"][module_id]["Enabled"] = enabled
             self.save()
 
-    # Compatibility alias used by older callers.
     def set_module_installed(self, module_id: str, installed: bool) -> None:
         self.set_module_enabled(module_id, installed)
 

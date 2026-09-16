@@ -836,10 +836,6 @@ class EmuKitConsole:
         }:
             print("EmuKit started with missing shared dependencies.")
         else:
-            # Remote module-feed availability is deliberately not treated as a
-            # startup failure. Local modules remain authoritative for installed
-            # state, and remote-feed details remain available through Status /
-            # Refresh Modules when they are needed.
             print("EmuKit started.")
 
         installs = self.emukit.get_current_installs()
