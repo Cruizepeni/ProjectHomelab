@@ -104,6 +104,9 @@ class EmuKit:
     def install_core_dependency(self, dependency_id: str) -> dict[str, Any]:
         return self.manager.install_core_dependency(dependency_id)
 
+    def install_missing_core_dependencies(self) -> dict[str, Any]:
+        return self.manager.install_missing_core_dependencies()
+
     def launch(self, system: str, game_path: str | Path) -> dict[str, Any]:
         return self.manager.launch(system=system, game_path=game_path)
 
@@ -505,7 +508,6 @@ class EmuKitConsole:
             "  Get Supported Systems [Brand <Name>] [Platform <Name>]\n"
             "  Get Status\n"
             "  Get Core Dependencies\n"
-            "  Install Core 7zip\n"
             "  Assign System <System> <Module|None>\n"
             "  Launch <GamePath> <System>\n"
             "  Launch Emulator <Module>\n"
@@ -749,18 +751,6 @@ class EmuKitConsole:
             return True
 
         if action in {"install", "uninstall", "repair", "update", "check"}:
-            if (
-                action == "install"
-                and len(args) == 2
-                and args[0].casefold() == "core"
-            ):
-                self._result(
-                    self.emukit.install_core_dependency(args[1]),
-                    raw=raw,
-                    verbose=verbose,
-                )
-                return True
-
             if not args:
                 print(f"Usage: {action.title()} <Module>")
                 return True
@@ -818,23 +808,99 @@ class EmuKitConsole:
         print(f'Unknown command "{command}". Type Help for available commands.')
         return True
 
+    def _dependency_preflight(self) -> bool:
+        assert self.emukit is not None
+        check = self.emukit.check_core_dependencies()
+        missing = list(check.get("missing") or [])
+        if not missing:
+            return True
+
+        details = check.get("details") if isinstance(check.get("details"), dict) else {}
+
+        print()
+        print("EmuKit cannot start because required dependencies are missing:")
+        for dependency_id in missing:
+            info = self.emukit.manager.CORE_DEPENDENCIES.get(dependency_id, {})
+            name = info.get("Name", dependency_id)
+            version = info.get("Version")
+            if isinstance(version, str) and version.casefold() == "latest supported":
+                suffix = " (latest supported)"
+            else:
+                suffix = f" {version}" if version else ""
+            print(f"  - {name}{suffix}")
+
+        print()
+        print("EmuKit requires these dependencies to run.")
+        print("You can install the required versions manually, or EmuKit can install them automatically.")
+        print("If you choose No, EmuKit will close.")
+
+        while True:
+            try:
+                answer = input(
+                    "Would you like EmuKit to install the missing dependencies now? Yes/No: "
+                ).strip().casefold()
+            except (EOFError, KeyboardInterrupt):
+                print("\nClosing EmuKit.")
+                return False
+
+            if answer in {"yes", "y"}:
+                print()
+                print("Installing required dependencies...")
+                result = self.emukit.install_missing_core_dependencies()
+                result_details = (
+                    result.get("details")
+                    if isinstance(result.get("details"), dict)
+                    else {}
+                )
+                for item in result_details.get("results", []):
+                    if isinstance(item, dict) and item.get("message"):
+                        print(f'  {item["message"]}')
+
+                if result.get("success"):
+                    if result.get("state") == "installed_reboot_required":
+                        print("Required dependencies are installed. A Windows restart may be required.")
+                    else:
+                        print("Required dependencies are installed.")
+                    print()
+                    return True
+
+                remaining_check = result_details.get("check")
+                remaining = (
+                    list(remaining_check.get("missing") or [])
+                    if isinstance(remaining_check, dict)
+                    else []
+                )
+                if remaining:
+                    print()
+                    print("EmuKit could not install all required dependencies:")
+                    for dependency_id in remaining:
+                        info = self.emukit.manager.CORE_DEPENDENCIES.get(dependency_id, {})
+                        print(f'  - {info.get("Name", dependency_id)}')
+                print("EmuKit cannot continue and will close.")
+                return False
+
+            if answer in {"no", "n"}:
+                print("Required dependencies were not installed. EmuKit will close.")
+                return False
+
+            print("Please enter Yes or No.")
+
     def run(self) -> None:
         print("EmuKit starting...")
         self.emukit = EmuKit(
             auto_initialize=False,
             progress_callback=self.progress,
         )
+
+        if not self._dependency_preflight():
+            return
+
         result = self.emukit.initialize()
         self._clear_progress()
 
         state = result.get("state")
         if state == "ready_with_errors" or not result.get("success"):
             print("EmuKit started with errors.")
-        elif state in {
-            "ready_with_missing_dependencies",
-            "ready_offline_with_missing_dependencies",
-        }:
-            print("EmuKit started with missing shared dependencies.")
         else:
             print("EmuKit started.")
 

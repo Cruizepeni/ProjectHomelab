@@ -11,6 +11,7 @@ import re
 import shutil
 import stat
 import subprocess
+import tarfile
 import sys
 import tempfile
 import threading
@@ -45,8 +46,20 @@ class EmuKitManager:
         "7zip": {
             "Name": "7-Zip",
             "Version": "26.03",
+            "RequiredOn": ["Windows", "Linux", "Mac"],
+            "RootManifestURL": (
+                "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/"
+                "main/Resources/7Zip/7Zip_Manifest.json"
+            ),
+            "LocalRootManifest": "Resources/7Zip/7Zip_Manifest.json",
+        },
+        "vcredist": {
+            "Name": "Microsoft Visual C++ v14 Redistributable",
+            "Version": "Latest supported",
             "RequiredOn": ["Windows"],
-        }
+            "URL": "https://aka.ms/vc14/vc_redist.x64.exe",
+            "FileName": "vc_redist.x64.exe",
+        },
     }
 
     def __init__(
@@ -240,56 +253,293 @@ class EmuKitManager:
         except Exception:
             return None
 
+    def _7zip_target_key(self) -> str | None:
+        platform_id = {
+            "Windows": "windows",
+            "Linux": "linux",
+            "Mac": "mac",
+        }.get(self.host_platform)
+        if platform_id is None or self.host_architecture not in {"x86_64", "arm64"}:
+            return None
+        return f"{platform_id}-{self.host_architecture}"
+
+    def _managed_7zip_executable(self) -> Path:
+        executable_name = "7z.exe" if self.host_platform == "Windows" else "7zz"
+        return (
+            self.dependencies_root
+            / "7Zip"
+            / self.CORE_DEPENDENCIES["7zip"]["Version"]
+            / self.host_platform
+            / self.host_architecture
+            / executable_name
+        )
+
+    def _load_json_document(self, source: str | Path) -> dict[str, Any]:
+        if isinstance(source, Path):
+            with source.open("r", encoding="utf-8") as handle:
+                document = json.load(handle)
+        else:
+            request = urllib.request.Request(
+                source,
+                headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
+            )
+            with urllib.request.urlopen(request, timeout=60) as response:
+                document = json.loads(response.read().decode("utf-8"))
+        if not isinstance(document, dict):
+            raise ValueError("Resource manifest root must be a JSON object.")
+        return document
+
+    def _resolve_7zip_resource(self) -> dict[str, Any]:
+        config = self.CORE_DEPENDENCIES["7zip"]
+        required_version = config["Version"]
+        local_root_manifest = self.project_root / config["LocalRootManifest"]
+        root_source: str | Path = (
+            local_root_manifest
+            if local_root_manifest.is_file()
+            else config["RootManifestURL"]
+        )
+        root_manifest = self._load_json_document(root_source)
+
+        if root_manifest.get("schema_version") != 1:
+            raise ValueError("Unsupported 7-Zip root resource manifest schema.")
+        if root_manifest.get("resource_id") != "7zip":
+            raise ValueError("7-Zip root resource manifest has an invalid resource_id.")
+
+        versions = root_manifest.get("versions")
+        if not isinstance(versions, dict):
+            raise ValueError("7-Zip root resource manifest has no versions map.")
+        version_entry = versions.get(required_version)
+        if not isinstance(version_entry, dict):
+            raise ValueError(f'7-Zip version "{required_version}" is not available.')
+        if str(version_entry.get("status", "")).casefold() != "supported":
+            raise ValueError(f'7-Zip version "{required_version}" is not supported.')
+
+        manifest_relative = version_entry.get("manifest")
+        if not isinstance(manifest_relative, str) or not manifest_relative.strip():
+            raise ValueError("7-Zip version entry does not provide a manifest path.")
+
+        local_version_manifest = (
+            local_root_manifest.parent / Path(manifest_relative.replace("/", os.sep))
+        )
+        raw_base_url = root_manifest.get("raw_base_url")
+        if not isinstance(raw_base_url, str) or not raw_base_url.strip():
+            raise ValueError("7-Zip root resource manifest has no raw_base_url.")
+        version_manifest_url = (
+            raw_base_url.rstrip("/") + "/" + manifest_relative.lstrip("/")
+        )
+        version_source: str | Path = (
+            local_version_manifest
+            if local_version_manifest.is_file()
+            else version_manifest_url
+        )
+        version_manifest = self._load_json_document(version_source)
+
+        if version_manifest.get("schema_version") != 1:
+            raise ValueError("Unsupported 7-Zip version resource manifest schema.")
+        if version_manifest.get("resource_id") != "7zip":
+            raise ValueError("7-Zip version resource manifest has an invalid resource_id.")
+        if str(version_manifest.get("version")) != required_version:
+            raise ValueError("7-Zip version resource manifest does not match the pinned version.")
+
+        target_key = self._7zip_target_key()
+        if target_key is None:
+            raise ValueError(
+                f'7-Zip is not defined for {self.host_platform}/{self.host_architecture}.'
+            )
+        targets = version_manifest.get("targets")
+        target = targets.get(target_key) if isinstance(targets, dict) else None
+        if not isinstance(target, dict):
+            raise ValueError(f'7-Zip target "{target_key}" is not available.')
+
+        artifact = target.get("artifact")
+        sha256 = target.get("sha256")
+        executable_name = target.get("executable_name")
+        install = target.get("install")
+        if not isinstance(artifact, str) or not artifact.strip():
+            raise ValueError("7-Zip target has no artifact path.")
+        if not self._valid_sha256(sha256):
+            raise ValueError("7-Zip target has an invalid SHA-256 value.")
+        if not isinstance(executable_name, str) or not executable_name.strip():
+            raise ValueError("7-Zip target has no executable_name.")
+        if not isinstance(install, dict) or not isinstance(install.get("method"), str):
+            raise ValueError("7-Zip target has no valid install method.")
+
+        version_directory = manifest_relative.rsplit("/", 1)[0] if "/" in manifest_relative else ""
+        artifact_relative = (
+            f"{version_directory}/{artifact}" if version_directory else artifact
+        )
+        artifact_url = raw_base_url.rstrip("/") + "/" + artifact_relative.lstrip("/")
+        local_artifact = (
+            local_root_manifest.parent
+            / Path(artifact_relative.replace("/", os.sep))
+        )
+
+        return {
+            "root_manifest": root_manifest,
+            "version_manifest": version_manifest,
+            "target_key": target_key,
+            "target": copy.deepcopy(target),
+            "artifact_url": artifact_url,
+            "local_artifact": local_artifact,
+        }
+
     def _check_7zip(self) -> dict[str, Any]:
-        candidates: list[Path] = []
+        required = self.host_platform in self.CORE_DEPENDENCIES["7zip"]["RequiredOn"]
+        if not required:
+            return {
+                "success": True,
+                "dependency": "7zip",
+                "state": "not_required",
+                "installed": True,
+                "message": "7-Zip is not a required EmuKit Core dependency on this host.",
+                "details": {
+                    "required": False,
+                    "resource_version": self.CORE_DEPENDENCIES["7zip"]["Version"],
+                },
+            }
+
+        candidates: list[Path] = [self._managed_7zip_executable()]
         for command_name in ("7z", "7zz"):
             found = shutil.which(command_name)
             if found:
                 candidates.append(Path(found))
 
         if self.host_platform == "Windows":
-            for root in (os.environ.get("ProgramFiles"), os.environ.get("ProgramFiles(x86)")):
-                if root:
-                    candidates.append(Path(root) / "7-Zip" / "7z.exe")
+            for program_root in (
+                os.environ.get("ProgramFiles"),
+                os.environ.get("ProgramFiles(x86)"),
+            ):
+                if program_root:
+                    candidates.append(Path(program_root) / "7-Zip" / "7z.exe")
 
+        required_version = self.CORE_DEPENDENCIES["7zip"]["Version"]
         seen: set[str] = set()
+        incompatible: list[dict[str, str | None]] = []
         for candidate in candidates:
             key = str(candidate).casefold()
             if key in seen:
                 continue
             seen.add(key)
-            if candidate.is_file():
-                return {
-                    "success": True,
-                    "dependency": "7zip",
-                    "state": "installed",
-                    "installed": True,
-                    "message": f'7-Zip found at "{candidate}".',
-                    "details": {
-                        "path": str(candidate),
-                        "version": self._read_7zip_version(candidate),
-                    },
-                }
+            if not candidate.is_file():
+                continue
+            version = self._read_7zip_version(candidate)
+            if version is not None and self._version_key(version) < self._version_key(required_version):
+                incompatible.append({"path": str(candidate), "version": version})
+                continue
+            return {
+                "success": True,
+                "dependency": "7zip",
+                "state": "installed",
+                "installed": True,
+                "message": f'7-Zip found at "{candidate}".',
+                "details": {
+                    "required": True,
+                    "path": str(candidate),
+                    "version": version,
+                    "resource_version": required_version,
+                },
+            }
 
-        required = self.host_platform in self.CORE_DEPENDENCIES["7zip"]["RequiredOn"]
         return {
             "success": True,
             "dependency": "7zip",
-            "state": "missing" if required else "not_required",
-            "installed": not required,
-            "message": (
-                "7-Zip is not installed or its command-line executable could not be found."
-                if required
-                else "7-Zip is not a required EmuKit Core dependency on this host."
-            ),
+            "state": "missing",
+            "installed": False,
+            "message": "7-Zip 26.03 or newer is not installed or could not be found.",
             "details": {
-                "required": required,
-                "resource_version": self.CORE_DEPENDENCIES["7zip"]["Version"],
+                "required": True,
+                "resource_version": required_version,
+                "incompatible": incompatible,
+            },
+        }
+
+    def _check_vcredist(self) -> dict[str, Any]:
+        required = self.host_platform in self.CORE_DEPENDENCIES["vcredist"]["RequiredOn"]
+        if not required:
+            return {
+                "success": True,
+                "dependency": "vcredist",
+                "state": "not_required",
+                "installed": True,
+                "message": "Microsoft Visual C++ v14 Redistributable is not required on this host.",
+                "details": {
+                    "required": False,
+                    "version": self.CORE_DEPENDENCIES["vcredist"]["Version"],
+                },
+            }
+
+        try:
+            import winreg
+        except ImportError:
+            return {
+                "success": True,
+                "dependency": "vcredist",
+                "state": "missing",
+                "installed": False,
+                "message": "Microsoft Visual C++ v14 Redistributable could not be detected.",
+                "details": {
+                    "required": True,
+                    "version": self.CORE_DEPENDENCIES["vcredist"]["Version"],
+                },
+            }
+
+        runtime_arches = ["arm64", "x64"] if self.host_architecture == "arm64" else ["x64"]
+        registry_views = [
+            getattr(winreg, "KEY_WOW64_64KEY", 0),
+            getattr(winreg, "KEY_WOW64_32KEY", 0),
+        ]
+        seen_views: set[int] = set()
+
+        for view in registry_views:
+            if view in seen_views:
+                continue
+            seen_views.add(view)
+            for runtime_arch in runtime_arches:
+                path = (
+                    "SOFTWARE\\Microsoft\\VisualStudio\\14.0\\VC\\Runtimes\\"
+                    f"{runtime_arch}"
+                )
+                try:
+                    access = winreg.KEY_READ | view
+                    with winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path, 0, access) as key:
+                        installed, _ = winreg.QueryValueEx(key, "Installed")
+                        version, _ = winreg.QueryValueEx(key, "Version")
+                    if int(installed) == 1:
+                        return {
+                            "success": True,
+                            "dependency": "vcredist",
+                            "state": "installed",
+                            "installed": True,
+                            "message": (
+                                "Microsoft Visual C++ v14 Redistributable "
+                                f'was found ({version}).'
+                            ),
+                            "details": {
+                                "required": True,
+                                "version": str(version),
+                                "architecture": runtime_arch,
+                            },
+                        }
+                except (FileNotFoundError, OSError, ValueError, TypeError):
+                    continue
+
+        return {
+            "success": True,
+            "dependency": "vcredist",
+            "state": "missing",
+            "installed": False,
+            "message": "Microsoft Visual C++ v14 Redistributable is not installed.",
+            "details": {
+                "required": True,
+                "version": self.CORE_DEPENDENCIES["vcredist"]["Version"],
             },
         }
 
     def check_core_dependencies(self) -> dict[str, Any]:
-        checks = {"7zip": self._check_7zip()}
+        checks = {
+            "7zip": self._check_7zip(),
+            "vcredist": self._check_vcredist(),
+        }
         missing = [
             dep_id
             for dep_id, result in checks.items()
@@ -298,11 +548,11 @@ class EmuKitManager:
         with self._state_lock:
             self._core_dependency_status = copy.deepcopy(checks)
         return {
-            "success": True,
+            "success": not missing,
             "operation": "core_dependency_check",
             "state": "missing_dependencies" if missing else "ready",
             "message": (
-                "EmuKit is missing one or more shared dependencies."
+                "EmuKit is missing one or more required shared dependencies."
                 if missing
                 else "EmuKit shared dependencies are ready."
             ),
@@ -310,83 +560,385 @@ class EmuKitManager:
             "missing": missing,
         }
 
-    def install_core_dependency(self, dependency_id: str) -> dict[str, Any]:
-        if dependency_id.casefold() != "7zip":
+    def _core_dependency_cache(self) -> Path:
+        return (
+            self.project_root
+            / "appdata"
+            / "cache"
+            / "EmuKit"
+            / "CoreDependencies"
+        )
+
+    def _download_core_dependency(
+        self,
+        url: str,
+        destination: Path,
+    ) -> Path:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        temp_path = destination.with_suffix(destination.suffix + ".download")
+        if temp_path.exists():
+            temp_path.unlink()
+        request = urllib.request.Request(
+            url,
+            headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=120) as response:
+                with temp_path.open("wb") as handle:
+                    shutil.copyfileobj(response, handle)
+            temp_path.replace(destination)
+            return destination
+        except Exception:
+            if temp_path.exists():
+                temp_path.unlink()
+            raise
+
+    def _install_7zip(self) -> dict[str, Any]:
+        try:
+            resource = self._resolve_7zip_resource()
+        except Exception as exc:
             return {
                 "success": False,
+                "dependency": "7zip",
                 "operation": "install_core_dependency",
                 "state": "install_failed",
-                "error": "dependency_not_found",
-                "message": f'Unknown EmuKit Core dependency "{dependency_id}".',
-                "details": None,
+                "error": "resource_manifest_error",
+                "message": "The controlled 7-Zip resource could not be resolved.",
+                "details": str(exc),
             }
 
+        target = resource["target"]
+        artifact_name = Path(str(target["artifact"])).name
+        expected_sha = str(target["sha256"])
+        local_artifact = Path(resource["local_artifact"])
+        cached_artifact = (
+            self._core_dependency_cache()
+            / "7Zip"
+            / self.CORE_DEPENDENCIES["7zip"]["Version"]
+            / resource["target_key"]
+            / artifact_name
+        )
+
+        artifact: Path | None = None
+        if (
+            local_artifact.is_file()
+            and self._sha256_file(local_artifact) == expected_sha
+        ):
+            artifact = local_artifact
+        elif (
+            cached_artifact.is_file()
+            and self._sha256_file(cached_artifact) == expected_sha
+        ):
+            artifact = cached_artifact
+        else:
+            try:
+                artifact = self._download_core_dependency(
+                    resource["artifact_url"],
+                    cached_artifact,
+                )
+            except Exception as exc:
+                return {
+                    "success": False,
+                    "dependency": "7zip",
+                    "operation": "install_core_dependency",
+                    "state": "install_failed",
+                    "error": "download_failed",
+                    "message": "7-Zip could not be downloaded from the controlled resource repository.",
+                    "details": str(exc),
+                }
+
+        actual_sha = self._sha256_file(artifact)
+        if actual_sha != expected_sha:
+            return {
+                "success": False,
+                "dependency": "7zip",
+                "operation": "install_core_dependency",
+                "state": "install_failed",
+                "error": "checksum_mismatch",
+                "message": "The 7-Zip artifact failed SHA-256 verification.",
+                "details": {
+                    "expected": expected_sha,
+                    "actual": actual_sha,
+                },
+            }
+
+        install = target["install"]
+        method = str(install["method"]).casefold()
+        if method == "exe":
+            silent_args = install.get("silent_args", [])
+            if not isinstance(silent_args, list) or not all(
+                isinstance(item, str) for item in silent_args
+            ):
+                return {
+                    "success": False,
+                    "dependency": "7zip",
+                    "operation": "install_core_dependency",
+                    "state": "install_failed",
+                    "error": "invalid_install_metadata",
+                    "message": "The 7-Zip installer metadata is invalid.",
+                    "details": None,
+                }
+            try:
+                completed = subprocess.run([str(artifact), *silent_args], check=False)
+            except Exception as exc:
+                return {
+                    "success": False,
+                    "dependency": "7zip",
+                    "operation": "install_core_dependency",
+                    "state": "install_failed",
+                    "error": "installer_exception",
+                    "message": "7-Zip could not be installed.",
+                    "details": str(exc),
+                }
+            verified = self._check_7zip()
+            if verified.get("installed"):
+                return {
+                    "success": True,
+                    "dependency": "7zip",
+                    "operation": "install_core_dependency",
+                    "state": (
+                        "installed_reboot_required"
+                        if completed.returncode == 3010
+                        else "installed"
+                    ),
+                    "message": "7-Zip installed successfully.",
+                    "details": verified.get("details"),
+                }
+            return {
+                "success": False,
+                "dependency": "7zip",
+                "operation": "install_core_dependency",
+                "state": "install_failed",
+                "error": "installer_failed",
+                "message": "7-Zip installation did not complete successfully.",
+                "details": {"returncode": completed.returncode},
+            }
+
+        if method == "extract":
+            executable_name = str(target["executable_name"])
+            managed_executable = self._managed_7zip_executable()
+            managed_directory = managed_executable.parent
+            try:
+                with tarfile.open(artifact, "r:*") as archive:
+                    matches = [
+                        member
+                        for member in archive.getmembers()
+                        if member.isfile()
+                        and Path(member.name).name == executable_name
+                    ]
+                    if not matches:
+                        raise FileNotFoundError(
+                            f'Archive does not contain "{executable_name}".'
+                        )
+                    member = min(matches, key=lambda value: len(Path(value.name).parts))
+                    source = archive.extractfile(member)
+                    if source is None:
+                        raise OSError(
+                            f'Archive entry "{member.name}" could not be read.'
+                        )
+                    managed_directory.mkdir(parents=True, exist_ok=True)
+                    temporary = managed_executable.with_suffix(
+                        managed_executable.suffix + ".installing"
+                    )
+                    if temporary.exists():
+                        temporary.unlink()
+                    with source, temporary.open("wb") as destination:
+                        shutil.copyfileobj(source, destination)
+                    os.chmod(temporary, 0o755)
+                    temporary.replace(managed_executable)
+            except Exception as exc:
+                return {
+                    "success": False,
+                    "dependency": "7zip",
+                    "operation": "install_core_dependency",
+                    "state": "install_failed",
+                    "error": "extract_failed",
+                    "message": "7-Zip could not be extracted into the shared dependency directory.",
+                    "details": str(exc),
+                }
+
+            verified = self._check_7zip()
+            if verified.get("installed"):
+                return {
+                    "success": True,
+                    "dependency": "7zip",
+                    "operation": "install_core_dependency",
+                    "state": "installed",
+                    "message": "7-Zip installed successfully.",
+                    "details": verified.get("details"),
+                }
+            return {
+                "success": False,
+                "dependency": "7zip",
+                "operation": "install_core_dependency",
+                "state": "install_failed",
+                "error": "verification_failed",
+                "message": "7-Zip was extracted but could not be verified.",
+                "details": {"path": str(managed_executable)},
+            }
+
+        return {
+            "success": False,
+            "dependency": "7zip",
+            "operation": "install_core_dependency",
+            "state": "install_failed",
+            "error": "unsupported_install_method",
+            "message": f'Unsupported 7-Zip install method "{install["method"]}".',
+            "details": None,
+        }
+
+    def _install_vcredist(self) -> dict[str, Any]:
         if self.host_platform != "Windows":
             return {
                 "success": False,
+                "dependency": "vcredist",
                 "operation": "install_core_dependency",
                 "state": "install_failed",
                 "error": "automatic_install_not_supported",
-                "message": "Automatic 7-Zip installation is currently defined only for Windows.",
+                "message": (
+                    "Microsoft Visual C++ v14 Redistributable installation "
+                    "is only defined for Windows."
+                ),
                 "details": None,
             }
 
-        arch_folder = "arm64" if self.host_architecture == "arm64" else "x86_64"
-        installer_name = "7z2603-arm64.exe" if arch_folder == "arm64" else "7z2603-x64.exe"
+        config = self.CORE_DEPENDENCIES["vcredist"]
         installer = (
-            self.project_root
-            / "Resources"
-            / "7Zip"
-            / "26.03"
-            / "Windows"
-            / arch_folder
-            / installer_name
+            self._core_dependency_cache()
+            / "VisualCpp"
+            / config["FileName"]
         )
 
-        if not installer.is_file():
-            return {
-                "success": False,
-                "operation": "install_core_dependency",
-                "state": "install_failed",
-                "error": "resource_missing",
-                "message": "The controlled ProjectHomelab 7-Zip installer resource was not found.",
-                "details": {"expected_path": str(installer)},
-            }
-
         try:
-            completed = subprocess.run([str(installer), "/S"], check=False)
-            if completed.returncode not in {0, 3010}:
+            installer = self._download_core_dependency(config["URL"], installer)
+        except Exception as exc:
+            if not installer.is_file():
                 return {
                     "success": False,
+                    "dependency": "vcredist",
                     "operation": "install_core_dependency",
                     "state": "install_failed",
-                    "error": "installer_failed",
-                    "message": "7-Zip installer returned a failure code.",
-                    "details": {"returncode": completed.returncode},
+                    "error": "download_failed",
+                    "message": (
+                        "Microsoft Visual C++ v14 Redistributable could not "
+                        "be downloaded from Microsoft."
+                    ),
+                    "details": str(exc),
                 }
-            verified = self._check_7zip()
-            self.check_core_dependencies()
+
+        try:
+            completed = subprocess.run(
+                [
+                    str(installer),
+                    "/install",
+                    "/quiet",
+                    "/norestart",
+                ],
+                check=False,
+            )
+            verified = self._check_vcredist()
+            if verified.get("installed"):
+                return {
+                    "success": True,
+                    "dependency": "vcredist",
+                    "operation": "install_core_dependency",
+                    "state": (
+                        "installed_reboot_required"
+                        if completed.returncode == 3010
+                        else "installed"
+                    ),
+                    "message": (
+                        "Microsoft Visual C++ v14 Redistributable "
+                        "installed successfully."
+                    ),
+                    "details": verified.get("details"),
+                }
             return {
-                "success": bool(verified.get("installed")),
+                "success": False,
+                "dependency": "vcredist",
                 "operation": "install_core_dependency",
-                "state": (
-                    "installed_reboot_required"
-                    if completed.returncode == 3010
-                    else "installed"
+                "state": "install_failed",
+                "error": "installer_failed",
+                "message": (
+                    "Microsoft Visual C++ v14 Redistributable installation "
+                    "did not complete successfully."
                 ),
-                "message": "7-Zip installed successfully.",
-                "details": verified.get("details"),
+                "details": {"returncode": completed.returncode},
             }
         except Exception as exc:
             return {
                 "success": False,
+                "dependency": "vcredist",
                 "operation": "install_core_dependency",
                 "state": "install_failed",
                 "error": "installer_exception",
-                "message": "7-Zip could not be installed.",
+                "message": (
+                    "Microsoft Visual C++ v14 Redistributable could not "
+                    "be installed."
+                ),
                 "details": str(exc),
             }
 
+    def install_core_dependency(self, dependency_id: str) -> dict[str, Any]:
+        normalized = dependency_id.strip().casefold()
+        if normalized == "7zip":
+            return self._install_7zip()
+        if normalized in {"vcredist", "visualcpp", "visualc++", "vc++"}:
+            return self._install_vcredist()
+        return {
+            "success": False,
+            "operation": "install_core_dependency",
+            "state": "install_failed",
+            "error": "dependency_not_found",
+            "message": f'Unknown EmuKit Core dependency "{dependency_id}".',
+            "details": None,
+        }
+
+    def install_missing_core_dependencies(self) -> dict[str, Any]:
+        before = self.check_core_dependencies()
+        missing = list(before.get("missing") or [])
+        if not missing:
+            return {
+                "success": True,
+                "operation": "install_core_dependencies",
+                "state": "ready",
+                "message": "EmuKit shared dependencies are already ready.",
+                "details": {
+                    "results": [],
+                    "check": before,
+                },
+            }
+
+        results = [
+            self.install_core_dependency(dependency_id)
+            for dependency_id in missing
+        ]
+        after = self.check_core_dependencies()
+        reboot_required = any(
+            result.get("state") == "installed_reboot_required"
+            for result in results
+        )
+
+        return {
+            "success": after.get("state") == "ready",
+            "operation": "install_core_dependencies",
+            "state": (
+                "installed_reboot_required"
+                if after.get("state") == "ready" and reboot_required
+                else "installed"
+                if after.get("state") == "ready"
+                else "install_failed"
+            ),
+            "message": (
+                "EmuKit shared dependencies installed successfully."
+                if after.get("state") == "ready"
+                else "EmuKit could not install all required shared dependencies."
+            ),
+            "details": {
+                "results": results,
+                "check": after,
+            },
+        }
 
     def _empty_registry_document(self) -> dict[str, Any]:
         return {
@@ -2322,6 +2874,23 @@ class EmuKitManager:
         self.dependencies_root.mkdir(parents=True, exist_ok=True)
 
         core = self.check_core_dependencies()
+        if core.get("state") == "missing_dependencies":
+            with self._state_lock:
+                self._initialized = False
+            return {
+                "success": False,
+                "operation": "initialize",
+                "state": "missing_dependencies",
+                "message": "EmuKit cannot initialize until required shared dependencies are installed.",
+                "details": {
+                    "core_dependencies": core,
+                    "registry": None,
+                    "settings": None,
+                    "remote_manifest": None,
+                    "reconcile": None,
+                },
+            }
+
         registry = self.sync_registry()
         settings = self.sync_settings()
         remote = self.refresh_remote_manifest()
@@ -2337,16 +2906,8 @@ class EmuKitManager:
         )
         state = "ready" if local_success else "ready_with_errors"
 
-        if local_success and core.get("state") == "missing_dependencies":
-            state = "ready_with_missing_dependencies"
         if local_success and not remote.get("success"):
             state = "ready_offline"
-        if (
-            local_success
-            and core.get("state") == "missing_dependencies"
-            and not remote.get("success")
-        ):
-            state = "ready_offline_with_missing_dependencies"
 
         return {
             "success": local_success,
