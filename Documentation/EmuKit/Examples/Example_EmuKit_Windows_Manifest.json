@@ -8,7 +8,7 @@
         "Example Emulator"
       ],
       "Version": "1.0.0",
-      "Package": "ExampleEmu/1.0.0/ExampleEmu_1.0.0.zip",
+      "Package": "ExampleEmu/ExampleEmu_1.0.0.zip",
       "SHA256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
     }
   }

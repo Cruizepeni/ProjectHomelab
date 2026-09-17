@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "replace-with-module-id",
+  "Name": "Replace With Emulator Name",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "replace-with-tested-emulator-version",
+      "Package": "ReplaceModule_1.0.0.zip",
+      "SHA256": "replace-with-64-character-lowercase-sha256"
+    }
+  }
+}

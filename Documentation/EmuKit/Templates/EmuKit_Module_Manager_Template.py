@@ -1,8 +1,23 @@
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any, Callable
 
 ProgressCallback = Callable[..., None] | None
+
+
+def _resolve_root() -> Path:
+    current = Path(__file__).resolve().parent
+    for candidate in (current, *current.parents):
+        if (candidate / ".ProjectHomelabRoot").is_file():
+            return candidate
+    if current.parent.name == "EmuKitModules":
+        return current.parent.parent
+    return current
+
+
+ROOT = _resolve_root()
+EMULATOR_DIR = ROOT / "Emulators" / "ReplaceModule"
 
 
 def _result(
@@ -27,7 +42,6 @@ def _result(
 
 
 def check(progress: ProgressCallback = None) -> dict[str, Any]:
-    # Inspect emulator state only. Do not install or repair as a side effect.
     return _result(
         "check",
         True,
@@ -40,7 +54,7 @@ def check(progress: ProgressCallback = None) -> dict[str, Any]:
 def install(progress: ProgressCallback = None) -> dict[str, Any]:
     if progress:
         progress(percent=0, stage="Starting", message="Starting installation.")
-    # Download/verify/install the emulator and its module-owned requirements.
+    EMULATOR_DIR.mkdir(parents=True, exist_ok=True)
     if progress:
         progress(percent=100, stage="Installed", message="Installation complete.")
     return _result(
@@ -53,7 +67,6 @@ def install(progress: ProgressCallback = None) -> dict[str, Any]:
 
 
 def uninstall(progress: ProgressCallback = None) -> dict[str, Any]:
-    # Remove the managed emulator according to this module's data policy.
     return _result(
         "uninstall",
         True,
@@ -63,7 +76,6 @@ def uninstall(progress: ProgressCallback = None) -> dict[str, Any]:
 
 
 def repair(progress: ProgressCallback = None) -> dict[str, Any]:
-    # Restore the emulator to the module's known-good managed state.
     return _result(
         "repair",
         True,
@@ -74,7 +86,6 @@ def repair(progress: ProgressCallback = None) -> dict[str, Any]:
 
 
 def update(progress: ProgressCallback = None) -> dict[str, Any]:
-    # Update the emulator itself. Core separately updates the module package.
     return _result(
         "update",
         True,

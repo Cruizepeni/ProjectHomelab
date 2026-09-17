@@ -4,14 +4,23 @@ from pathlib import Path
 from typing import Any
 
 
-def _dependency_root() -> Path:
-    # This is deliberately simplified example code.
-    return Path("dependencies/EmuKit/ExampleEmu")
+def _resolve_root() -> Path:
+    current = Path(__file__).resolve().parent
+    for candidate in (current, *current.parents):
+        if (candidate / ".ProjectHomelabRoot").is_file():
+            return candidate
+    if current.parent.name == "EmuKitModules":
+        return current.parent.parent
+    return current
+
+
+ROOT = _resolve_root()
+EMULATOR_DIR = ROOT / "Emulators" / "ExampleEmu"
+EXECUTABLE = EMULATOR_DIR / "exampleemu.exe"
 
 
 def check(progress=None) -> dict[str, Any]:
-    executable = _dependency_root() / "exampleemu.exe"
-    if not executable.is_file():
+    if not EXECUTABLE.is_file():
         return {
             "success": True,
             "operation": "check",
@@ -31,7 +40,7 @@ def check(progress=None) -> dict[str, Any]:
 def install(progress=None) -> dict[str, Any]:
     if progress:
         progress(percent=10, stage="Preparing", message="Preparing ExampleEmu installation.")
-    # Real modules download, verify, and materialize their emulator here.
+    EMULATOR_DIR.mkdir(parents=True, exist_ok=True)
     if progress:
         progress(percent=100, stage="Installed", message="ExampleEmu installation complete.")
     return {

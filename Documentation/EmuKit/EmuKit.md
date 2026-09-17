@@ -4,43 +4,46 @@
 
 `EmuKit` is ProjectHomelab's emulator-module manager.
 
-EmuKit Core provides shared orchestration. Emulator-specific behavior belongs to emulator modules.
+EmuKit Core provides shared orchestration while emulator-specific behavior belongs to emulator modules.
 
-The Core is responsible for:
+Core is responsible for:
 
-- ProjectHomelab root detection
-- host operating-system detection
-- local module discovery
+- ProjectHomelab and standalone root resolution
+- host operating-system and architecture detection
+- shared Core dependency preflight
+- local module discovery from `EmuKitModules`
 - registry generation
 - settings reconciliation
-- remote module-manifest discovery
+- remote platform-manifest discovery
 - module package download and SHA-256 verification
-- module package installation, update, and removal
+- safe module package extraction, installation, update, and removal
 - serialized lifecycle invocation
 - system-to-module assignment
-- emulator launching
-- progress and structured operation results
+- emulator and game launching
+- progress reporting
+- structured operation results
 
-The Core is not responsible for emulator-specific download URLs, firmware rules, BIOS requirements, emulator configuration, emulator repair logic, or emulator update logic.
+Core is not responsible for emulator-specific download URLs, BIOS or firmware rules, emulator configuration, emulator repair logic, emulator uninstall policy, or emulator update logic.
 
 Those responsibilities belong to each emulator module.
 
-## Versioning
+## Core 1.0.0 Layout
 
-Core source filenames do not contain version numbers.
-
-Canonical Core filenames include:
+Core source lives in a versioned directory while the Python filenames themselves remain unversioned.
 
 ```text
-EmuKit.py
-EmuKitManager.py
-EmuKitSettings.py
-EmuKitLauncher.py
+backend/
+└── EmuKit/
+    └── EmuKitCore/
+        └── EmuKit_1.0.0/
+            ├── EmuKit.py
+            ├── EmuKitManager.py
+            ├── EmuKitSettings.py
+            ├── EmuKitLauncher.py
+            └── EmuKitModules/
 ```
 
-The EmuKit Core version belongs to its containing release/version metadata.
-
-Do not create versioned script names such as:
+Do not create filenames such as:
 
 ```text
 EmuKit_1.0.0.py
@@ -55,73 +58,190 @@ Module Version
 Emulator Version
 ```
 
-Changing one does not imply the others changed.
+Changing one does not imply that either of the others changed.
 
 ## Root Resolution
 
-`.ProjectHomelabRoot` is the ProjectHomelab root marker.
+`.ProjectHomelabRoot` is the sole ProjectHomelab root marker.
 
-When EmuKit starts, it searches upward from its own location for:
+When EmuKit starts, it searches upward from its runtime location for:
 
 ```text
 .ProjectHomelabRoot
 ```
 
-If found, that directory is the ProjectHomelab root.
+If found, that directory becomes `ROOT`.
 
-Shared ProjectHomelab locations such as settings, registry, dependencies, resources, and release/source paths are resolved from that root.
+If no marker is found, EmuKit operates in standalone mode and its own runtime directory becomes `ROOT`.
 
-If no marker is found, EmuKit operates in standalone mode and treats its own containing directory as its local root.
+No secondary ProjectHomelab-host detection mechanism should be introduced.
 
-No other HomeLab-host detection mechanism should be introduced.
+A normal ProjectHomelab layout is:
 
-## Core Location and Local Modules
+```text
+ROOT/
+├── .ProjectHomelabRoot
+├── backend/
+│   └── EmuKit/
+│       └── EmuKitCore/
+│           └── EmuKit_1.0.0/
+│               └── EmuKitModules/
+├── Emulators/
+├── dependencies/
+├── appdata/
+└── Resources/
+```
 
-EmuKit discovers installed modules from its local EmuKit module location.
+A standalone EmuKit layout uses the same relative concepts locally:
+
+```text
+EmuKit_1.0.0/
+├── EmuKit.py or EmuKit.exe
+├── EmuKitModules/
+├── Emulators/
+├── dependencies/
+└── appdata/
+```
+
+## Local Module Location
+
+Installed module packages live under:
+
+```text
+<EmuKit runtime>/EmuKitModules/
+```
+
+A normal installed module is:
+
+```text
+EmuKitModules/
+└── Xemu_1.0.0/
+    ├── EmuKitXemuInfo.json
+    ├── XemuManager.py
+    └── module-owned supporting files
+```
 
 A physically present valid module is locally installed even if it does not appear in any remote manifest.
 
-The local module directory is authoritative for:
+The local module directory answers:
 
 ```text
 What module code is physically installed?
 ```
 
-The generated registry is authoritative for:
+The generated registry answers:
 
 ```text
-What valid local modules did EmuKit discover?
+What valid local modules did Core discover and normalize?
 ```
 
-A remote platform manifest is authoritative for:
+The remote platform manifest answers:
 
 ```text
-What modules are available to download or update?
+What module packages are available to download or update?
 ```
 
 These are deliberately separate authorities.
+
+## Emulator Installation Location
+
+Modules manage emulator installations below:
+
+```text
+ROOT/Emulators/
+```
+
+For example:
+
+```text
+ROOT/Emulators/Xemu/
+```
+
+A module's `DependencyPath` must be relative to `ROOT`, must resolve inside `ROOT/Emulators`, and must identify a child directory of `Emulators`.
+
+The old `dependencies/EmuKit/<Emulator>` emulator layout is not part of Core 1.0.0.
+
+The general `ROOT/dependencies/` directory remains available for shared non-emulator dependencies.
+
+## Core Dependencies
+
+Core 1.0.0 performs dependency preflight before normal initialization.
+
+Required shared dependencies are:
+
+```text
+7-Zip 26.03
+  Windows: required
+  Linux:   required
+  Mac:     required
+
+Microsoft Visual C++ v14 Redistributable
+  Windows: required
+  Linux:   not required
+  Mac:     not required
+```
+
+If required dependencies are missing, EmuKit lists them and asks whether it should install them automatically.
+
+If the user chooses `No`, EmuKit closes instead of entering the normal CLI without required dependencies.
+
+If automatic installation fails and dependencies remain missing, EmuKit closes.
+
+### 7-Zip Resource Resolution
+
+Core pins the required 7-Zip version but does not hard-code each artifact filename or checksum.
+
+Core starts from:
+
+```text
+Resources/7Zip/7Zip_Manifest.json
+```
+
+The root resource manifest identifies the pinned version manifest, for example:
+
+```text
+26.03/7Zip_26.03_Manifest.json
+```
+
+Core then selects the target matching the current OS and architecture and consumes the target's:
+
+- artifact path
+- SHA-256
+- executable name
+- install method
+- silent installer arguments where applicable
+
+On Windows, the controlled installer is executed according to manifest metadata.
+
+On Linux and macOS, the controlled archive is extracted into the shared dependency area and `7zz` is made executable.
+
+Local controlled Resources are preferred when present and valid; otherwise Core can retrieve the controlled artifact from the resource manifest's raw repository location.
+
+### Visual C++ Redistributable
+
+On Windows, Core detects the installed Microsoft Visual C++ v14 runtime through the Windows registry.
+
+If missing and the user accepts automatic dependency installation, Core downloads the latest supported x64 redistributable from Microsoft's official `vc14` permalink, installs it quietly, and verifies detection afterward.
 
 ## Development and Release Channels
 
 EmuKit uses the same Core behavior in development and release builds.
 
-Only the remote feed root changes.
+The remote module feed changes by channel.
 
-Development/source builds use:
+Normal Python source execution defaults to:
 
 ```text
 backend/EmuKit/
 ```
 
-Release/target builds use:
+Frozen executable builds default to:
 
 ```text
 Releases/EmuKit/
 ```
 
-Both feeds mirror the same structure.
-
-A normal module-manifest path is:
+The normal platform manifest path is:
 
 ```text
 <feed>/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
@@ -142,9 +262,43 @@ backend/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Manifest.json
 Releases/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Manifest.json
 ```
 
-Development and release must not use different downloader, installer, registry, or module-lifecycle implementations.
+`EMUKIT_CHANNEL` may explicitly select development or release behavior for testing.
 
-The channel changes the source, not the behavior.
+`EMUKIT_FEED_BASE_URL` may override the feed base for controlled development/testing scenarios.
+
+Development and release must not use different module lifecycle, validation, registry, or installer semantics.
+
+The channel changes the source of distributed module packages, not the module contract.
+
+## Distribution Layout
+
+The current backend convention is:
+
+```text
+backend/
+└── EmuKit/
+    └── EmulatorModules/
+        └── Windows/
+            ├── EmuKit_Windows_Manifest.json
+            └── Xemu/
+                ├── Xemu_Manifest.json
+                └── Xemu_1.0.0.zip
+```
+
+There is no extra `1.0.0/` directory between the module folder and `Xemu_1.0.0.zip`.
+
+The ZIP itself contains its versioned module directory:
+
+```text
+Xemu_1.0.0.zip
+└── Xemu_1.0.0/
+    ├── EmuKitXemuInfo.json
+    └── module code
+```
+
+Core 1.0.0 consumes the platform manifest for runtime discovery, download, and update decisions.
+
+The per-module `<Module>_Manifest.json` is the repository's retained module-version catalogue. It records available versions and metadata, but Core 1.0.0 does not require a second lookup through that file to install a module advertised by the platform manifest.
 
 ## Development Workflow
 
@@ -152,74 +306,24 @@ A normal module-development workflow is:
 
 ```text
 Create module locally
-→ place it inside EmuKit's local module location
+→ place it under EmuKitModules
 → run EmuKit
 → local discovery registers the module
 → develop and test lifecycle behavior
 → package the working module
-→ publish the package and manifest entry to backend/EmuKit
+→ calculate package SHA-256
+→ publish package and manifest metadata to backend/EmuKit
 → remove the local module copy
-→ ask EmuKit to install the module
-→ verify remote download, hash verification, extraction, discovery, and installation
-→ promote the exact tested package and manifest data to Releases/EmuKit
+→ install through the development feed
+→ verify remote download, hash verification, extraction, discovery, and emulator installation
+→ promote the exact tested package and matching metadata to Releases/EmuKit
 ```
 
-A locally present development module does not need a remote manifest entry.
-
-This is intentional. It allows module development without repeatedly uploading and downloading unfinished code.
-
-## Remote Module Discovery
-
-At startup or on explicit refresh, EmuKit may load the current host platform's remote manifest.
-
-The platform manifest uses schema version `1`.
-
-A minimal empty manifest is:
-
-```json
-{
-  "SchemaVersion": 1,
-  "Platform": "Windows",
-  "Modules": {}
-}
-```
-
-A populated manifest maps stable module IDs to package metadata.
-
-Example:
-
-```json
-{
-  "SchemaVersion": 1,
-  "Platform": "Windows",
-  "Modules": {
-    "duckstation": {
-      "Name": "DuckStation",
-      "Aliases": [
-        "PS1",
-        "PlayStation"
-      ],
-      "Version": "1.0.0",
-      "Package": "DuckStation/1.0.0/DuckStation_1.0.0.zip",
-      "SHA256": "<64-character lowercase sha256>"
-    }
-  }
-}
-```
-
-`Package` is relative to:
-
-```text
-<feed>/EmulatorModules/<OS>/
-```
-
-The remote manifest describes module distribution.
-
-It must not duplicate emulator-specific installation logic from the module.
+A locally present development module does not need a remote platform-manifest entry.
 
 ## Installing a Module
 
-`Install <Module>` has two possible paths.
+`Install <Module>` has two paths.
 
 If the module is already physically present:
 
@@ -232,17 +336,20 @@ resolve local module
 If the module is not physically present:
 
 ```text
-resolve module from remote platform manifest
+resolve module from platform manifest
 → download package to staging
 → verify SHA-256
 → safely extract package
-→ validate contained module registration
-→ verify module ID matches requested manifest entry
-→ install module package into EmuKit
+→ locate exactly one valid module root
+→ validate module registration
+→ verify module ID and version against manifest metadata
+→ copy validated module into EmuKitModules
 → rebuild registry
 → reconcile settings
 → invoke module install()
 ```
+
+Validated modules are copied out of staging rather than renamed from the temporary extraction directory so the installed module inherits normal destination permissions.
 
 Core installs the module package.
 
@@ -250,7 +357,7 @@ The module installs the emulator.
 
 ## Install All
 
-`Install All` operates on the active platform manifest.
+`Install All` operates on the current host platform manifest.
 
 For each remote module:
 
@@ -263,7 +370,7 @@ then
     → invoke emulator install lifecycle
 ```
 
-Failures are reported per module and do not silently disappear.
+Failures are reported per module.
 
 ## Updating
 
@@ -271,15 +378,15 @@ There are two separate update concepts.
 
 ### Module Package Update
 
-Core owns module-package updates.
+`Update Module <Module>` is owned by Core.
 
-Core compares the installed module's `ModuleVersion` with the version advertised by the current remote platform manifest.
+Core compares the installed module's `ModuleVersion` with the version advertised by the current platform manifest.
 
-A module-package update replaces the module package only after the new package has downloaded, passed SHA-256 validation, and passed module-contract validation.
+A replacement module is installed only after the package has downloaded, passed SHA-256 verification, and passed module-contract validation.
 
 ### Emulator Update
 
-The emulator module owns emulator updates.
+`Update <Module>` is owned by the module.
 
 Core invokes the module's:
 
@@ -289,7 +396,7 @@ update()
 
 handler.
 
-Core does not know how a particular emulator updates itself.
+Core does not contain emulator-specific update knowledge.
 
 ## Removing Modules and Uninstalling Emulators
 
@@ -297,61 +404,72 @@ These are different operations.
 
 ### Remove Module
 
-`Remove Module <Module>` removes the EmuKit module package itself.
+`Remove Module <Module>` removes the EmuKit module package from `EmuKitModules`.
 
 It does not invoke emulator uninstall logic.
 
-The emulator installation and emulator-owned data are left untouched.
+The emulator installation is left untouched.
 
-After removal, the registry is rebuilt and assignments that can no longer be satisfied are cleared.
+The registry is then rebuilt and invalid assignments are cleared.
 
 ### Uninstall
 
 `Uninstall <Module>` invokes the module's emulator uninstall lifecycle.
 
-The module decides how its managed emulator installation is removed according to the module contract.
-
-The module package may remain installed so the emulator can be installed again later.
+The module package remains available unless separately removed.
 
 ## Registry
 
-The registry is generated state.
+The registry is generated state stored below:
+
+```text
+ROOT/appdata/registry/EmuKitRegistry.json
+```
 
 It must be rebuildable from valid physically present modules.
 
+The registry normalizes:
+
+- modules
+- brands
+- platforms
+- systems
+
 A missing module directory must eventually disappear from the registry.
 
-The registry is not the authority for whether module files actually exist.
-
-The registry contains normalized module, brand, platform, and system information used by EmuKit.
+The registry is not the authority for whether module files physically exist.
 
 ## Settings
 
-Settings preserve user choices independently from registry regeneration where possible.
+Settings are stored below:
 
-Settings may contain:
+```text
+ROOT/appdata/settings/EmuKitSettings.json
+```
 
-- global Core settings
+They preserve user choices independently from registry regeneration where possible.
+
+Settings include:
+
+- global fullscreen state
 - module enabled/managed state
 - per-system module assignment
 
-Registry synchronization must not discard unrelated user choices.
+When a module is first discovered, `DefaultInstalled` is used to seed that module's enabled state.
 
-Assignments must be cleared when their module or supported system no longer exists.
+Registry synchronization should preserve unrelated user choices and clear assignments that can no longer be satisfied.
 
 ## Systems and Assignments
 
 Modules declare the systems they support.
 
-EmuKit combines those declarations into a normalized system catalogue.
+Core combines those declarations into a normalized catalogue.
 
-A system may have multiple supporting modules.
+A user may assign one module as the active module for a system.
 
-A user may assign one module as the active/default module for that system.
+Supported-system presentation includes Brand + System to remain unambiguous.
 
-Supported-system presentation should include enough context to be unambiguous, normally Brand + System.
-
-Example:
+Examples:
 
 ```text
 Nintendo GameCube
@@ -363,37 +481,73 @@ Microsoft Xbox
 
 EmuKit supports two launch modes.
 
-### Launch Emulator With Game
+### Launch a Game
 
-A system assignment determines which module launches the game.
+```text
+Launch <GamePath> <System>
+```
 
-Core verifies the module/emulator state before launch and may invoke install or repair when the user has enabled management of that module.
+The system assignment determines which local module launches the game.
 
-### Launch Emulator Without Game
+Core resolves the module's executable, working directory, system launch arguments, fullscreen setting, and game path.
 
-A module can also be launched without a game.
+### Launch an Emulator Without a Game
 
-This is required for emulator configuration, controller setup, graphics settings, maintenance, and emulator-native UI tasks.
+```text
+Launch Emulator <Module>
+```
 
-Module registration may provide module-level emulator launch arguments in addition to per-system game launch arguments.
+This is used for emulator configuration, controller setup, graphics settings, maintenance, and emulator-native UI tasks.
 
-## Core Dependencies
+Module registration may provide `EmulatorLaunchArguments` separately from each system's game-launch arguments.
 
-Core dependencies must remain generic and genuinely shared.
+## Current CLI Commands
 
-Emulator-specific runtimes or dependencies belong to the module that requires them.
+Core 1.0.0 exposes:
 
-ProjectHomelab Resources are the controlled source for shared external artifacts where applicable.
+```text
+Get Settings
+Get <Module> Settings
+Update Setting <Setting> <Value>
+Install <Module>
+Install All
+Uninstall <Module>
+Remove Module <Module>
+Repair <Module>
+Update <Module>
+Update Module <Module>
+Check <Module>
+Refresh Modules
+Get <Name> Info
+Get Module <Name> Info
+Get Brand <Name> Info
+Get Platform <Name> Info
+Get System <Name> Info
+Get Current Installs
+Get Supported Modules
+Get Supported Brands
+Get Supported Platforms
+Get Supported Systems [Brand <Name>] [Platform <Name>]
+Get Status
+Get Core Dependencies
+Assign System <System> <Module|None>
+Launch <GamePath> <System>
+Launch Emulator <Module>
+Help
+Close
+```
 
-Do not add emulator-specific installation knowledge to Core merely because several current modules happen to use the same external component.
+`--json` requests raw structured output where supported.
+
+`--verbose` requests additional operation details where supported.
+
+Dependency installation is handled by startup preflight instead of a user-facing `Install Core ...` command.
 
 ## Operation Serialization
 
-Module mutation operations are serialized.
+Mutation operations are serialized.
 
-Do not run concurrent install, uninstall, repair, update, module-package replacement, or removal operations that could mutate the same EmuKit/module state.
-
-Read-only discovery and status operations may remain independent when safe.
+Do not concurrently run install, uninstall, repair, emulator update, module-package replacement, or module removal operations that may mutate shared EmuKit/module state.
 
 ## Structured Results
 
@@ -404,15 +558,15 @@ A normal result contains:
 ```json
 {
   "success": true,
-  "module": "duckstation",
+  "module": "exampleemu",
   "operation": "install",
   "state": "installed",
-  "message": "DuckStation installed successfully.",
+  "message": "ExampleEmu installed successfully.",
   "details": {}
 }
 ```
 
-Required semantic fields are:
+Important semantic fields are:
 
 - `success`
 - `operation`
@@ -423,43 +577,42 @@ Required semantic fields are:
 
 `details` may contain operation-specific machine-readable information.
 
-Core normalizes incomplete module results but modules should return complete results themselves.
-
 ## Progress
 
 Lifecycle handlers may accept a `progress` callback.
 
-Expected usage is conceptually:
+Conceptual usage:
 
 ```python
 progress(percent=25, stage="Downloading", message="Downloading emulator package.")
 ```
 
-Progress is optional for instantaneous operations but strongly recommended for download, extract, install, repair, and update operations.
+Progress is optional for instantaneous operations but recommended for long download, extraction, installation, repair, update, and uninstall operations.
 
 ## Security and Validation
 
 Before installing a remote module package, Core must:
 
-- download into a staging location
-- verify SHA-256 before installation
-- reject unsafe archive paths
+- download into staging
+- verify package SHA-256
+- reject absolute or traversal archive paths
+- reject unsafe symbolic-link package entries
 - reject packages with no valid module
 - reject packages containing multiple valid module roots
 - reject a package whose module ID does not match the requested manifest entry
-- avoid overwriting the working installed module until the replacement package is validated
+- reject a package whose module version does not match the manifest entry
+- validate `DependencyPath` inside `ROOT/Emulators`
+- preserve the previous module during replacement until the new package has validated
 
 A failed module-package update should leave the previous valid module recoverable.
 
-## Documentation
+## Documentation Scope
 
-Core documentation belongs under:
+General EmuKit documentation belongs under:
 
 ```text
 Documentation/EmuKit/
 ```
-
-Module-author documentation and contracts belong beside the Core documentation.
 
 Reusable contributor aids belong under:
 
@@ -467,23 +620,31 @@ Reusable contributor aids belong under:
 Documentation/EmuKit/Templates/
 ```
 
-Concrete non-runtime examples belong under:
+Generic non-runtime examples belong under:
 
 ```text
 Documentation/EmuKit/Examples/
 ```
 
-Templates and Examples are documentation artifacts. They are not scanned as installed emulator modules.
+Individual emulator-module documentation is maintained separately as modules are documented.
+
+Generic Core documentation should not become a collection of emulator-specific instructions.
 
 ## Validation Checklist
 
 Before declaring an EmuKit Core build ready:
 
 - `.ProjectHomelabRoot` resolution works
-- standalone root fallback works
+- standalone fallback works
+- frozen runtime resolution uses the executable directory
 - host OS maps to Windows, Linux, or Mac
-- local valid modules are discovered without a remote manifest
-- invalid modules are rejected with useful errors
+- host architecture maps supported x86_64 and ARM64 forms correctly
+- Core dependency preflight blocks startup when required dependencies are missing
+- automatic dependency installation can satisfy supported missing dependencies
+- 7-Zip resource resolution follows root manifest → pinned version manifest → host target
+- local valid modules are discovered only from `EmuKitModules`
+- invalid modules are rejected with useful registration errors
+- module emulator paths are constrained to `ROOT/Emulators`
 - registry rebuild works
 - settings survive registry rebuild
 - active platform manifest validates
@@ -491,10 +652,11 @@ Before declaring an EmuKit Core build ready:
 - package download uses staging
 - package SHA-256 is verified
 - unsafe archive paths are rejected
-- acquired module ID matches manifest ID
+- acquired module ID and version match platform-manifest metadata
+- validated module installation preserves normal destination permissions
 - registry refresh sees newly acquired modules
 - `Install <Module>` works for local and remote modules
-- `Install All` handles multiple modules and reports per-module failures
+- `Install All` reports per-module failures
 - module-package update is separate from emulator update
 - `Remove Module` does not uninstall the emulator
 - `Uninstall` invokes module emulator-uninstall behavior

@@ -11,7 +11,7 @@ A compliant module tells Core:
 - who the module is
 - which emulator version it manages
 - which systems it supports
-- where the managed emulator will live
+- where the managed emulator lives
 - how games are launched
 - how the emulator itself is launched
 - how to check installation state
@@ -22,19 +22,20 @@ A compliant module tells Core:
 
 ## Local Module Layout
 
-A normal source module directory is:
+Installed modules live under the Core runtime's `EmuKitModules` directory.
 
 ```text
-<EmuKit>/
-└── <ModuleFolder>/
-    ├── EmuKit<ModuleName>Info.json
-    ├── <ModuleManager>.py
-    └── <module-owned supporting files>
+<EmuKit runtime>/
+└── EmuKitModules/
+    └── ExampleEmu_1.0.0/
+        ├── EmuKitExampleEmuInfo.json
+        ├── ExampleEmuManager.py
+        └── module-owned supporting files
 ```
 
-The exact folder name is not the module identity.
+The directory name is packaging/versioning convention.
 
-The stable `Id` inside the Info JSON is the module identity.
+The stable `Id` inside the Info JSON is the actual module identity.
 
 Each local module directory must contain exactly one file matching:
 
@@ -42,45 +43,63 @@ Each local module directory must contain exactly one file matching:
 EmuKit*Info.json
 ```
 
-Templates and examples outside the runtime EmuKit module location are not modules.
+Templates and examples outside `EmuKitModules` are not runtime modules.
 
 ## Module Info Schema
 
-The Info JSON root is an object.
-
 `Version` is the module-info schema version, not the module package version.
 
-For schema version `1`, a normal module registration contains:
+For schema version `1`, a normal registration is:
 
 ```json
 {
   "Version": 1,
-  "Id": "duckstation",
-  "Name": "DuckStation",
+  "Id": "exampleemu",
+  "Name": "ExampleEmu",
   "Aliases": [
-    "PS1",
-    "PlayStation"
+    "Example Emulator"
   ],
   "ModuleVersion": "1.0.0",
-  "EmulatorVersion": "0.0.0",
-  "Manager": "DuckStationManager.py",
-  "DependencyPath": "dependencies/EmuKit/DuckStation",
-  "LaunchPath": "dependencies/EmuKit/DuckStation/duckstation.exe",
-  "WorkingDirectory": "dependencies/EmuKit/DuckStation",
+  "EmulatorVersion": "4.2.0",
+  "Manager": "ExampleEmuManager.py",
+  "DependencyPath": "Emulators/ExampleEmu",
+  "LaunchPath": "Emulators/ExampleEmu/exampleemu.exe",
+  "WorkingDirectory": "Emulators/ExampleEmu",
   "EmulatorLaunchArguments": [],
   "DefaultInstalled": false,
-  "Systems": {}
+  "Systems": {
+    "example-console": {
+      "Name": "Example Console",
+      "Aliases": [
+        "EC"
+      ],
+      "Brand": {
+        "Id": "example-company",
+        "Name": "Example Company",
+        "Aliases": []
+      },
+      "Platform": {
+        "Id": "console",
+        "Name": "Console",
+        "Aliases": []
+      },
+      "LaunchArguments": [
+        "{game}"
+      ],
+      "FullscreenArgument": null,
+      "Default": true
+    }
+  }
 }
 ```
 
-### Required Identity Fields
+## Identity Fields
 
 `Id`
 
-- stable machine-safe module ID
-- lowercase
+- stable lowercase machine-safe module ID
 - may contain lowercase letters, numbers, `.`, `_`, and `-`
-- must not be renamed merely for display preference
+- must not change merely for display preference
 
 `Name`
 
@@ -88,9 +107,9 @@ For schema version `1`, a normal module registration contains:
 
 `Aliases`
 
-- optional list of alternative names accepted by Core lookup
+- optional alternative lookup names
 
-### Version Fields
+## Version Fields
 
 `Version`
 
@@ -99,47 +118,57 @@ For schema version `1`, a normal module registration contains:
 
 `ModuleVersion`
 
-- version of the EmuKit module package/logic
-- independent of emulator version
+- version of the EmuKit module package and module logic
 
 `EmulatorVersion`
 
-- emulator version the module is currently written/tested to manage
-- may be a pinned upstream version or another stable module-defined identifier
+- emulator version the module is written and tested to manage
 
-The module should not silently reinterpret these concepts.
+Module version and emulator version are independent.
 
 ## Manager Entry Point
 
 `Manager` identifies the lifecycle entry point relative to the module directory.
 
-Source modules normally use a Python manager.
+Python managers are supported.
 
-Example:
-
-```json
-"Manager": "DuckStationManager.py"
-```
-
-A release module may use a packaged executable manager when supported by Core.
-
-The module contract is defined by lifecycle operations and structured results, not by one programming language.
+Core also contains executable-manager invocation support, so the lifecycle contract is defined by operations and structured results rather than by one programming language.
 
 ## DependencyPath
 
-`DependencyPath` is the ProjectHomelab-relative or standalone-root-relative location containing the emulator installation managed by the module.
+`DependencyPath` is the root-relative directory containing the emulator installation managed by the module.
 
-It is not the location of the EmuKit module package itself.
+Core 1.0.0 requires it to:
 
-The module package and emulator dependency are separate things.
+- be relative, not absolute
+- resolve inside `ROOT/Emulators`
+- identify a child directory below `ROOT/Emulators`
+
+Correct:
+
+```json
+"DependencyPath": "Emulators/ExampleEmu"
+```
+
+Incorrect:
+
+```json
+"DependencyPath": "dependencies/EmuKit/ExampleEmu"
+```
+
+The module package and the emulator installation are separate things.
+
+Module code lives under `EmuKitModules`.
+
+Emulator binaries live under `ROOT/Emulators`.
 
 ## LaunchPath
 
-`LaunchPath` is the default emulator executable/app entry path.
+`LaunchPath` is the default emulator executable or app entry path.
 
-A system may override it when required.
+It normally resolves from `ROOT`.
 
-Paths should be relative to the resolved ProjectHomelab/standalone root unless an absolute path is genuinely required by the platform.
+A system registration may override it when required.
 
 ## WorkingDirectory
 
@@ -147,7 +176,7 @@ Paths should be relative to the resolved ProjectHomelab/standalone root unless a
 
 When present, Core uses it as the emulator process working directory.
 
-When absent, Core may default to the launch executable's parent directory.
+When absent, Core may use the launch executable's parent directory.
 
 ## EmulatorLaunchArguments
 
@@ -155,64 +184,38 @@ When absent, Core may default to the launch executable's parent directory.
 
 It contains arguments used when launching the emulator without a game.
 
-Example:
+This is separate from per-system game launch arguments.
 
-```json
-"EmulatorLaunchArguments": []
-```
+## DefaultInstalled
 
-This is separate from each system's game-launch arguments.
+`DefaultInstalled` is optional and defaults to `false`.
+
+When Core first creates settings for a newly discovered module, this value seeds the module's enabled/managed state.
+
+It is not the module package version and it is not a statement that the emulator binaries already exist.
 
 ## Systems
 
-`Systems` maps stable system IDs to system registration objects.
+`Systems` must contain at least one system.
 
-Example:
-
-```json
-{
-  "Systems": {
-    "playstation": {
-      "Name": "PlayStation",
-      "Aliases": [
-        "PS1",
-        "PSX"
-      ],
-      "Brand": {
-        "Id": "sony",
-        "Name": "Sony",
-        "Aliases": []
-      },
-      "Platform": {
-        "Id": "playstation",
-        "Name": "PlayStation",
-        "Aliases": []
-      },
-      "LaunchArguments": [
-        "{fullscreen}",
-        "{game}"
-      ],
-      "FullscreenArgument": "-fullscreen",
-      "Default": true
-    }
-  }
-}
-```
+Each system ID must be lowercase and machine-safe.
 
 A system registration must provide:
 
-- system `Name`
+- `Name`
 - optional `Aliases`
 - `Brand`
 - `Platform`
 - `LaunchArguments`
 
-It may provide:
+It may also provide:
 
 - system-specific `LaunchPath`
 - system-specific `WorkingDirectory`
 - `FullscreenArgument`
 - `Default`
+
+`FullscreenArgument` may be a string, a list of strings, or `null`.
 
 ## Brand and Platform Identity
 
@@ -220,15 +223,29 @@ It may provide:
 
 ```json
 {
-  "Id": "sony",
-  "Name": "Sony",
+  "Id": "example-company",
+  "Name": "Example Company",
   "Aliases": []
 }
 ```
 
 The same stable ID must describe the same identity across every module.
 
-Conflicting names for one ID are registration errors.
+Conflicting names or conflicting system identity metadata are registry errors.
+
+## Default System Module
+
+A system registration may set:
+
+```json
+"Default": true
+```
+
+Core uses these declarations when building the normalized system catalogue.
+
+For one system, no more than one discovered module should claim to be the default.
+
+Multiple default modules for the same system are treated as a catalogue error.
 
 ## Launch Arguments
 
@@ -240,41 +257,41 @@ Supported placeholders include:
 {fullscreen}
 ```
 
-`{game}` is replaced with the selected game path.
+`{game}` becomes the selected game path.
 
-`{system}` is replaced with the stable system ID.
+`{system}` becomes the stable system ID.
 
-`{fullscreen}` expands according to EmuKit's current fullscreen setting and the system's `FullscreenArgument`.
+`{fullscreen}` expands from the current EmuKit fullscreen setting and the system's `FullscreenArgument`.
 
-Do not quote placeholders inside an argument merely to compensate for shell parsing. Core launches processes using an argument array.
+Core launches with an argument array, so placeholders should not be wrapped in extra shell quoting merely to handle spaces.
 
 ## Required Lifecycle Operations
 
-Every source manager must implement:
+Every manager must provide:
 
-```python
-check()
-install()
-uninstall()
-repair()
-update()
+```text
+check
+install
+uninstall
+repair
+update
 ```
 
-Handlers may optionally accept:
+Python lifecycle handlers may optionally accept:
 
 ```python
 progress=None
 ```
 
-Core detects whether a Python handler accepts the progress callback.
+Core detects whether the handler accepts the progress callback.
 
 ### check()
 
-`check()` inspects the managed emulator state.
+`check()` inspects emulator state.
 
-It must not perform destructive repair or installation as a side effect.
+It must not install or perform destructive repair as a side effect.
 
-Expected successful states include:
+Normal successful states include:
 
 ```text
 missing
@@ -282,58 +299,43 @@ installed
 broken
 ```
 
-A typical installed result includes the detected emulator version:
-
-```json
-{
-  "success": true,
-  "operation": "check",
-  "state": "installed",
-  "message": "DuckStation is installed.",
-  "details": {
-    "version": "0.0.0"
-  }
-}
-```
-
 ### install()
 
-`install()` creates a known-good managed emulator installation.
+`install()` creates the module's known-good managed emulator installation.
 
 The module owns:
 
-- emulator download/source selection
-- emulator checksum/integrity validation
+- emulator source selection
+- emulator version pinning
+- emulator checksum validation
 - extraction or installation
 - emulator-specific runtime requirements
-- emulator-specific resource requirements
+- emulator-specific BIOS, firmware, or resource requirements
 - emulator-specific initial configuration
 
 Core does not implement those details.
 
 ### uninstall()
 
-`uninstall()` removes the managed emulator installation according to the module's documented data policy.
+`uninstall()` removes the managed emulator according to that module's documented data policy.
 
 It must not remove the EmuKit module package itself.
 
-User data must not be destroyed unless the module contract/documentation clearly defines that behavior and the operation specifically requires it.
-
 ### repair()
 
-`repair()` returns a broken managed emulator installation to the known-good module-managed state.
+`repair()` returns a broken managed emulator installation to the module's known-good state.
 
-A module may implement repair as reinstall/restore when that is the safest deterministic behavior.
+A module may repair individual files/configuration or perform a deterministic reinstall.
 
-Repair should preserve user-owned data unless the module explicitly owns that data and replacement is necessary.
+Its behavior must match the module's documented data policy.
 
 ### update()
 
-`update()` updates the emulator installation according to the module's emulator-update policy.
+`update()` updates the emulator itself according to the module's emulator-update policy.
 
 This is not a module-package update.
 
-Core owns module-package updates.
+Core owns module-package updates through `Update Module <Module>`.
 
 ## Progress Callback
 
@@ -342,13 +344,11 @@ Long operations should report progress.
 Example:
 
 ```python
-def install(progress=None):
-    if progress:
-        progress(percent=10, stage="Checking", message="Checking existing installation.")
-    ...
+if progress:
+    progress(percent=25, stage="Downloading", message="Downloading emulator package.")
 ```
 
-Callback keyword arguments are:
+Supported callback keywords are:
 
 - `percent`
 - `stage`
@@ -358,23 +358,23 @@ Percent should remain within `0..100`.
 
 ## Structured Results
 
-Lifecycle handlers return a dictionary.
+Lifecycle handlers return structured dictionaries.
 
-A successful example:
+Successful example:
 
 ```json
 {
   "success": true,
   "operation": "install",
   "state": "installed",
-  "message": "DuckStation installed successfully.",
+  "message": "ExampleEmu installed successfully.",
   "details": {
-    "version": "0.0.0"
+    "version": "4.2.0"
   }
 }
 ```
 
-A failure example:
+Failure example:
 
 ```json
 {
@@ -382,7 +382,7 @@ A failure example:
   "operation": "install",
   "state": "install_failed",
   "error": "download_failed",
-  "message": "DuckStation could not be downloaded.",
+  "message": "ExampleEmu could not be downloaded.",
   "details": "Connection timed out."
 }
 ```
@@ -396,68 +396,90 @@ Modules should provide:
 - optional `error`
 - optional `details`
 
-Core adds `module` when necessary.
+Core adds module identity when necessary.
 
-Do not return arbitrary strings or rely on console printing as the machine interface.
+Do not rely on console printing as the machine interface.
 
 ## Resource Ownership
 
-A module decides which Resources it requires.
+A module decides which ProjectHomelab Resources it requires.
 
-For emulator BIOS, firmware, controlled archives, or other external artifacts, use the ProjectHomelab Resources system when an appropriate controlled Resource exists.
+Emulator BIOS, firmware, controlled archives, or other emulator-specific artifacts remain module responsibilities.
 
-Modules must not require Core to know which BIOS belongs to which emulator.
-
-A module may consume:
+Modules may consume controlled resources from:
 
 ```text
 Resources/EmuKit/
 ```
 
-but the module remains responsible for mapping those controlled resources into the emulator-specific installed layout.
+A module remains responsible for:
+
+- selecting required resources
+- validating them
+- mapping them into the emulator's actual installed layout
+- writing emulator configuration that points at those resources when necessary
+
+Core must not know which BIOS belongs to which emulator.
+
+## Shared Core Dependencies
+
+Modules may assume that required Core dependencies passed startup preflight before normal EmuKit initialization.
+
+Core 1.0.0 currently provides:
+
+```text
+7-Zip 26.03
+  Windows
+  Linux
+  Mac
+
+Microsoft Visual C++ v14 Redistributable
+  Windows only
+```
+
+An emulator-specific dependency that is not genuinely shared still belongs to the module.
 
 ## Emulator Version Policy
 
-A module should use a known tested emulator version.
+A module should manage a known tested emulator version.
 
-Do not blindly interpret "latest" as compatible.
+Do not blindly interpret upstream `latest` as compatible.
 
-When a new upstream emulator version is adopted:
+When adopting a new upstream version:
 
 ```text
 test emulator
-→ update module behavior if required
-→ update EmulatorVersion/source metadata
-→ increment ModuleVersion when module logic/metadata changes
-→ package and test module through the development feed
-→ promote exact tested package
+→ update module logic or metadata as needed
+→ update EmulatorVersion
+→ increment ModuleVersion when package logic/metadata changes
+→ build module ZIP
+→ test through development feed
+→ promote exact tested ZIP
 ```
 
 ## Module Package Removal
 
 Core may remove the physical module package without calling `uninstall()`.
 
-Therefore modules must not assume their code will always remain present after emulator installation.
+Modules must therefore not assume their code will always remain present after emulator installation.
 
-Removing a module must not be required to clean emulator state.
+`Remove Module` and `Uninstall` are intentionally different operations.
 
 ## Module Package Update
 
-A module package can be replaced by Core.
+Core may replace a module package while leaving the managed emulator installation in place.
 
-A replacement package must use the same stable module `Id`.
+A replacement module must retain the same stable `Id`.
 
-The new package should be able to operate against the existing emulator-managed state or document a migration/repair requirement.
-
-Module package updates must not silently change identity.
+The new module should be able to understand the existing managed emulator state or provide a deterministic repair/update path.
 
 ## Local Development
 
-A local module is discoverable solely because it exists in the local EmuKit module location and passes registration validation.
+A local module is discoverable because it exists under `EmuKitModules` and passes registration validation.
 
-It does not need to exist in a remote manifest.
+It does not need a remote manifest entry.
 
-This enables:
+Normal loop:
 
 ```text
 edit
@@ -466,32 +488,31 @@ edit
 → fix
 ```
 
-without publishing every intermediate revision.
-
 ## Remote Distribution
 
-Before promotion to `Releases/EmuKit`, the module package should be tested through `backend/EmuKit`.
+Before promotion to `Releases/EmuKit`, the module ZIP should be tested through the `backend/EmuKit` development feed.
 
-The exact package that passed remote development installation should be promoted to release.
+The exact ZIP that passed remote installation should be promoted.
 
-Do not rebuild a supposedly identical release package after testing unless the rebuilt artifact is tested again.
+Do not rebuild a supposedly identical release package after testing unless the rebuilt bytes are tested again.
 
 ## Data Policy
 
-Every module should have a clear data policy.
+Each module should have a clearly documented data policy when its individual module documentation is written.
 
-At minimum, module implementation should distinguish:
+At minimum, consider:
 
-- module-owned emulator binaries
-- module-owned generated configuration
+- emulator binaries
+- generated configuration
 - emulator cache
-- user saves
-- user states
-- user screenshots
-- user controller profiles
-- user-supplied firmware/BIOS where applicable
+- saves
+- states
+- screenshots
+- controller profiles
+- user-supplied firmware/BIOS
+- writable emulator disk images or similar state
 
-`uninstall()` and `repair()` must not casually destroy user-owned data.
+`uninstall()` and `repair()` behavior should be explicit rather than assumed.
 
 ## Validation Checklist
 
@@ -504,16 +525,20 @@ Before publishing a module:
 - `ModuleVersion` is correct
 - `EmulatorVersion` is correct
 - `Manager` exists
+- `DependencyPath` resolves to a child of `ROOT/Emulators`
 - required lifecycle handlers exist
-- every declared system has valid identity metadata
-- all declared launch paths/arguments are intentional
+- `Systems` contains at least one valid system
+- every declared system has valid Brand and Platform metadata
+- system identity does not conflict with existing modules
+- all launch paths and arguments are intentional
 - `check()` correctly reports missing, installed, and broken states
-- `install()` succeeds from a clean machine state
-- `repair()` restores a deliberately broken installation
-- `uninstall()` follows the data policy
+- `install()` succeeds from a clean state
+- `repair()` restores a deliberately broken state
+- `uninstall()` follows the module's data policy
 - `update()` follows the emulator-update policy
 - launch with a game works
 - launch without a game works
-- development package installs successfully through the development feed
-- package SHA-256 matches the development manifest
-- the exact tested package is promoted to the release feed
+- development ZIP installs through the development feed
+- package SHA-256 matches distribution manifests
+- extracted `Id` and `ModuleVersion` match the platform manifest
+- exact tested ZIP is promoted to release

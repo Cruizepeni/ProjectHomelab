@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Describe why this emulator module exists and which emulator it manages.
+Describe which emulator this module manages and why the module exists.
 
 ## Module Identity
 
@@ -10,25 +10,32 @@ Describe why this emulator module exists and which emulator it manages.
 Module ID:
 Module Version:
 Emulator Version:
+Managed Emulator Path:
+```
+
+The managed emulator path should normally be below:
+
+```text
+ROOT/Emulators/
 ```
 
 ## Supported Systems
 
-List the systems this module declares and any important limitations.
+List each system declared by the module and any meaningful compatibility limitations.
 
 ## Emulator Source
 
 Document the upstream emulator source and the version policy used by this module.
 
-Do not duplicate package hashes that already belong in machine-readable manifests unless the value is needed to explain historical context.
+## Controlled Resources
 
-## Resources
+Describe any ProjectHomelab Resources consumed by the module.
 
-Describe any ProjectHomelab Resources consumed by the module and why they are required.
+Record how those resources are mapped into the emulator's installed layout.
 
 ## Installation
 
-Describe meaningful ProjectHomelab-specific installation behavior.
+Describe meaningful module-specific installation behavior.
 
 ## Check States
 
@@ -40,21 +47,27 @@ installed
 broken
 ```
 
+## Configuration
+
+Document module-generated emulator configuration and any paths the module writes into that configuration.
+
 ## Repair
 
-Describe what repair restores and what user data is intentionally preserved.
+Describe what repair restores.
 
-## Update
+State whether repair replaces configuration, emulator binaries, writable images, or other managed state.
+
+## Emulator Update
 
 Describe the emulator-update policy.
 
-Module-package update behavior belongs to EmuKit Core, not this section.
+Module-package update behavior belongs to EmuKit Core.
 
 ## Uninstall and Data Policy
 
 Document exactly what the module removes and what it preserves.
 
-Explicitly identify treatment of:
+Consider:
 
 - saves
 - states
@@ -63,11 +76,18 @@ Explicitly identify treatment of:
 - configuration
 - user-supplied firmware/BIOS
 - caches
+- writable disk images or equivalent emulator state
 
 ## Launch Behavior
 
-Document any non-obvious launch arguments or per-system differences.
+Document non-obvious launch arguments, fullscreen behavior, or per-system differences.
+
+## Distribution
+
+Record the module package naming convention and any important distribution constraints.
+
+The development package should be tested through `backend/EmuKit` before the exact bytes are promoted to `Releases/EmuKit`.
 
 ## Known Constraints
 
-Preserve compatibility constraints or upstream quirks that future maintainers need to know.
+Preserve upstream quirks, pinned-version reasons, or compatibility constraints that future maintainers need to know.

@@ -6,9 +6,9 @@
   "ModuleVersion": "1.0.0",
   "EmulatorVersion": "replace-with-tested-emulator-version",
   "Manager": "ReplaceManager.py",
-  "DependencyPath": "dependencies/EmuKit/ReplaceModule",
-  "LaunchPath": "dependencies/EmuKit/ReplaceModule/replace-executable",
-  "WorkingDirectory": "dependencies/EmuKit/ReplaceModule",
+  "DependencyPath": "Emulators/ReplaceModule",
+  "LaunchPath": "Emulators/ReplaceModule/replace-executable",
+  "WorkingDirectory": "Emulators/ReplaceModule",
   "EmulatorLaunchArguments": [],
   "DefaultInstalled": false,
   "Systems": {

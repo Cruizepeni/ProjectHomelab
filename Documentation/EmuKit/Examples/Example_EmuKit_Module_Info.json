@@ -8,9 +8,9 @@
   "ModuleVersion": "1.0.0",
   "EmulatorVersion": "4.2.0",
   "Manager": "ExampleEmuManager.py",
-  "DependencyPath": "dependencies/EmuKit/ExampleEmu",
-  "LaunchPath": "dependencies/EmuKit/ExampleEmu/exampleemu.exe",
-  "WorkingDirectory": "dependencies/EmuKit/ExampleEmu",
+  "DependencyPath": "Emulators/ExampleEmu",
+  "LaunchPath": "Emulators/ExampleEmu/exampleemu.exe",
+  "WorkingDirectory": "Emulators/ExampleEmu",
   "EmulatorLaunchArguments": [],
   "DefaultInstalled": false,
   "Systems": {
@@ -25,15 +25,14 @@
         "Aliases": []
       },
       "Platform": {
-        "Id": "example-console",
-        "Name": "Example Console",
+        "Id": "console",
+        "Name": "Console",
         "Aliases": []
       },
       "LaunchArguments": [
-        "--fullscreen",
         "{game}"
       ],
-      "FullscreenArgument": "--fullscreen",
+      "FullscreenArgument": null,
       "Default": true
     }
   }

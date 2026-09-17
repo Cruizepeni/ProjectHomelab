@@ -1,25 +1,36 @@
-# EmuKit Module Distribution Manifest
+# EmuKit Module Distribution Manifests
 
 ## Purpose
 
-The platform module manifest is the machine-readable catalogue of emulator modules available to an EmuKit build for one operating system.
+EmuKit uses platform manifests to advertise module packages available for one operating system.
 
-It describes distribution.
+The repository also keeps a per-module manifest as a retained version catalogue.
 
-It does not describe installed local state and it does not contain emulator-specific installation behavior.
+These files describe distribution metadata only.
 
-## Location
+They do not describe local installed state and they do not contain emulator-specific installation behavior.
+
+## Distribution Layout
 
 Development:
 
 ```text
-backend/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+backend/
+└── EmuKit/
+    └── EmulatorModules/
+        └── <OS>/
+            ├── EmuKit_<OS>_Manifest.json
+            └── <Module>/
+                ├── <Module>_Manifest.json
+                ├── <Module>_1.0.0.zip
+                ├── <Module>_1.0.1.zip
+                └── ...
 ```
 
-Release:
+Release mirrors the same shape below:
 
 ```text
-Releases/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+Releases/EmuKit/EmulatorModules/
 ```
 
 Canonical `<OS>` values are:
@@ -30,9 +41,31 @@ Linux
 Mac
 ```
 
-## Schema Version 1
+There is no extra version directory between the module directory and the ZIP.
 
-Minimal document:
+Correct:
+
+```text
+Windows/Xemu/Xemu_1.0.0.zip
+```
+
+Not:
+
+```text
+Windows/Xemu/1.0.0/Xemu_1.0.0.zip
+```
+
+## Platform Manifest
+
+Core 1.0.0 consumes the platform manifest for runtime module discovery, download, and update decisions.
+
+Location:
+
+```text
+<feed>/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+```
+
+Minimal schema version 1 document:
 
 ```json
 {
@@ -49,126 +82,172 @@ Populated example:
   "SchemaVersion": 1,
   "Platform": "Windows",
   "Modules": {
-    "example": {
-      "Name": "Example Emulator",
+    "exampleemu": {
+      "Name": "ExampleEmu",
       "Aliases": [
-        "Example"
+        "Example Emulator"
       ],
       "Version": "1.0.0",
-      "Package": "Example/1.0.0/Example_1.0.0.zip",
+      "Package": "ExampleEmu/ExampleEmu_1.0.0.zip",
       "SHA256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
     }
   }
 }
 ```
 
-## Fields
+### Platform Manifest Fields
 
-### SchemaVersion
+`SchemaVersion`
 
-Required integer.
+- required integer
+- currently `1`
 
-For this contract:
+`Platform`
 
-```json
-"SchemaVersion": 1
-```
+- required canonical host operating-system name
+- must match the platform directory and manifest filename
 
-### Platform
+`Modules`
 
-Required canonical operating-system name.
+- required object
+- keys are stable module IDs
 
-The value must match the platform directory and manifest filename.
-
-### Modules
-
-Required object.
-
-Keys are stable module IDs.
-
-A module entry contains:
+Each module entry contains:
 
 `Name`
 
-- human-readable name
+- human-readable module/emulator name
 
 `Aliases`
 
-- optional list of alternate names used for lookup before the module is locally installed
+- optional alternate lookup names
 
 `Version`
 
 - module package version
-- corresponds to local Info `ModuleVersion`
+- must match local Info `ModuleVersion` after extraction
 
 `Package`
 
-- relative package path below the current platform's `EmulatorModules/<OS>/` directory
+- safe path relative to the current platform's `EmulatorModules/<OS>/` directory
+- must not be absolute or contain `..`
 
 `SHA256`
 
-- lowercase SHA-256 of the exact package bytes
-- required before Core installs or updates the package
+- lowercase SHA-256 of the exact ZIP bytes
+
+## Per-Module Manifest
+
+Each distributed module directory may contain:
+
+```text
+<Module>_Manifest.json
+```
+
+Current repository convention:
+
+```json
+{
+  "SchemaVersion": 1,
+  "Id": "exampleemu",
+  "Name": "ExampleEmu",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "4.2.0",
+      "Package": "ExampleEmu_1.0.0.zip",
+      "SHA256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    }
+  }
+}
+```
+
+The per-module manifest is the retained version catalogue for that module.
+
+It records:
+
+- stable module identity
+- platform
+- current latest module version
+- retained module versions
+- support status
+- emulator version managed by each module version
+- ZIP filename
+- ZIP SHA-256
+
+Core 1.0.0 does not currently need to read this file to acquire a module.
+
+The active platform manifest remains Core's runtime index.
+
+The platform manifest and per-module manifest must agree on the package version, filename, and SHA-256 for the version currently advertised to Core.
 
 ## Package URL Resolution
 
 Given:
 
 ```json
-"Package": "DuckStation/1.0.0/DuckStation_1.0.0.zip"
+"Package": "ExampleEmu/ExampleEmu_1.0.0.zip"
 ```
 
-Windows development resolves to conceptually:
+Windows development resolves to:
 
 ```text
-backend/EmuKit/EmulatorModules/Windows/DuckStation/1.0.0/DuckStation_1.0.0.zip
+backend/EmuKit/EmulatorModules/Windows/ExampleEmu/ExampleEmu_1.0.0.zip
 ```
 
 Windows release resolves to:
 
 ```text
-Releases/EmuKit/EmulatorModules/Windows/DuckStation/1.0.0/DuckStation_1.0.0.zip
+Releases/EmuKit/EmulatorModules/Windows/ExampleEmu/ExampleEmu_1.0.0.zip
 ```
 
-The manifest should not need separate hard-coded absolute URLs for development and release.
+Absolute URLs are not required in the manifest.
 
 ## Package Format
 
 Schema version 1 module packages use ZIP archives.
 
-The archive must resolve to exactly one valid EmuKit module root.
-
-A recommended package is:
+The recommended package shape is:
 
 ```text
-DuckStation_1.0.0.zip
-└── DuckStation/
-    ├── EmuKitDuckStationInfo.json
-    ├── DuckStationManager.py
-    └── ...
+ExampleEmu_1.0.0.zip
+└── ExampleEmu_1.0.0/
+    ├── EmuKitExampleEmuInfo.json
+    ├── ExampleEmuManager.py
+    └── module-owned supporting files
 ```
 
-Core may also accept package contents whose valid module root is the archive root, but a single top-level module folder is preferred for clarity.
+The top-level directory is versioned because it becomes the installed local module directory under `EmuKitModules`.
+
+Core must be able to resolve exactly one valid module root from the archive.
 
 ## Integrity
 
-Core calculates SHA-256 over the downloaded package before extraction.
+Core calculates SHA-256 over the downloaded ZIP before installation.
 
-The calculated value must exactly match `SHA256`.
+The calculated value must exactly match the platform manifest's `SHA256`.
 
-A mismatch aborts installation and the package is discarded.
+A mismatch aborts installation.
 
-## Identity Validation
+The same exact ZIP hash should be recorded in the per-module manifest.
+
+## Identity and Version Validation
 
 After extraction, Core validates the module Info file.
 
-The extracted module's stable `Id` must equal the module ID key used in the platform manifest.
+The extracted module's stable `Id` must equal the platform manifest key.
 
-For example:
+The extracted module's `ModuleVersion` must equal the platform manifest `Version`.
+
+Example:
 
 ```text
-Manifest key: duckstation
-Info Id:      duckstation
+Platform manifest key:      exampleemu
+Info Id:                    exampleemu
+Platform manifest Version:  1.0.0
+Info ModuleVersion:         1.0.0
 ```
 
 A mismatch is rejected.
@@ -180,44 +259,49 @@ Recommended promotion flow:
 ```text
 build package
 → calculate SHA-256
-→ register package in backend/EmuKit manifest
-→ remove local dev copy
+→ place ZIP below backend/EmuKit/EmulatorModules/<OS>/<Module>/
+→ update the module's per-module manifest
+→ update the platform manifest
+→ remove local development copy from EmuKitModules
 → install through EmuKit development channel
-→ test module and emulator
-→ copy exact package into Releases/EmuKit
-→ copy equivalent manifest entry into release manifest
+→ test module acquisition and emulator lifecycle
+→ copy the exact tested ZIP into Releases/EmuKit
+→ copy matching manifest metadata into the release feed
 ```
 
 The release artifact should be byte-identical to the package tested through the development feed.
 
-## Updating an Entry
+## Publishing a New Module Version
 
 When publishing a new module version:
 
-1. do not overwrite a previously published package when that package remains referenced
-2. create the new version package path
+1. create a new `<Module>_<Version>.zip`
+2. do not overwrite retained packages still referenced by the module catalogue
 3. calculate SHA-256
-4. update `Version`
-5. update `Package`
-6. update `SHA256`
-7. test through the development channel
-8. promote the exact tested package
+4. add the new version to `<Module>_Manifest.json`
+5. update `Latest` when appropriate
+6. update the platform manifest `Version`
+7. update the platform manifest `Package`
+8. update the platform manifest `SHA256`
+9. test through the development feed
+10. promote the exact tested package and matching metadata
 
 ## Validation Checklist
 
-Before committing a platform manifest:
+Before committing module distribution metadata:
 
 - JSON parses
-- `SchemaVersion` is supported
-- `Platform` matches its directory
+- platform manifest `SchemaVersion` is supported
+- platform manifest `Platform` matches its directory
 - every module ID is machine-safe
-- every module entry has a name
-- aliases are strings
-- every version is present
-- every package path is repository-relative within the platform feed
+- every platform entry has `Name`, `Version`, `Package`, and lowercase SHA-256
+- every package path is safe and platform-feed-relative
 - every package exists
-- every SHA-256 is 64 lowercase hexadecimal characters
-- every SHA-256 matches its package
-- package extraction produces exactly one valid module
-- extracted module `Id` matches manifest key
-- extracted module `ModuleVersion` matches manifest `Version`
+- every SHA-256 matches its exact ZIP
+- ZIP contains exactly one valid module root
+- extracted module `Id` matches platform manifest key
+- extracted module `ModuleVersion` matches platform manifest `Version`
+- package is located directly under its module directory
+- per-module manifest identifies the same module and platform
+- current advertised version exists in the per-module `Versions` map
+- platform and per-module manifests agree on package filename and SHA-256
