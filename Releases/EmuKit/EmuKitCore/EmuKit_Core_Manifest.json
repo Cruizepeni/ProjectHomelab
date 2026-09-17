@@ -1,0 +1,22 @@
+{
+  "SchemaVersion": 1,
+  "Id": "emukit-core",
+  "Name": "EmuKit Core",
+  "Channel": "release",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "Targets": {
+        "windows-x86_64": {
+          "OS": "Windows",
+          "Architecture": "x86_64",
+          "Package": "Windows/EmuKit_1.0.0_Windows_x86_64.zip",
+          "SHA256": "85940eb3b1cbc2dbda547ad521c7a96a936bc391db425837d93db40f09c9f3e3",
+          "RootDirectory": "EmuKit_1.0.0",
+          "Executable": "EmuKit.exe"
+        }
+      }
+    }
+  }
+}
