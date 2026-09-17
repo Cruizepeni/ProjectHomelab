@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "ppsspp",
+  "Name": "PPSSPP",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "1.20.4",
+      "Package": "PPSSPP_1.0.0_Windows_x86_64.zip",
+      "SHA256": "41ae74bfaaa4208f6f222d5c6846dbb7f084700b8518b39301c0adabc2a40851"
+    }
+  }
+}

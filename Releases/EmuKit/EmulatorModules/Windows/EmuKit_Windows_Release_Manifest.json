@@ -41,6 +41,16 @@
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0_Windows_x86_64.zip",
       "SHA256": "6b6598c52cfa29c7acf8c9f9acf81a6a5c39cd801bb257ab70427881d17c629d"
+    },
+    "ppsspp": {
+      "Name": "PPSSPP",
+      "Aliases": [
+        "PSP",
+        "PlayStation Portable"
+      ],
+      "Version": "1.0.0",
+      "Package": "PPSSPP/PPSSPP_1.0.0_Windows_x86_64.zip",
+      "SHA256": "41ae74bfaaa4208f6f222d5c6846dbb7f084700b8518b39301c0adabc2a40851"
     }
   }
 }
