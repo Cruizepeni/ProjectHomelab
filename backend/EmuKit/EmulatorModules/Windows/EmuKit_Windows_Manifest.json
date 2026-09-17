@@ -51,6 +51,16 @@
       "Version": "1.0.0",
       "Package": "PPSSPP/PPSSPP_1.0.0.zip",
       "SHA256": "f08e7af60a58a38cea1ff8376b3543dfe0523d7aae53d398432b2370d8ce9876"
+    },
+    "rpcs3": {
+      "Name": "RPCS3",
+      "Aliases": [
+        "PS3",
+        "PlayStation 3"
+      ],
+      "Version": "1.0.0",
+      "Package": "RPCS3/RPCS3_1.0.0.zip",
+      "SHA256": "64479d9a94ce0eda773b95e5a3fbecf6893b48bb0e90e9e6e16de3652d6d986c"
     }
   }
 }
