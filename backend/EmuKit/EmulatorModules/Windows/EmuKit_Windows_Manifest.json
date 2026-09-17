@@ -9,7 +9,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0.zip",
-      "SHA256": "c67ca3c8e1ae8bab348a0531a9db68668274a36d63dfbece0e610330c77c02e1"
+      "SHA256": "e636f55a821e9c28b4c3b8fd77e9710643285c2a093b23fd07be84b38eea37d6"
     },
     "xenia": {
       "Name": "Xenia Canary",
@@ -18,7 +18,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0.zip",
-      "SHA256": "aac7a38c6afd56f4d26e9a08426dc9bb6acddf60ce4e449c2302e7c1cdf222b5"
+      "SHA256": "70c387014edfea10fb13f44e8e32bd62d2d764befebaf8132df3b7938580d396"
     },
     "duckstation": {
       "Name": "DuckStation",
@@ -30,7 +30,7 @@
       ],
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0.zip",
-      "SHA256": "d9cadd4508bb048718cd52b0c1db4d8d9066eab82fef0c0c9dc43cbcf12f4bac"
+      "SHA256": "ae4e9584b0c7ff375586a444608726ffc883a80aaf7ec2fa491546eb24b78a72"
     },
     "pcsx2": {
       "Name": "PCSX2",
@@ -40,7 +40,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0.zip",
-      "SHA256": "dabd95581c6ba26e1e659e770d76cdfe87ba3902850d76178627b58846641955"
+      "SHA256": "daf78245cdbf80f54519c0d4e22d15d104315c06e87d31ee976f5615b1d4480a"
     }
   }
 }

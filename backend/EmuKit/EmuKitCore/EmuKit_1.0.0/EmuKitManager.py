@@ -3,7 +3,6 @@ from __future__ import annotations
 import copy
 import hashlib
 import importlib.util
-import inspect
 import json
 import os
 import platform as host_platform
@@ -2314,54 +2313,156 @@ class EmuKitManager:
         operation: str,
         manager_path: Path,
     ) -> dict[str, Any]:
-        completed = subprocess.run(
+        process = subprocess.Popen(
             [str(manager_path), operation, "--json"],
             cwd=str(manager_path.parent),
-            capture_output=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
             text=True,
-            timeout=3600,
-            check=False,
+            bufsize=1,
         )
-        output = completed.stdout.strip()
-        result: Any = None
-        if output:
-            try:
-                result = json.loads(output)
-            except json.JSONDecodeError:
-                for line in reversed(output.splitlines()):
-                    try:
-                        result = json.loads(line)
-                        break
-                    except json.JSONDecodeError:
+        protocol_state: dict[str, Any] = {
+            "result": None,
+            "error": None,
+            "stdout": [],
+        }
+        stderr_lines: list[str] = []
+
+        def read_stdout() -> None:
+            if process.stdout is None:
+                protocol_state["error"] = "Executable manager stdout pipe was not available."
+                return
+            for raw_line in process.stdout:
+                line = raw_line.rstrip("\r\n")
+                protocol_state["stdout"].append(line)
+                if protocol_state["error"] is not None:
+                    continue
+                if not line:
+                    protocol_state["error"] = "Executable manager emitted a blank stdout record."
+                    continue
+                try:
+                    record = json.loads(line)
+                except json.JSONDecodeError as exc:
+                    protocol_state["error"] = f"Executable manager emitted invalid JSONL: {exc}."
+                    continue
+                if not isinstance(record, dict):
+                    protocol_state["error"] = "Executable manager JSONL records must be objects."
+                    continue
+                record_type = record.get("type")
+                if record_type == "progress":
+                    if protocol_state["result"] is not None:
+                        protocol_state["error"] = "Executable manager emitted progress after its final result."
                         continue
+                    percent = record.get("percent")
+                    stage = record.get("stage")
+                    message = record.get("message")
+                    if percent is not None and (
+                        not isinstance(percent, (int, float))
+                        or isinstance(percent, bool)
+                        or percent < 0
+                        or percent > 100
+                    ):
+                        protocol_state["error"] = "Executable manager progress percent must be between 0 and 100."
+                        continue
+                    if stage is not None and not isinstance(stage, str):
+                        protocol_state["error"] = "Executable manager progress stage must be a string or null."
+                        continue
+                    if message is not None and not isinstance(message, str):
+                        protocol_state["error"] = "Executable manager progress message must be a string or null."
+                        continue
+                    self._emit_progress(
+                        module_id,
+                        operation,
+                        percent,
+                        stage,
+                        message,
+                    )
+                    continue
+                if record_type == "result":
+                    if protocol_state["result"] is not None:
+                        protocol_state["error"] = "Executable manager emitted more than one final result."
+                        continue
+                    result = record.get("result")
+                    if not isinstance(result, dict):
+                        protocol_state["error"] = "Executable manager result record must contain an object result."
+                        continue
+                    protocol_state["result"] = result
+                    continue
+                protocol_state["error"] = f'Executable manager emitted unsupported JSONL record type "{record_type}".'
+
+        def read_stderr() -> None:
+            if process.stderr is None:
+                return
+            for raw_line in process.stderr:
+                stderr_lines.append(raw_line.rstrip("\r\n"))
+
+        stdout_thread = threading.Thread(target=read_stdout, daemon=True)
+        stderr_thread = threading.Thread(target=read_stderr, daemon=True)
+        stdout_thread.start()
+        stderr_thread.start()
+
+        try:
+            returncode = process.wait(timeout=3600)
+        except subprocess.TimeoutExpired:
+            process.kill()
+            process.wait()
+            stdout_thread.join(timeout=5)
+            stderr_thread.join(timeout=5)
+            return self._fallback_result(
+                module_id,
+                operation,
+                message=f'Module "{module_id}" executable manager timed out.',
+                details={
+                    "stdout": protocol_state["stdout"],
+                    "stderr": stderr_lines,
+                },
+                error="manager_timeout",
+            )
+
+        stdout_thread.join(timeout=5)
+        stderr_thread.join(timeout=5)
+
+        if protocol_state["error"] is not None:
+            return self._fallback_result(
+                module_id,
+                operation,
+                message=f'Module "{module_id}" executable manager violated the JSONL protocol.',
+                details={
+                    "returncode": returncode,
+                    "protocol_error": protocol_state["error"],
+                    "stdout": protocol_state["stdout"],
+                    "stderr": stderr_lines,
+                },
+                error="manager_protocol_error",
+            )
+
+        result = protocol_state["result"]
         if result is None:
             return self._fallback_result(
                 module_id,
                 operation,
-                message=(
-                    f'Module "{module_id}" executable manager did not return '
-                    "a valid JSON result."
-                ),
+                message=f'Module "{module_id}" executable manager did not return a final result record.',
                 details={
-                    "returncode": completed.returncode,
-                    "stdout": completed.stdout,
-                    "stderr": completed.stderr,
+                    "returncode": returncode,
+                    "stdout": protocol_state["stdout"],
+                    "stderr": stderr_lines,
                 },
-                error="invalid_module_result",
+                error="missing_manager_result",
             )
+
         normalized = self._normalize_module_result(
             module_id,
             operation,
             result,
         )
-        if completed.returncode != 0 and normalized.get("success"):
+        if returncode != 0 and normalized.get("success"):
             normalized["success"] = False
             normalized["state"] = f"{operation}_failed"
             normalized["error"] = "manager_exit_failure"
             normalized["details"] = {
-                "returncode": completed.returncode,
+                "returncode": returncode,
                 "result": result,
-                "stderr": completed.stderr,
+                "stderr": stderr_lines,
             }
         return normalized
 
@@ -2409,19 +2510,7 @@ class EmuKitManager:
                     stage,
                     message,
                 )
-                parameters = inspect.signature(handler).parameters
-                accepts_progress = (
-                    "progress" in parameters
-                    or any(
-                        item.kind == inspect.Parameter.VAR_KEYWORD
-                        for item in parameters.values()
-                    )
-                )
-                result = (
-                    handler(progress=progress)
-                    if accepts_progress
-                    else handler()
-                )
+                result = handler(progress=progress)
                 normalized = self._normalize_module_result(
                     module_id,
                     operation,
