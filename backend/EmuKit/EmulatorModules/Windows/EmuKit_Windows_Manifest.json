@@ -10,6 +10,15 @@
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0.zip",
       "SHA256": "c67ca3c8e1ae8bab348a0531a9db68668274a36d63dfbece0e610330c77c02e1"
+    },
+    "xenia": {
+      "Name": "Xenia Canary",
+      "Aliases": [
+        "Xenia"
+      ],
+      "Version": "1.0.0",
+      "Package": "Xenia/Xenia_1.0.0.zip",
+      "SHA256": "aac7a38c6afd56f4d26e9a08426dc9bb6acddf60ce4e449c2302e7c1cdf222b5"
     }
   }
 }
