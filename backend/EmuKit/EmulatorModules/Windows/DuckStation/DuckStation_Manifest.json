@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "duckstation",
+  "Name": "DuckStation",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "20260912-gc66b2694",
+      "Package": "DuckStation_1.0.0.zip",
+      "SHA256": "d9cadd4508bb048718cd52b0c1db4d8d9066eab82fef0c0c9dc43cbcf12f4bac"
+    }
+  }
+}

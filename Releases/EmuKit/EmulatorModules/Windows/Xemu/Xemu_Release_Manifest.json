@@ -8,7 +8,7 @@
     "1.0.0": {
       "Status": "supported",
       "EmulatorVersion": "0.8.136",
-      "Package": "Xemu_1.0.0.zip",
+      "Package": "Xemu_1.0.0_Windows_x86_64.zip",
       "SHA256": "eff2be17227de20dffe6ce9f4550a0e05c6ea2e0e901305ceeb1023e87a576ca"
     }
   }

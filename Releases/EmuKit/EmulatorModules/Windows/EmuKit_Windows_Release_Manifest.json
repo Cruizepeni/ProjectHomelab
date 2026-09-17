@@ -8,7 +8,7 @@
         "Original Xbox"
       ],
       "Version": "1.0.0",
-      "Package": "Xemu/Xemu_1.0.0.zip",
+      "Package": "Xemu/Xemu_1.0.0_Windows_x86_64.zip",
       "SHA256": "eff2be17227de20dffe6ce9f4550a0e05c6ea2e0e901305ceeb1023e87a576ca"
     },
     "xenia": {
@@ -19,6 +19,18 @@
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0_Windows_x86_64.zip",
       "SHA256": "03c118238ffa9d3b908104ccb4e7155cf2e26fe51ae83c17611a4ba8f9c42d0b"
+    },
+    "duckstation": {
+      "Name": "DuckStation",
+      "Aliases": [
+        "PS1",
+        "PlayStation",
+        "PlayStation 1",
+        "PSOne"
+      ],
+      "Version": "1.0.0",
+      "Package": "DuckStation/DuckStation_1.0.0_Windows_x86_64.zip",
+      "SHA256": "a8034e227b1c157248852db2fe6ea817ca06755e0c9560db99e3fe31d40f135d"
     }
   }
 }

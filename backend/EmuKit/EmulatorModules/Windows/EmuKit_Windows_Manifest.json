@@ -19,6 +19,18 @@
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0.zip",
       "SHA256": "aac7a38c6afd56f4d26e9a08426dc9bb6acddf60ce4e449c2302e7c1cdf222b5"
+    },
+    "duckstation": {
+      "Name": "DuckStation",
+      "Aliases": [
+        "PS1",
+        "PlayStation",
+        "PlayStation 1",
+        "PSOne"
+      ],
+      "Version": "1.0.0",
+      "Package": "DuckStation/DuckStation_1.0.0.zip",
+      "SHA256": "d9cadd4508bb048718cd52b0c1db4d8d9066eab82fef0c0c9dc43cbcf12f4bac"
     }
   }
 }
