@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "pcsx2",
+  "Name": "PCSX2",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "2.8.2",
+      "Package": "PCSX2_1.0.0_Windows_x86_64.zip",
+      "SHA256": "fdcbaef5ddacb25ca19d9e2161db19e67a4033021b59804dde2ad97c9a9e362b"
+    }
+  }
+}

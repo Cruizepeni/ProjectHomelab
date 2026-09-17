@@ -31,6 +31,16 @@
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0.zip",
       "SHA256": "d9cadd4508bb048718cd52b0c1db4d8d9066eab82fef0c0c9dc43cbcf12f4bac"
+    },
+    "pcsx2": {
+      "Name": "PCSX2",
+      "Aliases": [
+        "PS2",
+        "PlayStation 2"
+      ],
+      "Version": "1.0.0",
+      "Package": "PCSX2/PCSX2_1.0.0.zip",
+      "SHA256": "dabd95581c6ba26e1e659e770d76cdfe87ba3902850d76178627b58846641955"
     }
   }
 }
