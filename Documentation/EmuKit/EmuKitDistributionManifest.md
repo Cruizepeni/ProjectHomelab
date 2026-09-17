@@ -27,11 +27,22 @@ backend/
                 └── ...
 ```
 
-Release mirrors the same shape below:
+Release uses the same package hierarchy with release-specific manifest names:
 
 ```text
-Releases/EmuKit/EmulatorModules/
+Releases/
+└── EmuKit/
+    └── EmulatorModules/
+        └── <OS>/
+            ├── EmuKit_<OS>_Release_Manifest.json
+            └── <Module>/
+                ├── <Module>_Release_Manifest.json
+                ├── <Module>_1.0.0.zip
+                ├── <Module>_1.0.1.zip
+                └── ...
 ```
+
+Backend/source manifests use `Name_Manifest.json`. Release-side mirrors use `Name_Release_Manifest.json`.
 
 Canonical `<OS>` values are:
 
@@ -59,11 +70,14 @@ Windows/Xemu/1.0.0/Xemu_1.0.0.zip
 
 Core 1.0.0 consumes the platform manifest for runtime module discovery, download, and update decisions.
 
-Location:
+Locations:
 
 ```text
-<feed>/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+backend/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+Releases/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Release_Manifest.json
 ```
+
+Core selects the filename from the active channel.
 
 Minimal schema version 1 document:
 
@@ -138,10 +152,16 @@ Each module entry contains:
 
 ## Per-Module Manifest
 
-Each distributed module directory may contain:
+Each backend module directory may contain:
 
 ```text
 <Module>_Manifest.json
+```
+
+The matching release directory uses:
+
+```text
+<Module>_Release_Manifest.json
 ```
 
 Current repository convention:
@@ -219,6 +239,8 @@ ExampleEmu_1.0.0.zip
     └── module-owned supporting files
 ```
 
+Development packages commonly contain a Python manager. A release package may instead contain a compiled executable manager plus the external `EmuKit*Info.json` that points `Manager` at that executable.
+
 The top-level directory is versioned because it becomes the installed local module directory under `EmuKitModules`.
 
 Core must be able to resolve exactly one valid module root from the archive.
@@ -257,19 +279,22 @@ A mismatch is rejected.
 Recommended promotion flow:
 
 ```text
-build package
-→ calculate SHA-256
+build source/development package
+→ calculate development-package SHA-256
 → place ZIP below backend/EmuKit/EmulatorModules/<OS>/<Module>/
-→ update the module's per-module manifest
-→ update the platform manifest
+→ update `<Module>_Manifest.json`
+→ update `EmuKit_<OS>_Manifest.json`
 → remove local development copy from EmuKitModules
 → install through EmuKit development channel
-→ test module acquisition and emulator lifecycle
-→ copy the exact tested ZIP into Releases/EmuKit
-→ copy matching manifest metadata into the release feed
+→ test source-package acquisition and emulator lifecycle
+→ build the release package for the target OS/architecture
+→ calculate release-package SHA-256
+→ update `<Module>_Release_Manifest.json`
+→ update `EmuKit_<OS>_Release_Manifest.json`
+→ test module acquisition and lifecycle through the release channel
 ```
 
-The release artifact should be byte-identical to the package tested through the development feed.
+Development and release packages may have different bytes when the release package compiles the manager into an executable. They must retain the same stable `Id`, intended `ModuleVersion`, emulator-management behavior, and system metadata for that version. Each channel manifest must contain the SHA-256 of the package distributed by that channel.
 
 ## Publishing a New Module Version
 
@@ -278,13 +303,14 @@ When publishing a new module version:
 1. create a new `<Module>_<Version>.zip`
 2. do not overwrite retained packages still referenced by the module catalogue
 3. calculate SHA-256
-4. add the new version to `<Module>_Manifest.json`
-5. update `Latest` when appropriate
-6. update the platform manifest `Version`
-7. update the platform manifest `Package`
-8. update the platform manifest `SHA256`
-9. test through the development feed
-10. promote the exact tested package and matching metadata
+4. add the new version to backend `<Module>_Manifest.json`
+5. update backend `Latest` when appropriate
+6. update the backend platform manifest `Version`, `Package`, and `SHA256`
+7. test through the development feed
+8. build the release package for each supported target
+9. add/update the version in `<Module>_Release_Manifest.json`
+10. update the release platform manifest `Version`, `Package`, and `SHA256`
+11. test through the release channel
 
 ## Validation Checklist
 

@@ -130,9 +130,11 @@ Module version and emulator version are independent.
 
 `Manager` identifies the lifecycle entry point relative to the module directory.
 
-Python managers are supported.
+Python managers are supported. Development/source packages may therefore use a manager such as `ExampleEmuManager.py`.
 
-Core also contains executable-manager invocation support, so the lifecycle contract is defined by operations and structured results rather than by one programming language.
+Core also supports executable managers. Release packages may use a compiled manager such as `ExampleEmuManager.exe`. For executable managers Core invokes the manager as `<manager> <operation> --json`, runs it from the module directory, and expects stdout to contain one valid JSON result.
+
+The lifecycle contract is defined by operations and structured results rather than by one programming language.
 
 ## DependencyPath
 
@@ -452,9 +454,10 @@ test emulator
 → update module logic or metadata as needed
 → update EmulatorVersion
 → increment ModuleVersion when package logic/metadata changes
-→ build module ZIP
+→ build source/development module ZIP
 → test through development feed
-→ promote exact tested ZIP
+→ build target release package
+→ test through release channel
 ```
 
 ## Module Package Removal
@@ -490,11 +493,11 @@ edit
 
 ## Remote Distribution
 
-Before promotion to `Releases/EmuKit`, the module ZIP should be tested through the `backend/EmuKit` development feed.
+Before release packaging, the source/development module ZIP should be tested through the `backend/EmuKit` development feed.
 
-The exact ZIP that passed remote installation should be promoted.
+The release package may differ from the development package when Python lifecycle code is compiled into an executable manager. The release package must keep the same stable module identity and intended module version, and it must be tested independently through the release channel.
 
-Do not rebuild a supposedly identical release package after testing unless the rebuilt bytes are tested again.
+Every distributed package is hashed independently. Backend manifests must carry the development-package SHA-256, while release manifests must carry the release-package SHA-256.
 
 ## Data Policy
 
@@ -539,6 +542,9 @@ Before publishing a module:
 - launch with a game works
 - launch without a game works
 - development ZIP installs through the development feed
-- package SHA-256 matches distribution manifests
-- extracted `Id` and `ModuleVersion` match the platform manifest
-- exact tested ZIP is promoted to release
+- backend package SHA-256 matches backend manifests
+- release package is built for the intended target
+- release manager entry point matches the release Info JSON
+- release package SHA-256 matches release manifests
+- extracted `Id` and `ModuleVersion` match the active platform manifest
+- release package installs through the release feed

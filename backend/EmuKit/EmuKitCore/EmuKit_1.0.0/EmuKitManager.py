@@ -101,9 +101,12 @@ class EmuKitManager:
         self.platform_feed_base_url = (
             f"{self.feed_base_url}EmulatorModules/{self.host_platform}/"
         )
-        self.remote_manifest_url = (
-            f"{self.platform_feed_base_url}EmuKit_{self.host_platform}_Manifest.json"
+        platform_manifest_name = (
+            f"EmuKit_{self.host_platform}_Manifest.json"
+            if self.channel == "development"
+            else f"EmuKit_{self.host_platform}_Release_Manifest.json"
         )
+        self.remote_manifest_url = f"{self.platform_feed_base_url}{platform_manifest_name}"
 
         self.launcher = EmuKitLauncher(settings=self.settings, project_root=self.project_root)
 

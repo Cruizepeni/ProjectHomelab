@@ -241,11 +241,19 @@ Frozen executable builds default to:
 Releases/EmuKit/
 ```
 
-The normal platform manifest path is:
+Development platform manifests use:
 
 ```text
-<feed>/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+backend/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
 ```
+
+Release platform manifests use:
+
+```text
+Releases/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Release_Manifest.json
+```
+
+Backend/source manifests always use `Name_Manifest.json`. Release-side mirrors always use `Name_Release_Manifest.json`.
 
 Canonical operating-system names are:
 
@@ -259,7 +267,7 @@ Examples:
 
 ```text
 backend/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Manifest.json
-Releases/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Manifest.json
+Releases/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Release_Manifest.json
 ```
 
 `EMUKIT_CHANNEL` may explicitly select development or release behavior for testing.
@@ -285,6 +293,26 @@ backend/
                 └── Xemu_1.0.0.zip
 ```
 
+The release convention is:
+
+```text
+Releases/
+└── EmuKit/
+    └── EmulatorModules/
+        └── Windows/
+            ├── EmuKit_Windows_Release_Manifest.json
+            └── Xemu/
+                ├── Xemu_Release_Manifest.json
+                └── Xemu_1.0.0.zip
+```
+
+Core manifests follow the same split:
+
+```text
+backend/EmuKit/EmuKitCore/EmuKit_Core_Manifest.json
+Releases/EmuKit/EmuKitCore/EmuKit_Core_Release_Manifest.json
+```
+
 There is no extra `1.0.0/` directory between the module folder and `Xemu_1.0.0.zip`.
 
 The ZIP itself contains its versioned module directory:
@@ -298,7 +326,7 @@ Xemu_1.0.0.zip
 
 Core 1.0.0 consumes the platform manifest for runtime discovery, download, and update decisions.
 
-The per-module `<Module>_Manifest.json` is the repository's retained module-version catalogue. It records available versions and metadata, but Core 1.0.0 does not require a second lookup through that file to install a module advertised by the platform manifest.
+The backend per-module `<Module>_Manifest.json` and release `<Module>_Release_Manifest.json` are retained module-version catalogues for their respective channels. They record available versions and package hashes, but Core 1.0.0 does not require a second lookup through those files to install a module advertised by the active platform manifest.
 
 ## Development Workflow
 
@@ -312,11 +340,14 @@ Create module locally
 → develop and test lifecycle behavior
 → package the working module
 → calculate package SHA-256
-→ publish package and manifest metadata to backend/EmuKit
+→ publish the source/development package and `Name_Manifest.json` metadata to backend/EmuKit
 → remove the local module copy
 → install through the development feed
-→ verify remote download, hash verification, extraction, discovery, and emulator installation
-→ promote the exact tested package and matching metadata to Releases/EmuKit
+→ verify source-package download, hash verification, extraction, discovery, and emulator installation
+→ build the release package for the target OS/architecture
+→ use an executable manager in release packaging when that target is distributed as a compiled module
+→ publish `Name_Release_Manifest.json` metadata with the release-package hash
+→ test the release package through the release channel
 ```
 
 A locally present development module does not need a remote platform-manifest entry.

@@ -12,7 +12,7 @@
           "OS": "Windows",
           "Architecture": "x86_64",
           "Package": "Windows/EmuKit_1.0.0_Windows_x86_64.zip",
-          "SHA256": "85940eb3b1cbc2dbda547ad521c7a96a936bc391db425837d93db40f09c9f3e3",
+          "SHA256": "__EMUKIT_CORE_RELEASE_SHA256__",
           "RootDirectory": "EmuKit_1.0.0",
           "Executable": "EmuKit.exe"
         }

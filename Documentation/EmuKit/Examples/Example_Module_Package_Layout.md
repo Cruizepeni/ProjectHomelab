@@ -30,11 +30,15 @@ Releases/
 └── EmuKit/
     └── EmulatorModules/
         └── Windows/
-            ├── EmuKit_Windows_Manifest.json
+            ├── EmuKit_Windows_Release_Manifest.json
             └── ExampleEmu/
-                ├── ExampleEmu_Manifest.json
+                ├── ExampleEmu_Release_Manifest.json
                 └── ExampleEmu_1.0.0.zip
 ```
+
+Backend/source manifests use `Name_Manifest.json`. Release-side mirrors use `Name_Release_Manifest.json`.
+
+The development package may contain a Python manager while the release package may contain a compiled executable manager. The package Info JSON must name the manager entry point actually present in that package.
 
 There is no extra version directory around the ZIP.
 

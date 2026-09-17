@@ -9,7 +9,7 @@
       "Status": "supported",
       "EmulatorVersion": "0.8.136",
       "Package": "Xemu_1.0.0.zip",
-      "SHA256": "__XEMU_BACKEND_SHA256__"
+      "SHA256": "__XEMU_RELEASE_SHA256__"
     }
   }
 }
