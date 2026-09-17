@@ -11,13 +11,19 @@ Module ID:
 Module Version:
 Emulator Version:
 Managed Emulator Path:
+Development Manager:
+Release Manager:
 ```
 
-The managed emulator path should normally be below:
+The managed emulator path should be below:
 
 ```text
 ROOT/Emulators/
 ```
+
+## Supported Hosts
+
+Document each supported operating system and architecture.
 
 ## Supported Systems
 
@@ -25,17 +31,61 @@ List each system declared by the module and any meaningful compatibility limitat
 
 ## Emulator Source
 
-Document the upstream emulator source and the version policy used by this module.
+Document the upstream emulator source, exact tested version/build, asset naming, version policy, and pinned checksum behavior.
+
+If upstream uses a rolling release, document how the module prevents changed upstream bytes from silently replacing the tested build.
+
+## Core Dependencies
+
+Document which shared Core dependencies the module relies on.
+
+Do not duplicate shared Core dependency installation inside the module.
 
 ## Controlled Resources
 
 Describe any ProjectHomelab Resources consumed by the module.
 
-Record how those resources are mapped into the emulator's installed layout.
+Record:
+
+- resource manifest used
+- required resource paths
+- checksum requirements
+- install destinations
+- configuration references
+
+## Source Layout
+
+Record the module source files and any intentional deviations from:
+
+```text
+<Module>_1.0.0/
+├── EmuKit<Module>Info.json
+├── <Module>Manager.py
+├── <Module>Installer.py
+├── <Module>Repair.py
+├── <Module>Uninstall.py
+└── _<Module>Common.py
+```
+
+## Root and Path Resolution
+
+Document unusual path behavior if any.
+
+Compiled managers must use frozen-safe module-directory resolution.
+
+`.ProjectHomelabRoot` remains the only ProjectHomelab root marker.
 
 ## Installation
 
 Describe meaningful module-specific installation behavior.
+
+Include download verification, extraction/installer behavior, resource placement, receipts, portable-mode behavior, and initial configuration where applicable.
+
+## Progress
+
+Describe the meaningful install/repair/update/uninstall stages reported to Core.
+
+The release manager uses strict JSONL progress/result stdout.
 
 ## Check States
 
@@ -46,6 +96,8 @@ missing
 installed
 broken
 ```
+
+List the files, receipts, versions, checksums, configuration, and resources that are validated.
 
 ## Configuration
 
@@ -80,14 +132,34 @@ Consider:
 
 ## Launch Behavior
 
-Document non-obvious launch arguments, fullscreen behavior, or per-system differences.
+Document non-obvious launch arguments, fullscreen behavior, working directory behavior, or per-system differences.
 
-## Distribution
+## Development Distribution
 
-Record the module package naming convention and any important distribution constraints.
+Record:
 
-The development package should be tested through `backend/EmuKit` before the exact bytes are promoted to `Releases/EmuKit`.
+```text
+<Module>_1.0.0.zip
+```
+
+and its development manifest locations.
+
+The development ZIP is hashed independently.
+
+## Release Distribution
+
+For Windows x86_64 record:
+
+```text
+<Module>_1.0.0_Windows_x86_64.zip
+```
+
+and its release manifest locations.
+
+The release Info JSON points at the compiled `.exe` manager.
+
+The release ZIP is hashed independently from the development ZIP.
 
 ## Known Constraints
 
-Preserve upstream quirks, pinned-version reasons, or compatibility constraints that future maintainers need to know.
+Preserve upstream quirks, pinned-version reasons, compatibility constraints, and deliberate unsupported hosts that future maintainers need to know.

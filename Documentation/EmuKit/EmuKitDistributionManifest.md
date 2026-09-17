@@ -23,26 +23,26 @@ backend/
             └── <Module>/
                 ├── <Module>_Manifest.json
                 ├── <Module>_1.0.0.zip
-                ├── <Module>_1.0.1.zip
                 └── ...
 ```
 
-Release uses the same package hierarchy with release-specific manifest names:
+Windows x86_64 release:
 
 ```text
 Releases/
 └── EmuKit/
     └── EmulatorModules/
-        └── <OS>/
-            ├── EmuKit_<OS>_Release_Manifest.json
+        └── Windows/
+            ├── EmuKit_Windows_Release_Manifest.json
             └── <Module>/
                 ├── <Module>_Release_Manifest.json
-                ├── <Module>_1.0.0.zip
-                ├── <Module>_1.0.1.zip
+                ├── <Module>_1.0.0_Windows_x86_64.zip
                 └── ...
 ```
 
-Backend/source manifests use `Name_Manifest.json`. Release-side mirrors use `Name_Release_Manifest.json`.
+Backend/source manifests use `Name_Manifest.json`.
+
+Release-side mirrors use `Name_Release_Manifest.json`.
 
 Canonical `<OS>` values are:
 
@@ -52,12 +52,26 @@ Linux
 Mac
 ```
 
+Release package filenames include the target operating system and architecture.
+
+Current Windows x86_64 form:
+
+```text
+<Module>_<ModuleVersion>_Windows_x86_64.zip
+```
+
 There is no extra version directory between the module directory and the ZIP.
 
-Correct:
+Correct development path:
 
 ```text
 Windows/Xemu/Xemu_1.0.0.zip
+```
+
+Correct Windows x86_64 release path:
+
+```text
+Windows/Xemu/Xemu_1.0.0_Windows_x86_64.zip
 ```
 
 Not:
@@ -89,7 +103,7 @@ Minimal schema version 1 document:
 }
 ```
 
-Populated example:
+Development example:
 
 ```json
 {
@@ -104,6 +118,26 @@ Populated example:
       "Version": "1.0.0",
       "Package": "ExampleEmu/ExampleEmu_1.0.0.zip",
       "SHA256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+    }
+  }
+}
+```
+
+Windows x86_64 release example:
+
+```json
+{
+  "SchemaVersion": 1,
+  "Platform": "Windows",
+  "Modules": {
+    "exampleemu": {
+      "Name": "ExampleEmu",
+      "Aliases": [
+        "Example Emulator"
+      ],
+      "Version": "1.0.0",
+      "Package": "ExampleEmu/ExampleEmu_1.0.0_Windows_x86_64.zip",
+      "SHA256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
     }
   }
 }
@@ -145,14 +179,15 @@ Each module entry contains:
 
 - safe path relative to the current platform's `EmulatorModules/<OS>/` directory
 - must not be absolute or contain `..`
+- development and release package filenames may differ
 
 `SHA256`
 
-- lowercase SHA-256 of the exact ZIP bytes
+- lowercase SHA-256 of the exact ZIP bytes for that channel
 
 ## Per-Module Manifest
 
-Each backend module directory may contain:
+Each backend module directory contains:
 
 ```text
 <Module>_Manifest.json
@@ -164,7 +199,7 @@ The matching release directory uses:
 <Module>_Release_Manifest.json
 ```
 
-Current repository convention:
+Development example:
 
 ```json
 {
@@ -184,6 +219,26 @@ Current repository convention:
 }
 ```
 
+Windows x86_64 release example:
+
+```json
+{
+  "SchemaVersion": 1,
+  "Id": "exampleemu",
+  "Name": "ExampleEmu",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "4.2.0",
+      "Package": "ExampleEmu_1.0.0_Windows_x86_64.zip",
+      "SHA256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+    }
+  }
+}
+```
+
 The per-module manifest is the retained version catalogue for that module.
 
 It records:
@@ -194,16 +249,18 @@ It records:
 - retained module versions
 - support status
 - emulator version managed by each module version
-- ZIP filename
-- ZIP SHA-256
+- channel-specific ZIP filename
+- exact channel-specific ZIP SHA-256
 
 Core 1.0.0 does not currently need to read this file to acquire a module.
 
 The active platform manifest remains Core's runtime index.
 
-The platform manifest and per-module manifest must agree on the package version, filename, and SHA-256 for the version currently advertised to Core.
+For the version currently advertised to Core, the platform manifest and matching per-module manifest must agree on version, package filename, and SHA-256.
 
 ## Package URL Resolution
+
+Development:
 
 Given:
 
@@ -217,43 +274,73 @@ Windows development resolves to:
 backend/EmuKit/EmulatorModules/Windows/ExampleEmu/ExampleEmu_1.0.0.zip
 ```
 
-Windows release resolves to:
+Release:
 
-```text
-Releases/EmuKit/EmulatorModules/Windows/ExampleEmu/ExampleEmu_1.0.0.zip
+Given:
+
+```json
+"Package": "ExampleEmu/ExampleEmu_1.0.0_Windows_x86_64.zip"
 ```
 
-Absolute URLs are not required in the manifest.
+Windows x86_64 release resolves to:
+
+```text
+Releases/EmuKit/EmulatorModules/Windows/ExampleEmu/ExampleEmu_1.0.0_Windows_x86_64.zip
+```
+
+Absolute URLs are not required in the platform manifest.
 
 ## Package Format
 
 Schema version 1 module packages use ZIP archives.
 
-The recommended package shape is:
+Development package:
 
 ```text
 ExampleEmu_1.0.0.zip
 └── ExampleEmu_1.0.0/
     ├── EmuKitExampleEmuInfo.json
     ├── ExampleEmuManager.py
-    └── module-owned supporting files
+    ├── ExampleEmuInstaller.py
+    ├── ExampleEmuRepair.py
+    ├── ExampleEmuUninstall.py
+    └── _ExampleEmuCommon.py
 ```
 
-Development packages commonly contain a Python manager. A release package may instead contain a compiled executable manager plus the external `EmuKit*Info.json` that points `Manager` at that executable.
+Windows x86_64 release package:
 
-The top-level directory is versioned because it becomes the installed local module directory under `EmuKitModules`.
+```text
+ExampleEmu_1.0.0_Windows_x86_64.zip
+└── ExampleEmu_1.0.0/
+    ├── EmuKitExampleEmuInfo.json
+    └── ExampleEmuManager.exe
+```
+
+The development Info JSON points `Manager` at the Python manager.
+
+The release Info JSON points `Manager` at the executable manager.
+
+The top-level directory remains versioned because it becomes the installed local module directory under `EmuKitModules`.
 
 Core must be able to resolve exactly one valid module root from the archive.
+
+The compiled manager must implement the current strict JSONL executable protocol. Package naming does not change the manager protocol.
 
 ## Integrity
 
 Core calculates SHA-256 over the downloaded ZIP before installation.
 
-The calculated value must exactly match the platform manifest's `SHA256`.
+The calculated value must exactly match the active platform manifest's `SHA256`.
 
 A mismatch aborts installation.
 
-The same exact ZIP hash should be recorded in the per-module manifest.
+The same exact ZIP hash must be recorded in the corresponding per-module manifest.
+
+Development and release packages are separate byte artifacts and normally have different hashes.
+
+If any file inside a ZIP changes, if an executable is rebuilt, or if a ZIP is otherwise recreated with different bytes, calculate SHA-256 again and replace every manifest value that references that exact package.
+
+Renaming a ZIP without changing its bytes does not change the SHA-256, but changing its manifest `Package` path is still required.
 
 ## Identity and Version Validation
 
@@ -279,38 +366,48 @@ A mismatch is rejected.
 Recommended promotion flow:
 
 ```text
-build source/development package
-→ calculate development-package SHA-256
+build canonical source/development module
+→ create <Module>_1.0.0.zip
+→ calculate exact development ZIP SHA-256
 → place ZIP below backend/EmuKit/EmulatorModules/<OS>/<Module>/
-→ update `<Module>_Manifest.json`
-→ update `EmuKit_<OS>_Manifest.json`
-→ remove local development copy from EmuKitModules
-→ install through EmuKit development channel
-→ test source-package acquisition and emulator lifecycle
-→ build the release package for the target OS/architecture
-→ calculate release-package SHA-256
-→ update `<Module>_Release_Manifest.json`
-→ update `EmuKit_<OS>_Release_Manifest.json`
-→ test module acquisition and lifecycle through the release channel
+→ update <Module>_Manifest.json
+→ update EmuKit_<OS>_Manifest.json
+→ remove the local development copy from EmuKitModules
+→ install through the development channel
+→ test source acquisition, strict lifecycle contract, progress, and emulator behavior
+→ compile the manager for the target
+→ create release Info JSON pointing Manager at the compiled executable
+→ create target-qualified release ZIP
+→ calculate exact release ZIP SHA-256
+→ update <Module>_Release_Manifest.json
+→ update EmuKit_<OS>_Release_Manifest.json
+→ test acquisition, JSONL progress, and lifecycle behavior through the release channel
 ```
 
-Development and release packages may have different bytes when the release package compiles the manager into an executable. They must retain the same stable `Id`, intended `ModuleVersion`, emulator-management behavior, and system metadata for that version. Each channel manifest must contain the SHA-256 of the package distributed by that channel.
+Development and release packages keep the same stable `Id`, intended `ModuleVersion`, emulator-management behavior, and system metadata.
+
+They are not required to have the same bytes.
+
+Each channel always records the hash of the exact package distributed by that channel.
 
 ## Publishing a New Module Version
 
 When publishing a new module version:
 
-1. create a new `<Module>_<Version>.zip`
-2. do not overwrite retained packages still referenced by the module catalogue
-3. calculate SHA-256
-4. add the new version to backend `<Module>_Manifest.json`
-5. update backend `Latest` when appropriate
-6. update the backend platform manifest `Version`, `Package`, and `SHA256`
-7. test through the development feed
-8. build the release package for each supported target
-9. add/update the version in `<Module>_Release_Manifest.json`
-10. update the release platform manifest `Version`, `Package`, and `SHA256`
-11. test through the release channel
+1. create the new source `<Module>_<Version>.zip`
+2. calculate its exact SHA-256
+3. add/update the version in backend `<Module>_Manifest.json`
+4. update backend `Latest` when appropriate
+5. update the backend platform manifest `Version`, `Package`, and `SHA256`
+6. test through the development feed
+7. compile the manager for each supported release target
+8. create each target-qualified release ZIP
+9. calculate each exact release ZIP SHA-256
+10. add/update the version in `<Module>_Release_Manifest.json`
+11. update the release platform manifest `Version`, `Package`, and `SHA256`
+12. test each release target through the release channel
+
+During active development an existing module version may intentionally be rebuilt in place. In that case, do not leave a previous SHA-256 in any manifest. Recalculate and replace all affected checksums before pushing the rebuilt package.
 
 ## Validation Checklist
 
@@ -322,8 +419,10 @@ Before committing module distribution metadata:
 - every module ID is machine-safe
 - every platform entry has `Name`, `Version`, `Package`, and lowercase SHA-256
 - every package path is safe and platform-feed-relative
-- every package exists
-- every SHA-256 matches its exact ZIP
+- development package uses the source naming convention
+- release package uses the target-qualified naming convention
+- every advertised package exists
+- every SHA-256 matches its exact ZIP bytes
 - ZIP contains exactly one valid module root
 - extracted module `Id` matches platform manifest key
 - extracted module `ModuleVersion` matches platform manifest `Version`
@@ -331,3 +430,7 @@ Before committing module distribution metadata:
 - per-module manifest identifies the same module and platform
 - current advertised version exists in the per-module `Versions` map
 - platform and per-module manifests agree on package filename and SHA-256
+- development Info JSON points at the source manager
+- release Info JSON points at the compiled manager
+- rebuilt packages do not retain stale checksums
+

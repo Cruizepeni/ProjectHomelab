@@ -24,14 +24,40 @@ A compliant module tells Core:
 
 Installed modules live under the Core runtime's `EmuKitModules` directory.
 
+The canonical current source layout is:
+
 ```text
 <EmuKit runtime>/
 └── EmuKitModules/
     └── ExampleEmu_1.0.0/
         ├── EmuKitExampleEmuInfo.json
         ├── ExampleEmuManager.py
-        └── module-owned supporting files
+        ├── ExampleEmuInstaller.py
+        ├── ExampleEmuRepair.py
+        ├── ExampleEmuUninstall.py
+        └── _ExampleEmuCommon.py
 ```
+
+The current responsibility split is:
+
+- `EmuKitExampleEmuInfo.json`: registration, version, source, host, resource, system, and data-policy metadata
+- `ExampleEmuManager.py`: lifecycle gateway, installation-state checks, emulator update routing, and executable JSONL bridge
+- `ExampleEmuInstaller.py`: clean known-good installation
+- `ExampleEmuRepair.py`: deterministic repair
+- `ExampleEmuUninstall.py`: uninstall behavior
+- `_ExampleEmuCommon.py`: frozen-safe paths, root resolution, progress helpers, resource helpers, checksums, host checks, and other shared utilities
+
+A module may add files when genuinely required by that emulator, but this is the starting structure for new ProjectHomelab modules.
+
+The canonical release layout for a compiled Windows module is:
+
+```text
+ExampleEmu_1.0.0/
+├── EmuKitExampleEmuInfo.json
+└── ExampleEmuManager.exe
+```
+
+The release Info JSON points `Manager` at `ExampleEmuManager.exe`.
 
 The directory name is packaging/versioning convention.
 
@@ -130,11 +156,69 @@ Module version and emulator version are independent.
 
 `Manager` identifies the lifecycle entry point relative to the module directory.
 
-Python managers are supported. Development/source packages may therefore use a manager such as `ExampleEmuManager.py`.
+Development/source packages use a Python manager such as:
 
-Core also supports executable managers. Release packages may use a compiled manager such as `ExampleEmuManager.exe`. For executable managers Core invokes the manager as `<manager> <operation> --json`, runs it from the module directory, and expects stdout to contain one valid JSON result.
+```json
+"Manager": "ExampleEmuManager.py"
+```
 
-The lifecycle contract is defined by operations and structured results rather than by one programming language.
+Compiled release packages use the executable manager present in that package, for example:
+
+```json
+"Manager": "ExampleEmuManager.exe"
+```
+
+The source manager must be written so it can also be compiled into the release executable.
+
+Module-directory resolution must be frozen-safe:
+
+```python
+MODULE_DIR = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
+```
+
+A compiled one-file manager must not rely on `Path(__file__)` as its installed module location.
+
+Core invokes executable managers as:
+
+```text
+<manager> <operation> --json
+```
+
+from the module directory.
+
+Executable stdout uses the strict JSONL protocol documented below. A release manager is not allowed to substitute plain console text or a single untyped JSON object.
+
+The lifecycle contract is defined by operations, progress, structured results, and the JSONL executable protocol rather than by one programming language.
+
+## Runtime and Root Resolution
+
+Source and compiled managers must resolve the module directory differently.
+
+Canonical module directory:
+
+```python
+MODULE_DIR = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
+```
+
+The module then resolves `ROOT` from `MODULE_DIR`.
+
+The only ProjectHomelab marker is:
+
+```text
+.ProjectHomelabRoot
+```
+
+Search upward for that marker first.
+
+If the marker is absent, standalone resolution may use the nearby EmuKit runtime relationship, such as an `EmuKitModules` parent or a nearby `EmuKit.py` plus `EmuKitModules`.
+
+Do not introduce another ProjectHomelab root marker or host-detection mechanism.
+
+Managed emulator paths remain below:
+
+```text
+ROOT/Emulators/
+```
 
 ## DependencyPath
 
@@ -279,13 +363,23 @@ repair
 update
 ```
 
-Python lifecycle handlers may optionally accept:
+Every Python lifecycle handler must accept the `progress` keyword argument.
+
+Canonical signature:
 
 ```python
-progress=None
+def install(progress: ProgressCallback | None = None) -> dict[str, Any]:
 ```
 
-Core detects whether the handler accepts the progress callback.
+Core calls Python handlers with:
+
+```python
+handler(progress=progress)
+```
+
+The default value may remain `None` so the handler can be invoked directly during development, but accepting `progress` is part of the current contract.
+
+The compiled executable bridge dispatches the same five operations and passes its JSONL progress emitter as the lifecycle callback.
 
 ### check()
 
@@ -341,22 +435,83 @@ Core owns module-package updates through `Update Module <Module>`.
 
 ## Progress Callback
 
-Long operations should report progress.
+Progress is part of the current lifecycle contract.
 
-Example:
-
-```python
-if progress:
-    progress(percent=25, stage="Downloading", message="Downloading emulator package.")
-```
-
-Supported callback keywords are:
+Supported callback values are:
 
 - `percent`
 - `stage`
 - `message`
 
-Percent should remain within `0..100`.
+Conceptual use:
+
+```python
+emit_progress(progress, 25, "Downloading", "Downloading emulator package.")
+```
+
+or:
+
+```python
+progress(percent=25, stage="Downloading", message="Downloading emulator package.")
+```
+
+Percent may be `None` when a meaningful numeric percentage is unavailable.
+
+When present, percent must remain inside `0..100`.
+
+`stage` and `message` may be strings or `None`.
+
+Long downloads, extraction, installation, repair, update, and uninstall work should report useful live progress rather than remaining at the Core-generated starting state until completion.
+
+Shared module code should provide reusable progress helpers and a scaling helper when one lifecycle operation is composed from several sub-operations.
+
+## Executable Manager JSONL Protocol
+
+Compiled managers use strict newline-delimited JSON on stdout.
+
+Core launches:
+
+```text
+ExampleEmuManager.exe install --json
+```
+
+The manager must emit one JSON object per line and flush each record.
+
+A progress record is:
+
+```json
+{"type":"progress","percent":25,"stage":"Downloading","message":"Downloading emulator package."}
+```
+
+A final result record is:
+
+```json
+{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu installed successfully.","details":{}}}
+```
+
+Rules:
+
+- stdout is reserved for protocol records
+- every stdout line must contain one JSON object
+- blank stdout lines are invalid
+- `type` must be `progress` or `result`
+- `progress.percent` may be `null` or a number from `0` through `100`
+- `progress.stage` may be `null` or a string
+- `progress.message` may be `null` or a string
+- exactly one final `result` record is required
+- the final `result.result` value must be an object
+- progress must not be emitted after the final result
+- duplicate final results are invalid
+- unknown record types are invalid
+- malformed JSON is invalid
+- plain-text stdout is invalid
+- stderr may contain diagnostic text
+- successful final results exit with code `0`
+- unsuccessful final results exit non-zero
+
+There is no legacy fallback that searches arbitrary stdout for a JSON object.
+
+A manager that violates this protocol fails with a Core manager-protocol error.
 
 ## Structured Results
 
@@ -447,18 +602,28 @@ A module should manage a known tested emulator version.
 
 Do not blindly interpret upstream `latest` as compatible.
 
-When adopting a new upstream version:
+A stable release tag or immutable upstream artifact should be pinned when practical.
+
+If upstream uses a rolling release, the module should pin enough upstream identity and checksum metadata to prevent a future rolling asset from silently replacing the tested bytes.
+
+When adopting a new emulator build:
 
 ```text
-test emulator
-→ update module logic or metadata as needed
+verify upstream build
+→ test emulator
+→ update module source or metadata as needed
 → update EmulatorVersion
-→ increment ModuleVersion when package logic/metadata changes
-→ build source/development module ZIP
-→ test through development feed
-→ build target release package
-→ test through release channel
+→ rebuild the development package
+→ calculate its exact SHA-256
+→ test through the development feed
+→ rebuild each release target
+→ calculate each exact release SHA-256
+→ test through the release channel
 ```
+
+`ModuleVersion` identifies the EmuKit module package version and is independent from `EmulatorVersion`.
+
+During active development a package may intentionally be rebuilt in place while retaining its current `ModuleVersion`; when that happens all exact package checksums in the affected channel manifests must be replaced before publication.
 
 ## Module Package Removal
 
@@ -491,13 +656,59 @@ edit
 → fix
 ```
 
+## Windows Release Build
+
+After the source module passes development-feed testing, compile its manager from inside the module directory.
+
+Example:
+
+```powershell
+py -m PyInstaller --clean --noconfirm --onefile --console --name ExampleEmuManager ExampleEmuManager.py
+```
+
+Copy the resulting `dist/ExampleEmuManager.exe` into the release module root alongside the release Info JSON.
+
+The release package contains the compiled manager, not the Python lifecycle source files.
+
+The release Info JSON must point `Manager` at the `.exe`.
+
+The manager source must remain import-complete for PyInstaller so its Installer, Repair, Uninstall, and Common dependencies are collected into the executable.
+
+Test the compiled manager directly before packaging:
+
+```powershell
+.\ExampleEmuManager.exe check --json
+```
+
+Its stdout must contain only strict JSONL protocol records.
+
 ## Remote Distribution
 
 Before release packaging, the source/development module ZIP should be tested through the `backend/EmuKit` development feed.
 
-The release package may differ from the development package when Python lifecycle code is compiled into an executable manager. The release package must keep the same stable module identity and intended module version, and it must be tested independently through the release channel.
+Development package example:
 
-Every distributed package is hashed independently. Backend manifests must carry the development-package SHA-256, while release manifests must carry the release-package SHA-256.
+```text
+ExampleEmu_1.0.0.zip
+```
+
+A Windows x86_64 compiled release package uses the target-qualified name:
+
+```text
+ExampleEmu_1.0.0_Windows_x86_64.zip
+```
+
+The release package normally contains the external Info JSON plus the compiled executable manager.
+
+The release Info JSON must change `Manager` from the source `.py` entry to the `.exe` entry actually present.
+
+Development and release packages are independent exact byte artifacts. They retain the same stable module identity, intended `ModuleVersion`, emulator-management behavior, and system metadata for that version, but each package has its own SHA-256.
+
+Backend manifests carry the development ZIP SHA-256.
+
+Release manifests carry the release ZIP SHA-256.
+
+Rebuilding either ZIP, even while intentionally keeping `ModuleVersion` unchanged, requires recalculating every manifest checksum that references that ZIP.
 
 ## Data Policy
 
@@ -517,34 +728,56 @@ At minimum, consider:
 
 `uninstall()` and `repair()` behavior should be explicit rather than assumed.
 
+## Source Policy
+
+Current EmuKit runtime/module Python source and reusable Python templates do not use source comments or docstrings.
+
+Use clear file responsibilities, names, functions, and structured metadata instead.
+
+Do not add legacy protocol fallbacks, obsolete `dependencies/EmuKit/<Emulator>` emulator paths, alternate root markers, or compatibility branches for superseded EmuKit layouts.
+
+When the active contract changes during development, Core, current modules, reusable templates, examples, and contract documentation should be updated together.
+
 ## Validation Checklist
 
 Before publishing a module:
 
+- source layout follows the current manager/installer/repair/uninstall/common pattern
 - exactly one `EmuKit*Info.json` exists in the module root
 - Info JSON parses
 - schema `Version` is supported
 - stable module `Id` is valid
-- `ModuleVersion` is correct
-- `EmulatorVersion` is correct
-- `Manager` exists
+- `ModuleVersion` is intentional
+- `EmulatorVersion` matches the tested emulator build
+- source `Manager` exists
 - `DependencyPath` resolves to a child of `ROOT/Emulators`
+- frozen manager uses `sys.executable` for `MODULE_DIR`
+- `.ProjectHomelabRoot` remains the only ProjectHomelab root marker
 - required lifecycle handlers exist
+- every lifecycle handler accepts `progress`
 - `Systems` contains at least one valid system
 - every declared system has valid Brand and Platform metadata
 - system identity does not conflict with existing modules
 - all launch paths and arguments are intentional
 - `check()` correctly reports missing, installed, and broken states
 - `install()` succeeds from a clean state
+- long install work emits live progress
 - `repair()` restores a deliberately broken state
 - `uninstall()` follows the module's data policy
 - `update()` follows the emulator-update policy
 - launch with a game works
 - launch without a game works
-- development ZIP installs through the development feed
-- backend package SHA-256 matches backend manifests
-- release package is built for the intended target
-- release manager entry point matches the release Info JSON
-- release package SHA-256 matches release manifests
+- development ZIP uses the source manager and installs through the development feed
+- backend package SHA-256 matches both backend manifests
+- release package uses the target-qualified filename
+- release Info JSON points at the compiled executable manager
+- compiled manager emits strict JSONL progress/result stdout
+- compiled manager emits exactly one final result
+- compiled manager emits no plain-text stdout
+- release package SHA-256 matches both release manifests
 - extracted `Id` and `ModuleVersion` match the active platform manifest
 - release package installs through the release feed
+- rebuilt packages do not retain stale SHA-256 values in manifests
+- runtime/module Python source contains no comments or docstrings
+- no legacy EmuKit protocol or obsolete emulator path has been introduced
+

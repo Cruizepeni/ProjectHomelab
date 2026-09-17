@@ -1,16 +1,27 @@
 # Example EmuKit Module Package Layout
 
-A recommended module package contains one versioned top-level module directory.
+The current ProjectHomelab module convention uses a multi-file source module and a compact compiled release module.
+
+## Development Package
 
 ```text
 ExampleEmu_1.0.0.zip
 └── ExampleEmu_1.0.0/
     ├── EmuKitExampleEmuInfo.json
     ├── ExampleEmuManager.py
-    └── module-owned supporting files
+    ├── ExampleEmuInstaller.py
+    ├── ExampleEmuRepair.py
+    ├── ExampleEmuUninstall.py
+    └── _ExampleEmuCommon.py
 ```
 
-The corresponding development-feed layout is:
+The source Info JSON contains:
+
+```json
+"Manager": "ExampleEmuManager.py"
+```
+
+Development-feed layout:
 
 ```text
 backend/
@@ -23,7 +34,22 @@ backend/
                 └── ExampleEmu_1.0.0.zip
 ```
 
-The release feed mirrors the same layout:
+## Windows x86_64 Release Package
+
+```text
+ExampleEmu_1.0.0_Windows_x86_64.zip
+└── ExampleEmu_1.0.0/
+    ├── EmuKitExampleEmuInfo.json
+    └── ExampleEmuManager.exe
+```
+
+The release Info JSON contains:
+
+```json
+"Manager": "ExampleEmuManager.exe"
+```
+
+Release-feed layout:
 
 ```text
 Releases/
@@ -33,19 +59,31 @@ Releases/
             ├── EmuKit_Windows_Release_Manifest.json
             └── ExampleEmu/
                 ├── ExampleEmu_Release_Manifest.json
-                └── ExampleEmu_1.0.0.zip
+                └── ExampleEmu_1.0.0_Windows_x86_64.zip
 ```
 
-Backend/source manifests use `Name_Manifest.json`. Release-side mirrors use `Name_Release_Manifest.json`.
+Backend/source manifests use `Name_Manifest.json`.
 
-The development package may contain a Python manager while the release package may contain a compiled executable manager. The package Info JSON must name the manager entry point actually present in that package.
+Release-side mirrors use `Name_Release_Manifest.json`.
 
-There is no extra version directory around the ZIP.
+There is no extra version directory around either ZIP.
 
-After Core downloads and validates the package, the top-level module directory is installed under:
+After Core downloads and validates a package, the versioned top-level directory is installed under:
 
 ```text
 <EmuKit runtime>/EmuKitModules/ExampleEmu_1.0.0/
 ```
 
-The package SHA-256 recorded by the platform manifest and per-module manifest must match the exact ZIP bytes.
+The development and release ZIPs are independent exact byte artifacts.
+
+The backend platform and per-module manifests contain the development ZIP SHA-256.
+
+The release platform and per-module manifests contain the release ZIP SHA-256.
+
+The compiled manager must implement:
+
+```text
+ExampleEmuManager.exe <check|install|uninstall|repair|update> --json
+```
+
+and emit only strict JSONL progress/result records on stdout.

@@ -5,7 +5,7 @@
   "Aliases": [],
   "ModuleVersion": "1.0.0",
   "EmulatorVersion": "replace-with-tested-emulator-version",
-  "Manager": "ReplaceManager.py",
+  "Manager": "ReplaceManager.exe",
   "DependencyPath": "Emulators/ReplaceModule",
   "LaunchPath": "Emulators/ReplaceModule/replace-executable.exe",
   "WorkingDirectory": "Emulators/ReplaceModule",

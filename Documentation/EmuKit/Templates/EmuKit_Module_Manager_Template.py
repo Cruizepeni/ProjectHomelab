@@ -1,95 +1,138 @@
 from __future__ import annotations
 
+import json
+import sys
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
-ProgressCallback = Callable[..., None] | None
+MODULE_DIR = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
+if str(MODULE_DIR) not in sys.path:
+    sys.path.insert(0, str(MODULE_DIR))
 
+from _ReplaceModuleCommon import *
+import ReplaceInstaller
+import ReplaceRepair
+import ReplaceUninstall
 
-def _resolve_root() -> Path:
-    current = Path(__file__).resolve().parent
-    for candidate in (current, *current.parents):
-        if (candidate / ".ProjectHomelabRoot").is_file():
-            return candidate
-    if current.parent.name == "EmuKitModules":
-        return current.parent.parent
-    return current
-
-
-ROOT = _resolve_root()
-EMULATOR_DIR = ROOT / "Emulators" / "ReplaceModule"
+MODULE_ID = "replace-with-module-id"
+MODULE_NAME = "Replace With Emulator Name"
 
 
-def _result(
-    operation: str,
-    success: bool,
-    state: str,
-    message: str,
-    *,
-    error: str | None = None,
-    details: Any = None,
-) -> dict[str, Any]:
-    value: dict[str, Any] = {
+def base(success: bool, operation: str, state: str, message: str, error: str | None = None, details: Any = None) -> dict[str, Any]:
+    value = {
         "success": success,
+        "module": MODULE_ID,
         "operation": operation,
         "state": state,
         "message": message,
         "details": details,
     }
-    if error is not None:
+    if error:
         value["error"] = error
     return value
 
 
-def check(progress: ProgressCallback = None) -> dict[str, Any]:
-    return _result(
+def check(progress: ProgressCallback | None = None) -> dict[str, Any]:
+    emit_progress(progress, 10, "Checking host")
+    supported, reason = is_supported_host()
+    if not supported:
+        return base(False, "check", "unsupported", reason or f"{MODULE_NAME} is not supported on this host.", "unsupported_host")
+    if not EMULATOR_DIR.exists():
+        return base(True, "check", "missing", f"{MODULE_NAME} is not installed.", details={"expected_path": str(EMULATOR_DIR)})
+    emit_progress(progress, 50, "Checking executable")
+    if not EXECUTABLE_PATH.is_file():
+        return base(True, "check", "broken", f"{MODULE_NAME} is missing its managed executable.", details={"expected_executable": str(EXECUTABLE_PATH)})
+    emit_progress(progress, 95, "Ready")
+    return base(
+        True,
         "check",
-        True,
-        "missing",
-        "Example emulator is not installed.",
-        details={"version": None},
-    )
-
-
-def install(progress: ProgressCallback = None) -> dict[str, Any]:
-    if progress:
-        progress(percent=0, stage="Starting", message="Starting installation.")
-    EMULATOR_DIR.mkdir(parents=True, exist_ok=True)
-    if progress:
-        progress(percent=100, stage="Installed", message="Installation complete.")
-    return _result(
-        "install",
-        True,
         "installed",
-        "Example emulator installed successfully.",
-        details={"version": "replace-with-detected-version"},
+        f'{MODULE_NAME} "{emulator_version()}" is installed and valid.',
+        details={
+            "module_version": module_version(),
+            "version": emulator_version(),
+            "path": str(EXECUTABLE_PATH),
+        },
     )
 
 
-def uninstall(progress: ProgressCallback = None) -> dict[str, Any]:
-    return _result(
-        "uninstall",
-        True,
-        "missing",
-        "Example emulator uninstalled successfully.",
-    )
+def install(progress: ProgressCallback | None = None) -> dict[str, Any]:
+    return ReplaceInstaller.install(progress=progress)
 
 
-def repair(progress: ProgressCallback = None) -> dict[str, Any]:
-    return _result(
-        "repair",
-        True,
-        "installed",
-        "Example emulator repaired successfully.",
-        details={"version": "replace-with-detected-version"},
-    )
+def uninstall(progress: ProgressCallback | None = None) -> dict[str, Any]:
+    return ReplaceUninstall.uninstall(progress=progress)
 
 
-def update(progress: ProgressCallback = None) -> dict[str, Any]:
-    return _result(
-        "update",
-        True,
-        "installed",
-        "Example emulator update completed.",
-        details={"version": "replace-with-detected-version"},
-    )
+def repair(progress: ProgressCallback | None = None) -> dict[str, Any]:
+    return ReplaceRepair.repair(progress=progress)
+
+
+def update(progress: ProgressCallback | None = None) -> dict[str, Any]:
+    current = check(progress=scaled_progress(progress, 0, 20))
+    if not current.get("success") and current.get("state") == "unsupported":
+        current["operation"] = "update"
+        return current
+    if current.get("state") == "installed":
+        return base(
+            True,
+            "update",
+            "already_current",
+            f'{MODULE_NAME} "{emulator_version()}" is already the module-pinned version.',
+            details=current.get("details"),
+        )
+    repaired = ReplaceRepair.repair(progress=scaled_progress(progress, 20, 98))
+    repaired["operation"] = "update"
+    repaired["state"] = "updated" if repaired.get("success") else "update_failed"
+    if repaired.get("success"):
+        repaired["message"] = f'{MODULE_NAME} was updated to pinned version "{emulator_version()}".'
+    return repaired
+
+
+def _write_record(record: dict[str, Any]) -> None:
+    print(json.dumps(record, ensure_ascii=False, default=str, separators=(",", ":")), flush=True)
+
+
+def _stream_progress(percent: int | None = None, stage: str | None = None, message: str | None = None) -> None:
+    _write_record({"type": "progress", "percent": percent, "stage": stage, "message": message})
+
+
+def _run_cli() -> int:
+    raw_args = sys.argv[1:]
+    json_flags = [arg for arg in raw_args if arg.casefold() == "--json"]
+    args = [arg for arg in raw_args if arg.casefold() != "--json"]
+    operation = args[0].casefold() if len(args) == 1 else ""
+    handlers = {
+        "check": check,
+        "install": install,
+        "uninstall": uninstall,
+        "repair": repair,
+        "update": update,
+    }
+    handler = handlers.get(operation)
+    if len(json_flags) != 1 or handler is None:
+        result = base(
+            False,
+            operation or "manager",
+            "invalid_operation",
+            f"{MODULE_NAME}Manager requires one lifecycle operation: check, install, uninstall, repair, or update.",
+            "invalid_operation",
+        )
+    else:
+        try:
+            result = handler(progress=_stream_progress)
+        except Exception as exc:
+            result = base(
+                False,
+                operation,
+                f"{operation}_failed",
+                f"{MODULE_NAME}Manager failed during {operation}.",
+                "manager_exception",
+                str(exc),
+            )
+    _write_record({"type": "result", "result": result})
+    return 0 if result.get("success") else 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(_run_cli())
