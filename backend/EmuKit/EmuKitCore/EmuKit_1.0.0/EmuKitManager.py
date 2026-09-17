@@ -2871,7 +2871,6 @@ class EmuKitManager:
     def initialize(self) -> dict[str, Any]:
         self.module_root.mkdir(parents=True, exist_ok=True)
         self.emulators_root.mkdir(parents=True, exist_ok=True)
-        self.dependencies_root.mkdir(parents=True, exist_ok=True)
 
         core = self.check_core_dependencies()
         if core.get("state") == "missing_dependencies":
