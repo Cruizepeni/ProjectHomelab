@@ -1,6 +1,9 @@
 from __future__ import annotations
 
+import ctypes
+import os
 import subprocess
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +12,42 @@ class EmuKitLauncher:
     def __init__(self, settings, project_root: str | Path) -> None:
         self.settings = settings
         self.project_root = Path(project_root).resolve()
+
+    @staticmethod
+    def _spawn_external(command: list[str], working_directory: Path, isolate_console: bool = False) -> subprocess.Popen[Any]:
+        frozen_windows = os.name == "nt" and getattr(sys, "frozen", False)
+        kernel32 = ctypes.windll.kernel32 if frozen_windows else None
+        restore_directory = str(getattr(sys, "_MEIPASS", "")) or None if frozen_windows else None
+
+        if kernel32 is not None:
+            kernel32.SetDllDirectoryW(None)
+
+        try:
+            if os.name == "nt" and isolate_console:
+                comspec = os.environ.get("ComSpec") or str(Path(os.environ.get("SystemRoot", r"C:\\Windows")) / "System32" / "cmd.exe")
+                helper = [comspec, "/d", "/c", "start", "", "/b", *command]
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = 0
+                return subprocess.Popen(
+                    helper,
+                    cwd=str(working_directory),
+                    stdin=subprocess.DEVNULL,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL,
+                    creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+                    startupinfo=startupinfo,
+                )
+            return subprocess.Popen(command, cwd=str(working_directory))
+        finally:
+            if kernel32 is not None:
+                kernel32.SetDllDirectoryW(restore_directory)
+
+    @staticmethod
+    def _isolate_launch_console(module_info: dict[str, Any], system_info: dict[str, Any] | None = None) -> bool:
+        if isinstance(system_info, dict) and "IsolateLaunchConsole" in system_info:
+            return system_info.get("IsolateLaunchConsole") is True
+        return module_info.get("IsolateLaunchConsole") is True
 
     def _resolve_project_path(self, configured_path: str) -> Path:
         path = Path(configured_path)
@@ -149,7 +188,7 @@ class EmuKitLauncher:
                 system_info=system_info,
             )
             command = [str(executable), *arguments]
-            process = subprocess.Popen(command, cwd=str(working_directory))
+            process = self._spawn_external(command, working_directory, self._isolate_launch_console(module_info, system_info))
             return {
                 "success": True,
                 "module": module_id,
@@ -223,7 +262,7 @@ class EmuKitLauncher:
                 module_info=module_info,
             )
             command = [str(executable), *raw_args]
-            process = subprocess.Popen(command, cwd=str(working_directory))
+            process = self._spawn_external(command, working_directory, self._isolate_launch_console(module_info))
             return {
                 "success": True,
                 "module": module_id,
