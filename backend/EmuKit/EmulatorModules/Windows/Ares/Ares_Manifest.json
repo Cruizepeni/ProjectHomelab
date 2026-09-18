@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "ares",
+  "Name": "Ares",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "148",
+      "Package": "Ares_1.0.0.zip",
+      "SHA256": "4dd9a2b965d5e626c52cf54662597dadbd11356d318097fc2d6ce455967ad396"
+    }
+  }
+}

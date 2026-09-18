@@ -73,6 +73,15 @@
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0.zip",
       "SHA256": "d1fd0777ebc82100effdd5b24fb82b52ccd9f7768c4058b7d3238754f749acf1"
+    },
+    "ares": {
+      "Name": "Ares",
+      "Aliases": [
+        "Ares Emulator"
+      ],
+      "Version": "1.0.0",
+      "Package": "Ares/Ares_1.0.0.zip",
+      "SHA256": "4dd9a2b965d5e626c52cf54662597dadbd11356d318097fc2d6ce455967ad396"
     }
   }
 }
