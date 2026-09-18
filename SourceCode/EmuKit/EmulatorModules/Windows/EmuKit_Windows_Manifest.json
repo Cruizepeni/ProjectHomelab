@@ -18,7 +18,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0.zip",
-      "SHA256": "7cff81c39bf5fec42ad96fbd73ccf4449518ab423610b5acb8ef3d02047a6730"
+      "SHA256": "8ec9cdf86e415a9650fed4158ac7fa5b57f9a11bd0e11b7967a5112ac379cffd"
     },
     "duckstation": {
       "Name": "DuckStation",
@@ -40,7 +40,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0.zip",
-      "SHA256": "cae1930f9b10f4c632473e6322a94f91e8198a7e14598a45c83c878eba034f14"
+      "SHA256": "a857173d9c189e02c8def6d7657583b2425694f1085fc38386eb33bae448351d"
     },
     "ppsspp": {
       "Name": "PPSSPP",
@@ -60,7 +60,7 @@
       ],
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0.zip",
-      "SHA256": "83d60af4b5444cc1d034b8e069d72f8afb6dc3d2d13b8975d574c522bab7127d"
+      "SHA256": "8dfbe70f15eaa7fe9b4044942d94eb5d261b3bffeaea4afac742e25eb41a21bb"
     },
     "vita3k": {
       "Name": "Vita3K",
@@ -72,7 +72,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0.zip",
-      "SHA256": "562148f253998296082630d742cce4987fb7358e2564bd063c45e538facf8bbd"
+      "SHA256": "6ade206ae702399d51d6ec2e1c2e37b4781f832443ad905f093628ab8cb91378"
     },
     "ares": {
       "Name": "Ares",

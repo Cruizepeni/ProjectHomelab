@@ -38,7 +38,7 @@ class EmuKitManager:
 
     REPOSITORY = "Cruizepeni/ProjectHomelab"
     REPOSITORY_BRANCH = "main"
-    DEVELOPMENT_FEED = "backend/EmuKit"
+    DEVELOPMENT_FEED = "SourceCode/EmuKit"
     RELEASE_FEED = "Releases/EmuKit"
 
     CORE_DEPENDENCIES = {
@@ -75,10 +75,10 @@ class EmuKitManager:
         self.emukit_root = Path(emukit_root).resolve()
         self.module_root = self.emukit_root / "EmuKitModules"
         self.emulators_root = self.project_root / "Emulators"
-        self.dependencies_root = self.project_root / "dependencies"
+        self.dependencies_root = self.project_root / "Dependencies"
 
-        self.registry_path = self.project_root / "appdata" / "registry" / "EmuKitRegistry.json"
-        self.staging_root = self.project_root / "appdata" / "cache" / "EmuKit" / "ModuleStaging"
+        self.registry_path = self.project_root / "Appdata" / "Registry" / "EmuKitRegistry.json"
+        self.staging_root = self.project_root / "Appdata" / "Cache" / "EmuKit" / "ModuleStaging"
 
         self.host_platform = self._canonical_platform()
         self.host_architecture = self._canonical_architecture()
@@ -565,8 +565,8 @@ class EmuKitManager:
     def _core_dependency_cache(self) -> Path:
         return (
             self.project_root
-            / "appdata"
-            / "cache"
+            / "Appdata"
+            / "Cache"
             / "EmuKit"
             / "CoreDependencies"
         )

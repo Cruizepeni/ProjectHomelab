@@ -15,7 +15,7 @@ class EmuKitSettings:
     def __init__(self, project_root: str | Path) -> None:
         self._lock = threading.RLock()
         self.project_root = Path(project_root).resolve()
-        self.settings_path = self.project_root / "appdata" / "settings" / "EmuKitSettings.json"
+        self.settings_path = self.project_root / "Appdata" / "Settings" / "EmuKitSettings.json"
         self._data: dict[str, Any] = {}
         self.load()
 
