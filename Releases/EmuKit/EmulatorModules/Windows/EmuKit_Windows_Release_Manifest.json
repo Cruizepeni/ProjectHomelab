@@ -61,6 +61,18 @@
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0_Windows_x86_64.zip",
       "SHA256": "1a012ab3ea74d7f11f44a032bdced1072923603b6b2b5fbe1c682fe35c74facf"
+    },
+    "vita3k": {
+      "Name": "Vita3K",
+      "Aliases": [
+        "PS Vita",
+        "PSVita",
+        "PlayStation Vita",
+        "Vita"
+      ],
+      "Version": "1.0.0",
+      "Package": "Vita3K/Vita3K_1.0.0_Windows_x86_64.zip",
+      "SHA256": "2db5d3d11ec7b894d78ddd10ea2a890331c29248c3f4879941baa8bbd47c95b7"
     }
   }
 }
