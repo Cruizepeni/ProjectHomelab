@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import shlex
+import shutil
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -238,6 +239,7 @@ class EmuKitConsole:
     def __init__(self) -> None:
         self.emukit: EmuKit | None = None
         self._progress_active = False
+        self._progress_rendered: str | None = None
 
     def progress(self, event: dict[str, Any]) -> None:
         operation = str(event.get("operation", ""))
@@ -261,19 +263,41 @@ class EmuKitConsole:
         percent = event.get("percent")
         suffix = f" {percent:3d}%" if isinstance(percent, int) else ""
         message = " ".join(str(event.get("message") or "").split())
-        detail = f"  {message}" if message and percent != 100 else ""
-        text = f"{module_name:<24} {stage}{suffix}{detail}"
-        print("\r" + text.ljust(140), end="", flush=True)
+        terminal_width = shutil.get_terminal_size(fallback=(100, 24)).columns
+        line_width = max(1, terminal_width - 1)
+        base = f"{module_name:<24} {stage}{suffix}"
+        text = base
+
+        if message and percent != 100:
+            remaining = line_width - len(base) - 2
+            if remaining > 3:
+                detail = message
+                if len(detail) > remaining:
+                    detail = detail[: remaining - 3] + "..."
+                text = f"{base}  {detail}"
+
+        if len(text) > line_width:
+            if line_width > 3:
+                text = text[: line_width - 3] + "..."
+            else:
+                text = text[:line_width]
+
+        rendered = text.ljust(line_width)
+        if rendered != self._progress_rendered:
+            print("\r" + rendered, end="", flush=True)
+            self._progress_rendered = rendered
         self._progress_active = True
 
         if percent == 100:
             print()
             self._progress_active = False
+            self._progress_rendered = None
 
     def _clear_progress(self) -> None:
         if self._progress_active:
             print()
             self._progress_active = False
+            self._progress_rendered = None
 
     @staticmethod
     def _json(value: Any) -> None:
