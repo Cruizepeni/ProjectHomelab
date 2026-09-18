@@ -33,7 +33,7 @@ Those responsibilities belong to each emulator module.
 Core source lives in a versioned directory while the Python filenames themselves remain unversioned.
 
 ```text
-backend/
+SourceCode/
 └── EmuKit/
     └── EmuKitCore/
         └── EmuKit_1.0.0/
@@ -41,8 +41,16 @@ backend/
             ├── EmuKitManager.py
             ├── EmuKitSettings.py
             ├── EmuKitLauncher.py
+            ├── EmuKit.ico
+            ├── IconEmuKit.png
             └── EmuKitModules/
 ```
+
+`EmuKit.ico` is the canonical Windows executable icon asset.
+
+`IconEmuKit.png` is the source artwork/reference image used to produce the Windows icon.
+
+Windows release builds embed `EmuKit.ico` into `EmuKit.exe`. The icon source files do not need to be distributed as separate runtime files inside the compiled Core release package.
 
 Do not create filenames such as:
 
@@ -82,16 +90,33 @@ A normal ProjectHomelab layout is:
 ```text
 ROOT/
 ├── .ProjectHomelabRoot
-├── backend/
+├── Appdata/
+│   ├── Cache/
+│   ├── Registry/
+│   └── Settings/
+├── Dependencies/
+├── Emulators/
+├── Modules/
+│   └── EmuKit/
+│       └── EmuKit_1.0.0/
+│           ├── EmuKit.exe
+│           └── EmuKitModules/
+├── SourceCode/
 │   └── EmuKit/
 │       └── EmuKitCore/
 │           └── EmuKit_1.0.0/
+│               ├── EmuKit.py
 │               └── EmuKitModules/
-├── Emulators/
-├── dependencies/
-├── appdata/
-└── Resources/
+├── Releases/
+├── Resources/
+└── Documentation/
 ```
+
+`SourceCode/EmuKit` is the development/source tree.
+
+Compiled HomeLab Core runtimes live below `Modules/EmuKit`.
+
+`EmuKitModules` remains inside the active Core runtime directory in both source and compiled operation. It is not moved to the higher-level `SourceCode/EmuKit` or `Modules/EmuKit` directory.
 
 A standalone EmuKit layout uses the same relative concepts locally:
 
@@ -100,8 +125,11 @@ EmuKit_1.0.0/
 ├── EmuKit.py or EmuKit.exe
 ├── EmuKitModules/
 ├── Emulators/
-├── dependencies/
-└── appdata/
+├── Dependencies/
+└── Appdata/
+    ├── Cache/
+    ├── Registry/
+    └── Settings/
 ```
 
 ## Local Module Location
@@ -185,9 +213,9 @@ ROOT/Emulators/Xemu/
 
 A module's `DependencyPath` must be relative to `ROOT`, must resolve inside `ROOT/Emulators`, and must identify a child directory of `Emulators`.
 
-The old `dependencies/EmuKit/<Emulator>` emulator layout is not part of Core 1.0.0.
+The old `Dependencies/EmuKit/<Emulator>` emulator layout is not part of Core 1.0.0.
 
-The general `ROOT/dependencies/` directory remains available for shared non-emulator dependencies.
+The general `ROOT/Dependencies/` directory remains available for shared non-emulator dependencies.
 
 ## Core Dependencies
 
@@ -258,7 +286,7 @@ The remote module feed changes by channel.
 Normal Python source execution defaults to:
 
 ```text
-backend/EmuKit/
+SourceCode/EmuKit/
 ```
 
 Frozen executable builds default to:
@@ -270,7 +298,7 @@ Releases/EmuKit/
 Development platform manifests use:
 
 ```text
-backend/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+SourceCode/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
 ```
 
 Release platform manifests use:
@@ -279,7 +307,7 @@ Release platform manifests use:
 Releases/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Release_Manifest.json
 ```
 
-Backend/source manifests always use `Name_Manifest.json`. Release-side mirrors always use `Name_Release_Manifest.json`.
+Source/development manifests always use `Name_Manifest.json`. Release-side mirrors always use `Name_Release_Manifest.json`.
 
 Canonical operating-system names are:
 
@@ -292,7 +320,7 @@ Mac
 Examples:
 
 ```text
-backend/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Manifest.json
+SourceCode/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Manifest.json
 Releases/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Release_Manifest.json
 ```
 
@@ -306,10 +334,10 @@ The channel changes the source of distributed module packages, not the module co
 
 ## Distribution Layout
 
-The current backend convention is:
+The current source/development convention is:
 
 ```text
-backend/
+SourceCode/
 └── EmuKit/
     └── EmulatorModules/
         └── Windows/
@@ -335,8 +363,18 @@ Releases/
 Core manifests follow the same development/release split:
 
 ```text
-backend/EmuKit/EmuKitCore/EmuKit_Core_Manifest.json
+SourceCode/EmuKit/EmuKitCore/EmuKit_Core_Manifest.json
 Releases/EmuKit/EmuKitCore/EmuKit_Core_Release_Manifest.json
+```
+
+Core release packages sit directly beside the Core release manifest. There is no operating-system subdirectory below `Releases/EmuKit/EmuKitCore`.
+
+```text
+Releases/
+└── EmuKit/
+    └── EmuKitCore/
+        ├── EmuKit_Core_Release_Manifest.json
+        └── EmuKit_1.0.0_Windows_x86_64.zip
 ```
 
 The Windows x86_64 Core release package is named:
@@ -373,7 +411,7 @@ The release Info JSON must point `Manager` at the executable actually present in
 
 Core 1.0.0 consumes the platform manifest for runtime discovery, download, and update decisions.
 
-The backend per-module `<Module>_Manifest.json` and release `<Module>_Release_Manifest.json` are retained module-version catalogues for their respective channels. They record available versions and package hashes, but Core 1.0.0 does not require a second lookup through those files to install a module advertised by the active platform manifest.
+The development per-module `<Module>_Manifest.json` and release `<Module>_Release_Manifest.json` are retained module-version catalogues for their respective channels. They record available versions and package hashes, but Core 1.0.0 does not require a second lookup through those files to install a module advertised by the active platform manifest.
 
 Development and release packages are different artifacts and are hashed independently. Never copy the development ZIP checksum into a release manifest or the release ZIP checksum into a development manifest.
 
@@ -513,7 +551,7 @@ The module package remains available unless separately removed.
 The registry is generated state stored below:
 
 ```text
-ROOT/appdata/registry/EmuKitRegistry.json
+ROOT/Appdata/Registry/EmuKitRegistry.json
 ```
 
 It must be rebuildable from valid physically present modules.
@@ -534,7 +572,7 @@ The registry is not the authority for whether module files physically exist.
 Settings are stored below:
 
 ```text
-ROOT/appdata/settings/EmuKitSettings.json
+ROOT/Appdata/Settings/EmuKitSettings.json
 ```
 
 They preserve user choices independently from registry regeneration where possible.

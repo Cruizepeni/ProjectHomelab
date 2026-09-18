@@ -240,7 +240,7 @@ Correct:
 Incorrect:
 
 ```json
-"DependencyPath": "dependencies/EmuKit/ExampleEmu"
+"DependencyPath": "Dependencies/EmuKit/ExampleEmu"
 ```
 
 The module package and the emulator installation are separate things.
@@ -732,7 +732,7 @@ A release-only failure that does not reproduce from Python source must be treate
 
 ## Remote Distribution
 
-Before release packaging, the source/development module ZIP should be tested through the `backend/EmuKit` development feed.
+Before release packaging, the source/development module ZIP should be tested through the `SourceCode/EmuKit` development feed.
 
 Development package example:
 
@@ -752,7 +752,7 @@ The release Info JSON must change `Manager` from the source `.py` entry to the `
 
 Development and release packages are independent exact byte artifacts. They retain the same stable module identity, intended `ModuleVersion`, emulator-management behavior, and system metadata for that version, but each package has its own SHA-256.
 
-Backend manifests carry the development ZIP SHA-256.
+Development manifests carry the development ZIP SHA-256.
 
 Release manifests carry the release ZIP SHA-256.
 
@@ -782,7 +782,7 @@ Current EmuKit runtime/module Python source and reusable Python templates do not
 
 Use clear file responsibilities, names, functions, and structured metadata instead.
 
-Do not add legacy protocol fallbacks, obsolete `dependencies/EmuKit/<Emulator>` emulator paths, alternate root markers, or compatibility branches for superseded EmuKit layouts.
+Do not add legacy protocol fallbacks, obsolete `Dependencies/EmuKit/<Emulator>` emulator paths, alternate root markers, or compatibility branches for superseded EmuKit layouts.
 
 When the active contract changes during development, Core, current modules, reusable templates, examples, and contract documentation should be updated together.
 
@@ -821,7 +821,7 @@ Before publishing a module:
 - launch with a game works from source Core
 - launch without a game works from source Core
 - development ZIP uses the source manager and installs through the development feed
-- backend package SHA-256 matches both backend manifests
+- development package SHA-256 matches both development manifests
 - release package uses the target-qualified filename
 - release Info JSON points at the compiled executable manager
 - compiled manager emits strict JSONL progress/result stdout

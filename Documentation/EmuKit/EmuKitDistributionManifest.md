@@ -15,7 +15,7 @@ They do not describe local installed state and they do not contain emulator-spec
 Development:
 
 ```text
-backend/
+SourceCode/
 └── EmuKit/
     └── EmulatorModules/
         └── <OS>/
@@ -40,7 +40,28 @@ Releases/
                 └── ...
 ```
 
-Backend/source manifests use `Name_Manifest.json`.
+
+Core distribution uses a separate Core catalogue.
+
+Development Core manifest:
+
+```text
+SourceCode/EmuKit/EmuKitCore/EmuKit_Core_Manifest.json
+```
+
+Release Core layout:
+
+```text
+Releases/
+└── EmuKit/
+    └── EmuKitCore/
+        ├── EmuKit_Core_Release_Manifest.json
+        └── EmuKit_1.0.0_Windows_x86_64.zip
+```
+
+Core release packages sit directly beside `EmuKit_Core_Release_Manifest.json`. Do not create an additional `Windows/`, `Linux/`, or `Mac/` directory below `Releases/EmuKit/EmuKitCore`; the target is expressed by the manifest target key and the target-qualified package filename.
+
+Source/development manifests use `Name_Manifest.json`.
 
 Release-side mirrors use `Name_Release_Manifest.json`.
 
@@ -87,7 +108,7 @@ Core 1.0.0 consumes the platform manifest for runtime module discovery, download
 Locations:
 
 ```text
-backend/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+SourceCode/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
 Releases/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Release_Manifest.json
 ```
 
@@ -187,7 +208,7 @@ Each module entry contains:
 
 ## Per-Module Manifest
 
-Each backend module directory contains:
+Each development module directory contains:
 
 ```text
 <Module>_Manifest.json
@@ -271,7 +292,7 @@ Given:
 Windows development resolves to:
 
 ```text
-backend/EmuKit/EmulatorModules/Windows/ExampleEmu/ExampleEmu_1.0.0.zip
+SourceCode/EmuKit/EmulatorModules/Windows/ExampleEmu/ExampleEmu_1.0.0.zip
 ```
 
 Release:
@@ -369,7 +390,7 @@ Recommended promotion flow:
 build canonical source/development module
 → create <Module>_1.0.0.zip
 → calculate exact development ZIP SHA-256
-→ place ZIP below backend/EmuKit/EmulatorModules/<OS>/<Module>/
+→ place ZIP below SourceCode/EmuKit/EmulatorModules/<OS>/<Module>/
 → update <Module>_Manifest.json
 → update EmuKit_<OS>_Manifest.json
 → remove the local development copy from EmuKitModules
@@ -399,9 +420,9 @@ When publishing a new module version:
 
 1. create the new source `<Module>_<Version>.zip`
 2. calculate its exact SHA-256
-3. add/update the version in backend `<Module>_Manifest.json`
-4. update backend `Latest` when appropriate
-5. update the backend platform manifest `Version`, `Package`, and `SHA256`
+3. add/update the version in development `<Module>_Manifest.json`
+4. update development `Latest` when appropriate
+5. update the development platform manifest `Version`, `Package`, and `SHA256`
 6. test through the development feed
 7. compile the manager for each supported release target
 8. create each target-qualified release ZIP
@@ -421,13 +442,15 @@ A Core source change that affects runtime behavior does not require a Core versi
 For a Windows x86_64 Core rebuild:
 
 ```text
-rebuild EmuKit.exe
+build EmuKit.exe from the Core source with EmuKit.ico embedded as the Windows executable icon
 → recreate EmuKit_1.0.0_Windows_x86_64.zip
 → calculate the exact new ZIP SHA-256
 → replace the windows-x86_64 target SHA256 in EmuKit_Core_Release_Manifest.json
-→ publish the new ZIP and manifest together
+→ publish the new ZIP and manifest together below Releases/EmuKit/EmuKitCore/
 → test the real compiled Core against the release module feed
 ```
+
+`EmuKit.ico` is the canonical Windows executable icon asset and `IconEmuKit.png` is its source artwork/reference image. They remain in the Core source tree; the compiled Windows release package only needs `EmuKit.exe` because the icon is embedded into the executable.
 
 When Core external-process launch behavior changes, the release test must include at least one emulator-only launch and one game launch from the compiled Core. This specifically verifies that frozen-runtime DLL-search state and parent-console behavior are not leaking into the emulator process.
 
@@ -443,6 +466,7 @@ Before committing module distribution metadata:
 - every package path is safe and platform-feed-relative
 - development package uses the source naming convention
 - release package uses the target-qualified naming convention
+- Core release packages sit directly below `Releases/EmuKit/EmuKitCore/` beside `EmuKit_Core_Release_Manifest.json`
 - every advertised package exists
 - every SHA-256 matches its exact ZIP bytes
 - ZIP contains exactly one valid module root
