@@ -1031,6 +1031,9 @@ class EmuKitManager:
         if "DefaultInstalled" in info and not isinstance(info.get("DefaultInstalled"), bool):
             return False, 'Module "DefaultInstalled" must be a boolean.'
 
+        if "IsolateLaunchConsole" in info and not isinstance(info.get("IsolateLaunchConsole"), bool):
+            return False, 'Module "IsolateLaunchConsole" must be a boolean.'
+
         if "WorkingDirectory" in info and not self._valid_string(info.get("WorkingDirectory")):
             return False, 'Module "WorkingDirectory" must be a non-empty string.'
 
@@ -1096,6 +1099,12 @@ class EmuKitManager:
 
             if "Default" in system_info and not isinstance(system_info.get("Default"), bool):
                 return False, f'System "{system_id}" "Default" must be a boolean.'
+
+            if "IsolateLaunchConsole" in system_info and not isinstance(
+                system_info.get("IsolateLaunchConsole"),
+                bool,
+            ):
+                return False, f'System "{system_id}" "IsolateLaunchConsole" must be a boolean.'
 
         manager_path = info_path.parent / info["Manager"]
         if not manager_path.is_file():
