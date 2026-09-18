@@ -2,6 +2,15 @@
   "SchemaVersion": 1,
   "Platform": "Windows",
   "Modules": {
+    "ares": {
+      "Name": "Ares",
+      "Aliases": [
+        "Ares Emulator"
+      ],
+      "Version": "1.0.0",
+      "Package": "Ares/Ares_1.0.0_Windows_x86_64.zip",
+      "SHA256": "91d5bfdb4017ae80fa37db17b16a47b9c25d9f016610ae4c5c1108f541dcee15"
+    },
     "xemu": {
       "Name": "Xemu",
       "Aliases": [
@@ -9,7 +18,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0_Windows_x86_64.zip",
-      "SHA256": "c1cf643d4e3dc2a7228e1fc2537f5f43143e92e22f3e32565a1b5345de6ceaab"
+      "SHA256": "968a6daca5ff65e7323b6cf68ffb77133770c7f5c222a292018aad0693ad18e4"
     },
     "xenia": {
       "Name": "Xenia Canary",
@@ -18,7 +27,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0_Windows_x86_64.zip",
-      "SHA256": "b6930b3a008784fb477bf4b8b9b2b36fe61a88af5ff557ae471365374b60389c"
+      "SHA256": "46180cbcc697f51a84d44efdef3320c7471d89545c5c80998175c74930074acc"
     },
     "duckstation": {
       "Name": "DuckStation",
@@ -30,7 +39,7 @@
       ],
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0_Windows_x86_64.zip",
-      "SHA256": "530bbf48fc7de0001950ead5867493a52932ee9475793e7d793b5793cd525a9a"
+      "SHA256": "6288cc47f3c3475b79c1e0d957f167f4df2d1cf7e72d35c23f2e82a4fa2c3b5e"
     },
     "pcsx2": {
       "Name": "PCSX2",
@@ -40,7 +49,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0_Windows_x86_64.zip",
-      "SHA256": "6b6598c52cfa29c7acf8c9f9acf81a6a5c39cd801bb257ab70427881d17c629d"
+      "SHA256": "c991f6d63c08cf7e85ba6e96a2337ca7b4520624a46a041600a15860da8dbd98"
     },
     "ppsspp": {
       "Name": "PPSSPP",
@@ -50,7 +59,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PPSSPP/PPSSPP_1.0.0_Windows_x86_64.zip",
-      "SHA256": "41ae74bfaaa4208f6f222d5c6846dbb7f084700b8518b39301c0adabc2a40851"
+      "SHA256": "a9945e4485d34d30fb95f99099ced5dd71cd86367dff2dfb979b022322809eeb"
     },
     "rpcs3": {
       "Name": "RPCS3",
@@ -60,7 +69,7 @@
       ],
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0_Windows_x86_64.zip",
-      "SHA256": "1a012ab3ea74d7f11f44a032bdced1072923603b6b2b5fbe1c682fe35c74facf"
+      "SHA256": "fd87e5d4020be0068502418075996c58c0bc6c6f388d436d98cd31c15a087fbd"
     },
     "vita3k": {
       "Name": "Vita3K",
@@ -72,7 +81,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0_Windows_x86_64.zip",
-      "SHA256": "2db5d3d11ec7b894d78ddd10ea2a890331c29248c3f4879941baa8bbd47c95b7"
+      "SHA256": "aaef3ce44d82ad9b4600b66c33ce082eae9e6d4c66165f21d587e6045c622e86"
     }
   }
 }
