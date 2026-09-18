@@ -14,7 +14,6 @@ e11527b3b96ce112a037138988ca72fd117a6b0779c2480d9e03eaebece3d9ce  NEC/PC Engine 
 cadac2725711b3c442bcf237b02f5a5210c96f17625c35fa58f009e0ed39e4db  NEC/PC Engine CD - TurboGrafx-CD/BIOS/syscard3u.pce
 4b44ccf5d84cc83daa2e6a2bee00fdafa14eb58bdf5859e96d8861a891675417  NEC/PC-FX/BIOS/pcfx.rom
 99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b0178  Nintendo/Famicom Disk System/BIOS/Disksys.rom
-99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b0178  Nintendo/Famicom Disk System/BIOS/FDS_disksys-nintendo.rom
 fd2547724b505f487e6dcb29ec2ecff3af35a841a77ab2e85fd87350abd36570  Nintendo/Game Boy Advance/BIOS/gba_bios.bin
 92f1411fb2c3e6c37bb6a5819d01f84f945fda31cfe26db8c81d997ed471a62e  Nintendo/GameCube/BIOS/iplusa.bin
 9c2962a8b994a29e4cd04b3a6e4ed730a751414655ab6a9799ebf5fc08b79d44  Nintendo/Nintendo 64DD/BIOS/64DD_IPL_DEV.bin
@@ -38,9 +37,9 @@ dd8b365521a9c08bb4c170da3592212580f7251f35a45d6083774d1c030bc3e3  Sega/Dreamcast
 8c8a21335038285cfa03dc076100c1f0bfadf3e4ff70796f11f3dfaaab60eee2  Sega/Game Gear/BIOS/GG_majesco.gg
 67846e26764bd862f19179294347f7353a4166b62ac4198a5ec32933b7da486e  Sega/Master System/BIOS/[BIOS] Sega Master System (Japan) (v2.1).sms
 477617917a12a30f9f43844909dc2de6e6a617430f5c9a36306c86414a670d50  Sega/Master System/BIOS/[BIOS] Sega Master System (USA, Europe) (v1.3).sms
-16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4  Sega/Mega CD - Sega CD/BIOS/bios_CD_E.bin
-923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f  Sega/Mega CD - Sega CD/BIOS/bios_CD_J.bin
-807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a  Sega/Mega CD - Sega CD/BIOS/bios_CD_U.bin
+fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb  Sega/Mega CD - Sega CD/BIOS/bios_CD_E.bin
+7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88  Sega/Mega CD - Sega CD/BIOS/bios_CD_J.bin
+fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c  Sega/Mega CD - Sega CD/BIOS/bios_CD_U.bin
 879a31a70a7c87fe41554b6358d1d25db09c20cf9505d1c3abad13abee334e3e  Sega/NAOMI 2/BIOS/naomi2.zip
 f4c734fc4a56a8894bacea9408408d0d27d9339711702f4840665fa4bf099d90  Sega/NAOMI/BIOS/airlbios.zip
 74e809bb3bc24a866c792365745f4054f99eaed00d2877a62562f977b788a661  Sega/NAOMI/BIOS/f355bios.zip

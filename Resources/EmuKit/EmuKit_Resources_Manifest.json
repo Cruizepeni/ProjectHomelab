@@ -8,7 +8,7 @@
     "MD5",
     "SHA256"
   ],
-  "resource_count": 64,
+  "resource_count": 63,
   "resources": [
     {
       "path": "Atari/Atari Lynx/BIOS/lynxboot.img",
@@ -120,15 +120,6 @@
       "sources": [
         "MesenCE/BIOS/Famicom Disk System/Disksys.rom",
         "MesenCE/BIOS/Famicom/Disksys.rom"
-      ]
-    },
-    {
-      "path": "Nintendo/Famicom Disk System/BIOS/FDS_disksys-nintendo.rom",
-      "size": 8192,
-      "md5": "ca30b50f880eb660a320674ed365ef7a",
-      "sha256": "99c18490ed9002d9c6d999b9d8d15be5c051bdfa7cc7e73318053c9a994b0178",
-      "sources": [
-        "Ares/BIOS/Famicom Disk System/FDS_disksys-nintendo.rom"
       ]
     },
     {
@@ -346,8 +337,8 @@
     {
       "path": "Sega/Mega CD - Sega CD/BIOS/bios_CD_E.bin",
       "size": 131072,
-      "md5": "e66fa1dc5820d254611fdcdba0662372",
-      "sha256": "16735df92fcc1d0fc6a1eced244867e95281c5006340926082b74e363e073dc4",
+      "md5": "9b562ebf2d095bf1dabadbc1881f519a",
+      "sha256": "fe608a2a07676a23ab5fd5eee2f53c9e2526d69a28aa16ccd85c0ec42e6933cb",
       "sources": [
         "Ares/BIOS/Mega CD/bios_CD_E.bin"
       ]
@@ -355,8 +346,8 @@
     {
       "path": "Sega/Mega CD - Sega CD/BIOS/bios_CD_J.bin",
       "size": 131072,
-      "md5": "278a9397d192149e84e820ac621a8edd",
-      "sha256": "923eb9da740f98ab1572085e3d351e2c0982df0906b0b99efb68a9997c94cf8f",
+      "md5": "683a8a9e273662561172468dfa2858eb",
+      "sha256": "7133fc2dd2fe5b7d0acd53a5f10f3d00b5d31270239ad20d74ef32393e24af88",
       "sources": [
         "Ares/BIOS/Mega CD/bios_CD_J.bin"
       ]
@@ -364,8 +355,8 @@
     {
       "path": "Sega/Mega CD - Sega CD/BIOS/bios_CD_U.bin",
       "size": 131072,
-      "md5": "2efd74e3232ff260e371b99f84024f7f",
-      "sha256": "807384678ef259494d943eddb6954dfc7069693d0dde0c424e2028488d88e81a",
+      "md5": "310a9081d2edf2d316ab38813136725e",
+      "sha256": "fb477cdbf94c84424c2feca4fe40656d85393fe7b7b401911b45ad2eb991258c",
       "sources": [
         "Ares/BIOS/Mega CD/bios_CD_U.bin"
       ]

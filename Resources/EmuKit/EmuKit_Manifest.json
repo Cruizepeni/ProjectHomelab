@@ -9,7 +9,7 @@
   "resource_manifest": "EmuKit_Resources_Manifest.json",
   "checksum_file": "EmuKit_Checksums.txt",
   "hash_algorithm": "SHA256",
-  "resource_count": 64,
+  "resource_count": 63,
   "distribution": {
     "mode": "individual_resources",
     "platform_independent": true
