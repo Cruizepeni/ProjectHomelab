@@ -9,7 +9,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0_Windows_x86_64.zip",
-      "SHA256": "3bc245eb9011fb6f33987c787989262f4f8d4529e1e5f63ef103574b6aa987b1"
+      "SHA256": "c1cf643d4e3dc2a7228e1fc2537f5f43143e92e22f3e32565a1b5345de6ceaab"
     },
     "xenia": {
       "Name": "Xenia Canary",
