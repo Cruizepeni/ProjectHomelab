@@ -20,6 +20,7 @@ Core is responsible for:
 - serialized lifecycle invocation
 - system-to-module assignment
 - emulator and game launching
+- external emulator process isolation and frozen-runtime launch sanitization
 - progress reporting
 - structured operation results
 
@@ -401,6 +402,9 @@ Create the canonical source module locally
 → update the release per-module manifest
 → update the release platform manifest
 → test acquisition and lifecycle behavior through the release channel
+→ test the real compiled EmuKit executable with the compiled module manager
+→ verify install output is clean and no lifecycle child process leaks console text or opens an unwanted console window
+→ verify Launch Emulator and game launch from the compiled Core
 ```
 
 A locally present development module does not need a remote platform-manifest entry.
@@ -586,6 +590,45 @@ Launch Emulator <Module>
 This is used for emulator configuration, controller setup, graphics settings, maintenance, and emulator-native UI tasks.
 
 Module registration may provide `EmulatorLaunchArguments` separately from each system's game-launch arguments.
+
+## External Process Isolation
+
+EmuKit treats emulator launching and module lifecycle subprocesses as two separate process boundaries.
+
+Core owns the environment used when it launches an emulator for `Launch` or `Launch Emulator`.
+
+On frozen Windows builds, PyInstaller may temporarily place its own runtime directory in the process DLL search path. Core must clear that frozen-runtime DLL directory before creating an external emulator process and restore its own runtime directory immediately after process creation. This prevents an emulator from accidentally loading DLLs from EmuKit's `_MEI` extraction directory instead of the normal Windows runtime locations.
+
+Modules must not duplicate this Core behavior for normal emulator launching.
+
+A module may declare:
+
+```json
+"IsolateLaunchConsole": true
+```
+
+when the emulator is known to attach to or write into its parent console. On Windows, Core then launches the emulator without inheriting EmuKit's console streams while still allowing the emulator's GUI to open normally. The default is `false`.
+
+A system registration may also provide `IsolateLaunchConsole` to override the module-level value for that system's game launch.
+
+Lifecycle subprocesses are different. Installer, repair, update, and uninstall code owns every child process it starts, including extractors, firmware installers, setup tools, and emulator maintenance commands. Those child processes must not write directly into EmuKit's user-facing terminal or executable-manager JSONL stdout. Modules should capture or redirect child stdout/stderr, suppress unnecessary child console windows, and include useful diagnostic output in structured failure `details` instead of printing it during successful operations.
+
+Reusable module code should use the common external-process helper for this boundary so source and frozen-manager behavior remain equivalent and frozen managers do not leak their PyInstaller DLL search directory into child programs.
+
+The resulting ownership boundary is:
+
+```text
+EmuKit Core
+    → launches emulator UI/game process
+    → sanitizes frozen launch environment
+    → optionally isolates the emulator from EmuKit's console
+
+Module lifecycle code
+    → launches installer/extractor/firmware/maintenance child processes
+    → captures child output
+    → suppresses unwanted child console windows
+    → returns diagnostics through structured results
+```
 
 ## Current CLI Commands
 
@@ -800,10 +843,19 @@ Before publishing or relying on a Core/module set:
 - compiled managers use frozen-safe `sys.executable` module-directory resolution
 - compiled managers implement strict JSONL progress/result stdout
 - compiled managers emit no plain-text stdout
+- module lifecycle child processes do not inherit executable-manager stdout or leak routine console output into EmuKit
+- source and compiled module lifecycle behavior is equivalent
+- frozen Windows module managers sanitize the PyInstaller DLL search path before starting external child programs
+- unwanted lifecycle child console windows are suppressed where the module requires it
 - `check`, `install`, `uninstall`, `repair`, and `update` all return valid structured results
 - long lifecycle operations report live progress
-- game launch works
-- emulator-only launch works
+- game launch works from source Core
+- emulator-only launch works from source Core
+- compiled EmuKit launches external emulators without leaking PyInstaller `_MEI` DLL search state
+- `IsolateLaunchConsole` is enabled only for emulators/systems that require parent-console isolation
+- game launch works from the real compiled EmuKit release executable
+- emulator-only launch works from the real compiled EmuKit release executable
+- launched emulator processes do not pollute the EmuKit terminal when console isolation is requested
 - development package SHA-256 matches the exact development ZIP
 - development per-module and platform manifests agree
 - release package uses the target-qualified filename

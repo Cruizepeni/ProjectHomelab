@@ -382,6 +382,9 @@ build canonical source/development module
 → update <Module>_Release_Manifest.json
 → update EmuKit_<OS>_Release_Manifest.json
 → test acquisition, JSONL progress, and lifecycle behavior through the release channel
+→ test the compiled module through the real compiled EmuKit release executable
+→ verify emulator-only launch and game launch from the compiled Core
+→ verify lifecycle child processes do not leak routine output or unwanted console windows
 ```
 
 Development and release packages keep the same stable `Id`, intended `ModuleVersion`, emulator-management behavior, and system metadata.
@@ -406,8 +409,27 @@ When publishing a new module version:
 10. add/update the version in `<Module>_Release_Manifest.json`
 11. update the release platform manifest `Version`, `Package`, and `SHA256`
 12. test each release target through the release channel
+13. test each release target with the real compiled EmuKit executable
+14. verify lifecycle child-process isolation and emulator launch behavior in the frozen Core/module path
 
 During active development an existing module version may intentionally be rebuilt in place. In that case, do not leave a previous SHA-256 in any manifest. Recalculate and replace all affected checksums before pushing the rebuilt package.
+
+## Core Release Rebuilds
+
+A Core source change that affects runtime behavior does not require a Core version bump during active 1.0.0 development, but the compiled Core release package becomes a new exact byte artifact.
+
+For a Windows x86_64 Core rebuild:
+
+```text
+rebuild EmuKit.exe
+→ recreate EmuKit_1.0.0_Windows_x86_64.zip
+→ calculate the exact new ZIP SHA-256
+→ replace the windows-x86_64 target SHA256 in EmuKit_Core_Release_Manifest.json
+→ publish the new ZIP and manifest together
+→ test the real compiled Core against the release module feed
+```
+
+When Core external-process launch behavior changes, the release test must include at least one emulator-only launch and one game launch from the compiled Core. This specifically verifies that frozen-runtime DLL-search state and parent-console behavior are not leaking into the emulator process.
 
 ## Validation Checklist
 
@@ -432,5 +454,8 @@ Before committing module distribution metadata:
 - platform and per-module manifests agree on package filename and SHA-256
 - development Info JSON points at the source manager
 - release Info JSON points at the compiled manager
+- release package has been exercised through the real compiled EmuKit executable
+- lifecycle child output does not corrupt JSONL or pollute the EmuKit terminal
+- Core release checksum is replaced whenever the compiled Core ZIP bytes change
 - rebuilt packages do not retain stale checksums
 

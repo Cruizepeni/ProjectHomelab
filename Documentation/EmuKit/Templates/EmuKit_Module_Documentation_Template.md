@@ -134,6 +134,22 @@ Consider:
 
 Document non-obvious launch arguments, fullscreen behavior, working directory behavior, or per-system differences.
 
+Record whether module-level or system-level `IsolateLaunchConsole` is required and why. Leave it disabled when the emulator behaves correctly with normal Core launching.
+
+## Lifecycle External Processes
+
+Document every external tool started during install, repair, update, or uninstall.
+
+For each one record:
+
+- why it is launched
+- whether stdout/stderr is captured or redirected
+- whether console isolation is required
+- how failures return diagnostic output through structured `details`
+- whether frozen Windows DLL-search sanitization is required
+
+Source and compiled-manager lifecycle behavior should remain equivalent.
+
 ## Development Distribution
 
 Record:
@@ -159,6 +175,24 @@ and its release manifest locations.
 The release Info JSON points at the compiled `.exe` manager.
 
 The release ZIP is hashed independently from the development ZIP.
+
+## Release Validation
+
+Record the results of testing the actual compiled module through the actual compiled EmuKit release executable.
+
+At minimum cover:
+
+```text
+check
+install
+repair
+update
+uninstall
+Launch Emulator
+game launch
+```
+
+Confirm that lifecycle subprocesses do not leak routine output into EmuKit, no unwanted child console windows appear, and emulator launches do not inherit PyInstaller runtime DLLs.
 
 ## Known Constraints
 

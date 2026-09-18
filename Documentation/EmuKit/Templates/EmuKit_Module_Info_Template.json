@@ -9,6 +9,7 @@
   "DependencyPath": "Emulators/ReplaceModule",
   "LaunchPath": "Emulators/ReplaceModule/replace-executable.exe",
   "WorkingDirectory": "Emulators/ReplaceModule",
+  "IsolateLaunchConsole": false,
   "EmulatorLaunchArguments": [],
   "DefaultInstalled": true,
   "Channel": "Stable",

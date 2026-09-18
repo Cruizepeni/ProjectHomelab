@@ -91,6 +91,7 @@ For schema version `1`, a normal registration is:
   "DependencyPath": "Emulators/ExampleEmu",
   "LaunchPath": "Emulators/ExampleEmu/exampleemu.exe",
   "WorkingDirectory": "Emulators/ExampleEmu",
+  "IsolateLaunchConsole": false,
   "EmulatorLaunchArguments": [],
   "DefaultInstalled": false,
   "Systems": {
@@ -272,6 +273,18 @@ It contains arguments used when launching the emulator without a game.
 
 This is separate from per-system game launch arguments.
 
+## IsolateLaunchConsole
+
+`IsolateLaunchConsole` is optional and defaults to `false`. When present it must be a boolean. The current isolation implementation applies to Windows; other hosts may treat the value as a no-op until that host has an equivalent Core launch isolation path.
+
+Set it to `true` only when the emulator is known to attach to, inherit, or write into EmuKit's parent console and that behavior would pollute the EmuKit terminal.
+
+At module level it applies to emulator-only launch and acts as the default for system game launches.
+
+A system registration may provide its own boolean `IsolateLaunchConsole` value. When present on a system, the system value overrides the module-level value for that system's game launch.
+
+Core owns this launch behavior. Module lifecycle code must not use `IsolateLaunchConsole` as a substitute for containing its own installer, extractor, firmware, or maintenance subprocesses.
+
 ## DefaultInstalled
 
 `DefaultInstalled` is optional and defaults to `false`.
@@ -298,6 +311,7 @@ It may also provide:
 
 - system-specific `LaunchPath`
 - system-specific `WorkingDirectory`
+- system-specific `IsolateLaunchConsole`
 - `FullscreenArgument`
 - `Default`
 
@@ -513,6 +527,36 @@ There is no legacy fallback that searches arbitrary stdout for a JSON object.
 
 A manager that violates this protocol fails with a Core manager-protocol error.
 
+## Lifecycle External Processes
+
+A module owns every external process it starts during `check`, `install`, `repair`, `update`, or `uninstall`.
+
+Examples include:
+
+- archive extractors
+- firmware installers
+- emulator maintenance commands
+- bootstrap/setup executables
+- conversion or verification utilities
+
+Routine child-process stdout/stderr must not be allowed to flow directly into EmuKit's terminal. This is especially important for compiled managers because stdout is reserved for the strict JSONL manager protocol.
+
+Module lifecycle code should:
+
+- start child programs through the shared external-process helper in the Common module
+- capture stdout/stderr or redirect them to controlled temporary log files
+- discard routine successful child output unless it is useful structured data
+- include relevant output tails in structured failure `details`
+- suppress unwanted child console windows when required
+- keep source and compiled-manager behavior equivalent
+- avoid relying on `sys.frozen` to change lifecycle semantics
+
+On frozen Windows managers, PyInstaller may alter the process DLL search directory. The common external-process helper clears that frozen-runtime DLL directory before starting a child program and restores the manager's own runtime directory after the child process has been created. This prevents external tools from resolving DLLs from the manager's `_MEI` extraction directory.
+
+When `isolate_console=True` is required on Windows, the helper creates the lifecycle child behind a hidden/no-console helper so programs that explicitly attach to their parent console cannot attach to EmuKit. This is intended for lifecycle operations, not normal emulator launching.
+
+Core owns the equivalent boundary for `Launch` and `Launch Emulator`.
+
 ## Structured Results
 
 Lifecycle handlers return structured dictionaries.
@@ -682,6 +726,10 @@ Test the compiled manager directly before packaging:
 
 Its stdout must contain only strict JSONL protocol records.
 
+After packaging, perform the release acceptance test through the real compiled EmuKit executable and release feed. At minimum verify install, check, repair, update, uninstall, emulator-only launch, and game launch where the module supports them.
+
+A release-only failure that does not reproduce from Python source must be treated as a frozen-runtime/process-boundary problem until proven otherwise. Check DLL-search inheritance, child console attachment, working directory, and source-versus-frozen path resolution before changing emulator-specific logic.
+
 ## Remote Distribution
 
 Before release packaging, the source/development module ZIP should be tested through the `backend/EmuKit` development feed.
@@ -752,6 +800,10 @@ Before publishing a module:
 - source `Manager` exists
 - `DependencyPath` resolves to a child of `ROOT/Emulators`
 - frozen manager uses `sys.executable` for `MODULE_DIR`
+- source and frozen lifecycle behavior is equivalent
+- frozen Windows managers sanitize PyInstaller DLL-search state before launching lifecycle child programs
+- lifecycle child stdout/stderr is captured or redirected instead of leaking into executable-manager stdout
+- unwanted lifecycle child console windows are suppressed when required
 - `.ProjectHomelabRoot` remains the only ProjectHomelab root marker
 - required lifecycle handlers exist
 - every lifecycle handler accepts `progress`
@@ -759,14 +811,15 @@ Before publishing a module:
 - every declared system has valid Brand and Platform metadata
 - system identity does not conflict with existing modules
 - all launch paths and arguments are intentional
+- `IsolateLaunchConsole` is present only when the emulator or a specific system requires console isolation
 - `check()` correctly reports missing, installed, and broken states
 - `install()` succeeds from a clean state
 - long install work emits live progress
 - `repair()` restores a deliberately broken state
 - `uninstall()` follows the module's data policy
 - `update()` follows the emulator-update policy
-- launch with a game works
-- launch without a game works
+- launch with a game works from source Core
+- launch without a game works from source Core
 - development ZIP uses the source manager and installs through the development feed
 - backend package SHA-256 matches both backend manifests
 - release package uses the target-qualified filename
@@ -777,6 +830,9 @@ Before publishing a module:
 - release package SHA-256 matches both release manifests
 - extracted `Id` and `ModuleVersion` match the active platform manifest
 - release package installs through the release feed
+- the real compiled EmuKit release executable completes lifecycle operations with the compiled manager
+- the real compiled EmuKit release executable launches the emulator and games without PyInstaller DLL contamination
+- isolated emulator launches do not write routine output into the EmuKit terminal
 - rebuilt packages do not retain stale SHA-256 values in manifests
 - runtime/module Python source contains no comments or docstrings
 - no legacy EmuKit protocol or obsolete emulator path has been introduced

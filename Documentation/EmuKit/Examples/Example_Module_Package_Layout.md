@@ -21,6 +21,14 @@ The source Info JSON contains:
 "Manager": "ExampleEmuManager.py"
 ```
 
+If the emulator must not attach to EmuKit's console when launched, the same Info JSON may also declare:
+
+```json
+"IsolateLaunchConsole": true
+```
+
+The default is `false`.
+
 Development-feed layout:
 
 ```text
@@ -87,3 +95,5 @@ ExampleEmuManager.exe <check|install|uninstall|repair|update> --json
 ```
 
 and emit only strict JSONL progress/result records on stdout.
+
+Lifecycle child programs must be contained by the module rather than writing into manager stdout. The release package must also be tested through the real compiled EmuKit executable because frozen Core/module process behavior can differ from Python-source execution if DLL or console state is inherited incorrectly.

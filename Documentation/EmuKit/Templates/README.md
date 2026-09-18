@@ -74,6 +74,30 @@ Managed emulator files belong below:
 ROOT/Emulators/
 ```
 
+## External Processes
+
+`EmuKit_Module_Common_Template.py` includes `run_external_process(...)` for lifecycle child programs.
+
+Use it for extractors, firmware installers, emulator setup/maintenance commands, and other external tools started by the module.
+
+For routine lifecycle work:
+
+- capture or redirect child stdout/stderr
+- never allow child stdout to enter executable-manager JSONL stdout
+- include useful output tails in structured failure `details`
+- use `isolate_console=True` only for child programs that attach to or create unwanted consoles
+- keep source and frozen-manager behavior equivalent
+
+On frozen Windows managers the helper temporarily restores the normal DLL search path while the external program is created, then restores the manager's PyInstaller runtime path.
+
+The Info templates also contain:
+
+```json
+"IsolateLaunchConsole": false
+```
+
+Set that to `true` only when the emulator itself must be isolated from EmuKit's console during normal Core launching. A system may override it for a specific game-launch path.
+
 ## Development Package
 
 Package:
@@ -138,6 +162,8 @@ EmuKit_Platform_Release_Manifest_Template.json
 Calculate SHA-256 from the exact release ZIP.
 
 Development and release hashes are independent.
+
+Before publication, test the actual compiled manager through the actual compiled EmuKit release executable. A Python-source-only test is not sufficient for Windows release acceptance because frozen process DLL and console inheritance must also be validated.
 
 ## Source Policy
 
