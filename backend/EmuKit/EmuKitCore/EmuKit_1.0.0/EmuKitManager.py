@@ -1847,12 +1847,13 @@ class EmuKitManager:
             package_url,
             headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
         )
+        package_name = Path(entry["Package"]).name
         self._emit_progress(
             module_id,
             "acquire_module",
-            10,
-            "Downloading",
-            f'Downloading module package from "{package_url}".',
+            0,
+            "Downloading Module",
+            package_name,
         )
         with urllib.request.urlopen(request, timeout=60) as response:
             total_raw = response.headers.get("Content-Length")
@@ -1865,15 +1866,21 @@ class EmuKitManager:
                         break
                     handle.write(chunk)
                     read += len(chunk)
-                    if total:
-                        percent = 10 + int((read / total) * 45)
-                        self._emit_progress(
-                            module_id,
-                            "acquire_module",
-                            min(55, percent),
-                            "Downloading",
-                            None,
-                        )
+                    percent = int((read / total) * 55) if total else None
+                    self._emit_progress(
+                        module_id,
+                        "acquire_module",
+                        min(55, percent) if percent is not None else None,
+                        "Downloading Module",
+                        package_name,
+                    )
+        self._emit_progress(
+            module_id,
+            "acquire_module",
+            55,
+            "Downloading Module",
+            package_name,
+        )
 
     def acquire_module(
         self,
@@ -1946,8 +1953,8 @@ class EmuKitManager:
                         remote_id,
                         "acquire_module",
                         60,
-                        "Verifying",
-                        "Verifying module package SHA-256.",
+                        "Validating Module",
+                        Path(entry["Package"]).name,
                     )
                     actual_sha = self._sha256_file(package_path)
                     if actual_sha != entry["SHA256"]:
@@ -1971,8 +1978,8 @@ class EmuKitManager:
                             remote_id,
                             "acquire_module",
                             70,
-                            "Extracting",
-                            "Extracting module package.",
+                            "Extracting Module",
+                            Path(entry["Package"]).name,
                         )
                         self._safe_extract_zip(package_path, extract_root)
                         module_dir, info, _ = self._locate_extracted_module(
@@ -2035,7 +2042,7 @@ class EmuKitManager:
                             "acquire_module",
                             85,
                             "Installing Module",
-                            "Installing validated module package.",
+                            entry["Name"],
                         )
 
                         if destination.exists():
@@ -2490,11 +2497,18 @@ class EmuKitManager:
 
         try:
             manager_path = self._manager_entry_path(module_id)
+            start_stage = {
+                "install": "Starting Install",
+                "repair": "Starting Repair",
+                "update": "Starting Update",
+                "uninstall": "Starting Uninstall",
+                "check": "Starting Check",
+            }.get(operation, operation.replace("_", " ").title())
             self._emit_progress(
                 module_id,
                 operation,
                 0,
-                operation.capitalize(),
+                start_stage,
                 None,
             )
 

@@ -260,8 +260,10 @@ class EmuKitConsole:
         stage = str(event.get("stage") or operation.replace("_", " ").title())
         percent = event.get("percent")
         suffix = f" {percent:3d}%" if isinstance(percent, int) else ""
-        text = f"{module_name:<24} {stage}{suffix}"
-        print("\r" + text.ljust(90), end="", flush=True)
+        message = " ".join(str(event.get("message") or "").split())
+        detail = f"  {message}" if message and percent != 100 else ""
+        text = f"{module_name:<24} {stage}{suffix}{detail}"
+        print("\r" + text.ljust(140), end="", flush=True)
         self._progress_active = True
 
         if percent == 100:

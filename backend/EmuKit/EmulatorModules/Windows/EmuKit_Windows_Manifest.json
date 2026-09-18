@@ -9,7 +9,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0.zip",
-      "SHA256": "fffe48bd45491b018d74f88d75baa6e5a2b8da6e49fff78c67a130111268ded5"
+      "SHA256": "f235c4039328fad34f5adb69ba6dd081b87fecaba70ed2d5532c086ec30256e8"
     },
     "xenia": {
       "Name": "Xenia Canary",
@@ -18,7 +18,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0.zip",
-      "SHA256": "38c9fc56a2e8ab48d5f78fdd5b198dd133f2a4cdb6fa4e1f6ebb2e162b73c785"
+      "SHA256": "7cff81c39bf5fec42ad96fbd73ccf4449518ab423610b5acb8ef3d02047a6730"
     },
     "duckstation": {
       "Name": "DuckStation",
@@ -30,7 +30,7 @@
       ],
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0.zip",
-      "SHA256": "02baeb9aaa7def090e25305bf0817e80848e12f6bb8476cf27ebbb74a330e918"
+      "SHA256": "ca4b863f3c72617e21bceaa57632606b74183f92ad5043c741fb91a5e09b22cf"
     },
     "pcsx2": {
       "Name": "PCSX2",
@@ -40,7 +40,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0.zip",
-      "SHA256": "e52b20d35423ce7570e7dad92542009c21262c518b957fcbc8e4fe82f1774118"
+      "SHA256": "cae1930f9b10f4c632473e6322a94f91e8198a7e14598a45c83c878eba034f14"
     },
     "ppsspp": {
       "Name": "PPSSPP",
@@ -50,7 +50,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PPSSPP/PPSSPP_1.0.0.zip",
-      "SHA256": "0c737b80ea71c356658ac0363d14ff11d076d5cea040352da29e72cd863f6553"
+      "SHA256": "2fa5b15baef2a9294c241e7fece13e987ea7dc38929a179bacd2865a1462fed6"
     },
     "rpcs3": {
       "Name": "RPCS3",
@@ -60,7 +60,7 @@
       ],
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0.zip",
-      "SHA256": "025daa54b463e34a89c7bc5022cbdefff16b1ebe939df94c1eb60018155e1bef"
+      "SHA256": "83d60af4b5444cc1d034b8e069d72f8afb6dc3d2d13b8975d574c522bab7127d"
     },
     "vita3k": {
       "Name": "Vita3K",
@@ -72,7 +72,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0.zip",
-      "SHA256": "51b04cf61ce33e77062f8dc221748e82d2dc74d978c53229fb691eae061b13c7"
+      "SHA256": "562148f253998296082630d742cce4987fb7358e2564bd063c45e538facf8bbd"
     },
     "ares": {
       "Name": "Ares",
@@ -81,7 +81,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Ares/Ares_1.0.0.zip",
-      "SHA256": "4dd9a2b965d5e626c52cf54662597dadbd11356d318097fc2d6ce455967ad396"
+      "SHA256": "aa416455f844aa96ecd4e22424ffc3105bb4e985880503d04159e41083351da5"
     }
   }
 }
