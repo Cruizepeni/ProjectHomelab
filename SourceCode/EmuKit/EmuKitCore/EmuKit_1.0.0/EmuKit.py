@@ -27,16 +27,15 @@ class EmuKit:
         auto_initialize: bool = True,
         progress_callback: Callable[[dict[str, Any]], None] | None = None,
     ) -> None:
-        runtime_directory = self._runtime_directory()
-        self.project_root = (
-            Path(project_root).resolve()
-            if project_root is not None
-            else self._resolve_project_root(runtime_directory)
-        )
         self.emukit_root = (
             Path(emukit_root).resolve()
             if emukit_root is not None
-            else self._resolve_emukit_root(runtime_directory, self.project_root)
+            else self._runtime_directory()
+        )
+        self.project_root = (
+            Path(project_root).resolve()
+            if project_root is not None
+            else self._resolve_project_root(self.emukit_root)
         )
 
         self.settings = EmuKitSettings(project_root=self.project_root)
@@ -65,22 +64,6 @@ class EmuKit:
             if (candidate / cls.ROOT_MARKER).is_file():
                 return candidate
         return current
-
-    @staticmethod
-    def _resolve_emukit_root(runtime_directory: Path, project_root: Path) -> Path:
-        runtime_directory = runtime_directory.resolve()
-        project_root = project_root.resolve()
-        source_root = project_root / "SourceCode" / "EmuKit"
-        modules_root = project_root / "Modules" / "EmuKit"
-
-        for candidate in (source_root, modules_root):
-            try:
-                runtime_directory.relative_to(candidate.resolve())
-                return candidate.resolve()
-            except ValueError:
-                continue
-
-        return runtime_directory
 
     def initialize(self) -> dict[str, Any]:
         self.initialization_result = self.manager.initialize()
