@@ -1,0 +1,520 @@
+{
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Platform": "Windows",
+  "Emulators": {
+    "ares": {
+      "Name": "Ares",
+      "Aliases": [
+        "Ares Emulator"
+      ],
+      "Systems": [
+        "bandai.wonderswan",
+        "bandai.wonderswancolor",
+        "coleco.colecovision",
+        "nec.pcengine",
+        "nec.pcenginecd",
+        "nec.supergrafx",
+        "nintendo.fds",
+        "nintendo.gameboy",
+        "nintendo.gameboyadvance",
+        "nintendo.gameboycolor",
+        "nintendo.n64",
+        "nintendo.n64dd",
+        "nintendo.nes",
+        "nintendo.satellaview",
+        "nintendo.snes",
+        "nintendo.supergameboy",
+        "sega.32x",
+        "sega.gamegear",
+        "sega.genesis",
+        "sega.mastersystem",
+        "sega.segacd",
+        "sega.sg1000",
+        "snk.neogeopocket",
+        "snk.neogeopocketcolor"
+      ]
+    },
+    "duckstation": {
+      "Name": "DuckStation",
+      "Aliases": [],
+      "Systems": [
+        "sony.playstation"
+      ]
+    },
+    "melonds": {
+      "Name": "MelonDS",
+      "Aliases": [],
+      "Systems": [
+        "nintendo.ds",
+        "nintendo.dsi"
+      ]
+    },
+    "pcsx2": {
+      "Name": "PCSX2",
+      "Aliases": [],
+      "Systems": [
+        "sony.playstation2"
+      ]
+    },
+    "ppsspp": {
+      "Name": "PPSSPP",
+      "Aliases": [],
+      "Systems": [
+        "sony.playstationportable"
+      ]
+    },
+    "rpcs3": {
+      "Name": "RPCS3",
+      "Aliases": [],
+      "Systems": [
+        "sony.playstation3"
+      ]
+    },
+    "vita3k": {
+      "Name": "Vita3K",
+      "Aliases": [],
+      "Systems": [
+        "sony.playstationvita"
+      ]
+    },
+    "xemu": {
+      "Name": "Xemu",
+      "Aliases": [],
+      "Systems": [
+        "microsoft.xbox"
+      ]
+    },
+    "xenia": {
+      "Name": "Xenia Canary",
+      "Aliases": [
+        "Xenia"
+      ],
+      "Systems": [
+        "microsoft.xbox360"
+      ]
+    }
+  },
+  "Brands": {
+    "bandai": {
+      "Name": "Bandai",
+      "Aliases": [],
+      "Systems": {
+        "bandai.wonderswan": {
+          "Name": "WonderSwan",
+          "Aliases": [
+            "WS"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "bandai.wonderswancolor": {
+          "Name": "WonderSwan Color",
+          "Aliases": [
+            "WSC"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        }
+      }
+    },
+    "coleco": {
+      "Name": "Coleco",
+      "Aliases": [],
+      "Systems": {
+        "coleco.colecovision": {
+          "Name": "ColecoVision",
+          "Aliases": [
+            "Coleco Vision"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        }
+      }
+    },
+    "microsoft": {
+      "Name": "Microsoft",
+      "Aliases": [],
+      "Systems": {
+        "microsoft.xbox": {
+          "Name": "Xbox",
+          "Aliases": [
+            "Original Xbox"
+          ],
+          "Emulators": [
+            "xemu"
+          ],
+          "RecommendedPrimary": "xemu"
+        },
+        "microsoft.xbox360": {
+          "Name": "Xbox 360",
+          "Aliases": [
+            "Xbox360",
+            "X360"
+          ],
+          "Emulators": [
+            "xenia"
+          ],
+          "RecommendedPrimary": "xenia"
+        }
+      }
+    },
+    "nec": {
+      "Name": "NEC",
+      "Aliases": [],
+      "Systems": {
+        "nec.pcengine": {
+          "Name": "PC Engine / TurboGrafx-16",
+          "Aliases": [
+            "PC Engine",
+            "TurboGrafx-16",
+            "TG16",
+            "PCE"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nec.pcenginecd": {
+          "Name": "PC Engine CD / TurboGrafx-CD",
+          "Aliases": [
+            "PC Engine CD",
+            "TurboGrafx-CD",
+            "TurboGrafx CD",
+            "PCE CD"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nec.supergrafx": {
+          "Name": "SuperGrafx",
+          "Aliases": [
+            "SGX",
+            "NEC SuperGrafx"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        }
+      }
+    },
+    "nintendo": {
+      "Name": "Nintendo",
+      "Aliases": [],
+      "Systems": {
+        "nintendo.ds": {
+          "Name": "Nintendo DS",
+          "Aliases": [
+            "DS",
+            "NDS"
+          ],
+          "Emulators": [
+            "melonds"
+          ],
+          "RecommendedPrimary": "melonds"
+        },
+        "nintendo.dsi": {
+          "Name": "Nintendo DSi",
+          "Aliases": [
+            "DSi",
+            "NDSi"
+          ],
+          "Emulators": [
+            "melonds"
+          ],
+          "RecommendedPrimary": "melonds"
+        },
+        "nintendo.fds": {
+          "Name": "Famicom Disk System",
+          "Aliases": [
+            "FDS"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.gameboy": {
+          "Name": "Game Boy",
+          "Aliases": [
+            "GB",
+            "DMG",
+            "Nintendo Game Boy"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.gameboyadvance": {
+          "Name": "Game Boy Advance",
+          "Aliases": [
+            "GBA",
+            "Nintendo Game Boy Advance"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.gameboycolor": {
+          "Name": "Game Boy Color",
+          "Aliases": [
+            "GBC",
+            "CGB",
+            "Nintendo Game Boy Color"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.n64": {
+          "Name": "Nintendo 64",
+          "Aliases": [
+            "N64"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.n64dd": {
+          "Name": "Nintendo 64DD",
+          "Aliases": [
+            "N64DD",
+            "64DD"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.nes": {
+          "Name": "Nintendo Entertainment System",
+          "Aliases": [
+            "NES",
+            "Famicom"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.satellaview": {
+          "Name": "Satellaview",
+          "Aliases": [
+            "BS-X",
+            "BSX"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.snes": {
+          "Name": "Super Nintendo Entertainment System",
+          "Aliases": [
+            "SNES",
+            "Super Famicom",
+            "SFC"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "nintendo.supergameboy": {
+          "Name": "Super Game Boy",
+          "Aliases": [
+            "SGB",
+            "Super Game Boy 2",
+            "SGB2"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        }
+      }
+    },
+    "sega": {
+      "Name": "Sega",
+      "Aliases": [],
+      "Systems": {
+        "sega.32x": {
+          "Name": "32X",
+          "Aliases": [
+            "Sega 32X",
+            "Mega 32X",
+            "Mega Drive 32X"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "sega.gamegear": {
+          "Name": "Game Gear",
+          "Aliases": [
+            "Sega Game Gear",
+            "GG"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "sega.genesis": {
+          "Name": "Mega Drive / Genesis",
+          "Aliases": [
+            "Mega Drive",
+            "Genesis",
+            "Sega Mega Drive",
+            "Sega Genesis"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "sega.mastersystem": {
+          "Name": "Master System",
+          "Aliases": [
+            "Sega Master System",
+            "SMS"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "sega.segacd": {
+          "Name": "Mega CD / Sega CD",
+          "Aliases": [
+            "Mega CD",
+            "Sega CD",
+            "Mega-CD"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "sega.sg1000": {
+          "Name": "SG-1000",
+          "Aliases": [
+            "SG1000",
+            "Sega SG-1000"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        }
+      }
+    },
+    "snk": {
+      "Name": "SNK",
+      "Aliases": [],
+      "Systems": {
+        "snk.neogeopocket": {
+          "Name": "Neo Geo Pocket",
+          "Aliases": [
+            "NGP",
+            "SNK Neo Geo Pocket",
+            "NeoGeo Pocket"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        },
+        "snk.neogeopocketcolor": {
+          "Name": "Neo Geo Pocket Color",
+          "Aliases": [
+            "NGPC",
+            "SNK Neo Geo Pocket Color",
+            "NeoGeo Pocket Color"
+          ],
+          "Emulators": [
+            "ares"
+          ],
+          "RecommendedPrimary": "ares"
+        }
+      }
+    },
+    "sony": {
+      "Name": "Sony",
+      "Aliases": [],
+      "Systems": {
+        "sony.playstation": {
+          "Name": "PlayStation",
+          "Aliases": [
+            "PS1",
+            "PlayStation 1",
+            "PSOne"
+          ],
+          "Emulators": [
+            "duckstation"
+          ],
+          "RecommendedPrimary": "duckstation"
+        },
+        "sony.playstation2": {
+          "Name": "PlayStation 2",
+          "Aliases": [
+            "PS2",
+            "PlayStation2"
+          ],
+          "Emulators": [
+            "pcsx2"
+          ],
+          "RecommendedPrimary": "pcsx2"
+        },
+        "sony.playstation3": {
+          "Name": "PlayStation 3",
+          "Aliases": [
+            "PS3",
+            "PlayStation3"
+          ],
+          "Emulators": [
+            "rpcs3"
+          ],
+          "RecommendedPrimary": "rpcs3"
+        },
+        "sony.playstationportable": {
+          "Name": "PlayStation Portable",
+          "Aliases": [
+            "PSP"
+          ],
+          "Emulators": [
+            "ppsspp"
+          ],
+          "RecommendedPrimary": "ppsspp"
+        },
+        "sony.playstationvita": {
+          "Name": "PlayStation Vita",
+          "Aliases": [
+            "PS Vita",
+            "PSVita",
+            "Vita"
+          ],
+          "Emulators": [
+            "vita3k"
+          ],
+          "RecommendedPrimary": "vita3k"
+        }
+      }
+    }
+  }
+}

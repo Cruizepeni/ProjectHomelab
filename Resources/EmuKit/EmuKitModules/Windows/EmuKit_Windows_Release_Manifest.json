@@ -1,6 +1,12 @@
 {
   "SchemaVersion": 1,
   "Platform": "Windows",
+  "Catalogue": {
+    "SchemaVersion": 1,
+    "Version": 1,
+    "File": "EmuKit_Windows_Catalogue.json",
+    "SHA256": "5b75a9e4493a6591a4c55b7f533b903016cf1bbbd84723aaf90e5f2309ce9d9c"
+  },
   "Modules": {
     "ares": {
       "Name": "Ares",
