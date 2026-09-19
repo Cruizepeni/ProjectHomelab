@@ -16,7 +16,7 @@ Example stream:
 {"type":"progress","percent":55,"stage":"Verifying","message":"Verifying SHA-256."}
 {"type":"progress","percent":75,"stage":"Extracting","message":null}
 {"type":"progress","percent":95,"stage":"Finalizing","message":null}
-{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu installed successfully.","details":{"version":"4.2.0"}}}
+{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu version \"4.2.0\" installed successfully.","details":{"version":"4.2.0"}}}
 ```
 
 Every record is one complete JSON object followed by a newline.

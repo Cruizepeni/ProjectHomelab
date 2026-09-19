@@ -150,6 +150,18 @@ For each one record:
 
 Source and compiled-manager lifecycle behavior should remain equivalent.
 
+## User-Facing Identity and Completion
+
+Record the exact module display `Name`. It must begin with a capital letter even when the upstream project's branding begins with lowercase.
+
+Successful install results should use:
+
+```text
+<Module Name> version "<EmulatorVersion>" installed successfully.
+```
+
+Document additional firmware, resource, profile, or system-specific completion data as structured result `details` rather than adding it to the success sentence.
+
 ## Development Distribution
 
 Record:

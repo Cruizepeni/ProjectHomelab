@@ -728,7 +728,7 @@ A normal result contains:
   "module": "exampleemu",
   "operation": "install",
   "state": "installed",
-  "message": "ExampleEmu installed successfully.",
+  "message": "ExampleEmu version \"4.2.0\" installed successfully.",
   "details": {}
 }
 ```
@@ -743,6 +743,14 @@ Important semantic fields are:
 `module` should be present for module operations.
 
 `details` may contain operation-specific machine-readable information.
+
+Successful install messages use the concise canonical form:
+
+```text
+<Module Name> version "<EmulatorVersion>" installed successfully.
+```
+
+The module display name comes from its `Name` field and must begin with a capital letter even when upstream branding begins with lowercase. Extra information such as installed firmware, resources, profiles, or system coverage belongs in structured `details` rather than the final success sentence.
 
 Python lifecycle handlers return these dictionaries directly to Core.
 
@@ -783,7 +791,7 @@ Progress record:
 Final result record:
 
 ```json
-{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu installed successfully.","details":{}}}
+{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu version \"4.2.0\" installed successfully.","details":{}}}
 ```
 
 Executable managers must:

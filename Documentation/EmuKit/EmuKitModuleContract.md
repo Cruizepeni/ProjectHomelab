@@ -130,7 +130,9 @@ For schema version `1`, a normal registration is:
 
 `Name`
 
-- human-readable module/emulator name
+- human-readable module/emulator display name
+- must begin with a capital letter even when upstream branding begins with lowercase
+- this display convention does not rename upstream-controlled filenames, executables, package assets, URLs, repository identifiers, or other external identifiers
 
 `Aliases`
 
@@ -500,7 +502,7 @@ A progress record is:
 A final result record is:
 
 ```json
-{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu installed successfully.","details":{}}}
+{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu version \"4.2.0\" installed successfully.","details":{}}}
 ```
 
 Rules:
@@ -568,7 +570,7 @@ Successful example:
   "success": true,
   "operation": "install",
   "state": "installed",
-  "message": "ExampleEmu installed successfully.",
+  "message": "ExampleEmu version \"4.2.0\" installed successfully.",
   "details": {
     "version": "4.2.0"
   }
@@ -598,6 +600,14 @@ Modules should provide:
 - optional `details`
 
 Core adds module identity when necessary.
+
+For a successful `install` result, the canonical human-readable message is:
+
+```text
+<Module Name> version "<EmulatorVersion>" installed successfully.
+```
+
+Keep this sentence concise and consistent across modules. Firmware versions, installed resources, profile names, supported systems, and other module-specific completion information belong in `details` rather than being appended to the success message.
 
 Do not rely on console printing as the machine interface.
 

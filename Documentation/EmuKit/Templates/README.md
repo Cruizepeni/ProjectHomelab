@@ -165,6 +165,18 @@ Development and release hashes are independent.
 
 Before publication, test the actual compiled manager through the actual compiled EmuKit release executable. A Python-source-only test is not sufficient for Windows release acceptance because frozen process DLL and console inheritance must also be validated.
 
+## Display Name and Install Completion
+
+The module `Name` is the user-facing emulator display name and must begin with a capital letter even when upstream branding begins with lowercase. Do not apply this display rule to real upstream filenames, executables, package assets, URLs, repository identifiers, or other upstream-controlled identifiers.
+
+Successful install results use:
+
+```text
+<Module Name> version "<EmulatorVersion>" installed successfully.
+```
+
+Keep firmware, resource, profile, and system-specific completion information in structured `details` rather than extending the success sentence.
+
 ## Source Policy
 
 Do not add comments or docstrings to EmuKit Core/module runtime Python or these reusable Python templates.

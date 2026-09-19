@@ -185,7 +185,9 @@ Each module entry contains:
 
 `Name`
 
-- human-readable module/emulator name
+- human-readable module/emulator display name
+- must begin with a capital letter even when the upstream project styles its name with a lowercase first letter
+- upstream casing may still be preserved where it is part of a real external filename, executable, package asset, URL, repository identifier, or other upstream-controlled identifier
 
 `Aliases`
 

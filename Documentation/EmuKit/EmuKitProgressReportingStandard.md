@@ -93,7 +93,17 @@ Module install logic should normally finish below 100 percent after its final ve
 
 Core owns the final normalized install result and emits the final `Installed 100%` event.
 
-This keeps one authoritative completion event for every module.
+The following result message should then use the canonical form:
+
+```text
+<Module Name> version "<EmulatorVersion>" installed successfully.
+```
+
+Keep the success sentence limited to module name, emulator version, and successful completion. Firmware, resource, profile, and system-specific completion data belongs in structured result `details`.
+
+Module display names shown in progress and result output must begin with a capital letter even when upstream branding begins with lowercase.
+
+This keeps one authoritative completion event and one concise completion sentence for every module.
 
 ## Console Output
 
