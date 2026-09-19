@@ -40,7 +40,7 @@ class EmuKitManager:
     REPOSITORY = "Cruizepeni/ProjectHomelab"
     REPOSITORY_BRANCH = "main"
     DEVELOPMENT_FEED = "SourceCode/EmuKit"
-    RELEASE_FEED = "Releases/EmuKit"
+    RELEASE_FEED = "Resources/EmuKit"
 
     CORE_DEPENDENCIES = {
         "7zip": {
@@ -99,7 +99,7 @@ class EmuKitManager:
             )
 
         self.platform_feed_base_url = (
-            f"{self.feed_base_url}EmulatorModules/{self.host_platform}/"
+            f"{self.feed_base_url}EmuKitModules/{self.host_platform}/"
         )
         platform_manifest_name = (
             f"EmuKit_{self.host_platform}_Manifest.json"
