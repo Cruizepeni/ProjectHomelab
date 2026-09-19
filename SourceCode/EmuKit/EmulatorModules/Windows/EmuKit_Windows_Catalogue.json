@@ -44,9 +44,7 @@
     },
     "melonds": {
       "Name": "MelonDS",
-      "Aliases": [
-        "MelonDS"
-      ],
+      "Aliases": [],
       "Systems": [
         "nintendo.ds",
         "nintendo.dsi"
@@ -68,22 +66,14 @@
     },
     "rpcs3": {
       "Name": "RPCS3",
-      "Aliases": [
-        "PS3",
-        "PlayStation 3"
-      ],
+      "Aliases": [],
       "Systems": [
         "sony.playstation3"
       ]
     },
     "vita3k": {
       "Name": "Vita3K",
-      "Aliases": [
-        "PS Vita",
-        "PSVita",
-        "PlayStation Vita",
-        "Vita"
-      ],
+      "Aliases": [],
       "Systems": [
         "sony.playstationvita"
       ]

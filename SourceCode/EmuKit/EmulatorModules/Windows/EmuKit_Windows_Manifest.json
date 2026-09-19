@@ -5,14 +5,12 @@
     "SchemaVersion": 1,
     "Version": 1,
     "File": "EmuKit_Windows_Catalogue.json",
-    "SHA256": "67fe790d5abf626e5785ae3daf09d4a08b639aa021a60458444779317e81c37c"
+    "SHA256": "5b75a9e4493a6591a4c55b7f533b903016cf1bbbd84723aaf90e5f2309ce9d9c"
   },
   "Modules": {
     "xemu": {
       "Name": "Xemu",
-      "Aliases": [
-        "Original Xbox"
-      ],
+      "Aliases": [],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0.zip",
       "SHA256": "d5c763cc8cf99ed47d89d27a4dd301b73846a4dcf1207ce7b2474b3ce9974998"
@@ -28,57 +26,38 @@
     },
     "duckstation": {
       "Name": "DuckStation",
-      "Aliases": [
-        "PS1",
-        "PlayStation",
-        "PlayStation 1",
-        "PSOne"
-      ],
+      "Aliases": [],
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0.zip",
       "SHA256": "040a7005161a2f429e9c001ce114bfe447b1052097ca767ab2b6f4ec65606fcf"
     },
     "pcsx2": {
       "Name": "PCSX2",
-      "Aliases": [
-        "PS2",
-        "PlayStation 2"
-      ],
+      "Aliases": [],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0.zip",
       "SHA256": "b6e43ef4b84b9be13281e66d80852db959967a23d986e3ddb8401d4fdb6303c5"
     },
     "ppsspp": {
       "Name": "PPSSPP",
-      "Aliases": [
-        "PSP",
-        "PlayStation Portable"
-      ],
+      "Aliases": [],
       "Version": "1.0.0",
       "Package": "PPSSPP/PPSSPP_1.0.0.zip",
       "SHA256": "57c15949c81729db375df0b8113ffb8b62169695e4a539fd61ec6676fec9f67f"
     },
     "rpcs3": {
       "Name": "RPCS3",
-      "Aliases": [
-        "PS3",
-        "PlayStation 3"
-      ],
+      "Aliases": [],
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0.zip",
-      "SHA256": "aa9208fbdedb2333c4b060ed93da5b1b5acd6bfa1432192f1ee539a8517e1f96"
+      "SHA256": "a864a0457e78bb85e3815bf1e214e08bd9107826b52541b4208d57834647d580"
     },
     "vita3k": {
       "Name": "Vita3K",
-      "Aliases": [
-        "PS Vita",
-        "PSVita",
-        "PlayStation Vita",
-        "Vita"
-      ],
+      "Aliases": [],
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0.zip",
-      "SHA256": "ca26a2b3c6c6275ff6fc80f8d7d24b42ff68530df31eb67a8e6b8a5bba8ef0b0"
+      "SHA256": "6e47bb47043a867ad12cd94a3ed4f901fa529e31e6df451e5fb8e2fe071bcf03"
     },
     "ares": {
       "Name": "Ares",
@@ -91,17 +70,10 @@
     },
     "melonds": {
       "Name": "MelonDS",
-      "Aliases": [
-        "MelonDS",
-        "Nintendo DS",
-        "NDS",
-        "DS",
-        "Nintendo DSi",
-        "DSi"
-      ],
+      "Aliases": [],
       "Version": "1.0.0",
       "Package": "MelonDS/MelonDS_1.0.0.zip",
-      "SHA256": "cedafc8dbb61601a4f4370e9c994ed8b84c41984c75ec0509f9a824f607a2867"
+      "SHA256": "28c7e2ead2f19eb526b60c0b9fa57bab52ccb05568d5cd3a87dcf99efe2824e7"
     }
   }
 }
