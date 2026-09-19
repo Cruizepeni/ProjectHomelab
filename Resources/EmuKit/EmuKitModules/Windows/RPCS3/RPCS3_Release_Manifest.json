@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "rpcs3",
+  "Name": "RPCS3",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "0.0.42-20019-92721aed",
+      "Package": "RPCS3_1.0.0_Windows_x86_64.zip",
+      "SHA256": "20791a6e1960d323d14315f6dfe717713bff3c5c62827c746dcf5022eaf616a1"
+    }
+  }
+}

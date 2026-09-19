@@ -13,5 +13,12 @@
   "distribution": {
     "mode": "individual_resources",
     "platform_independent": true
+  },
+  "module_distribution": {
+    "root": "EmuKitModules",
+    "checksum_authority": "platform_manifests",
+    "platform_manifests": {
+      "Windows": "EmuKitModules/Windows/EmuKit_Windows_Release_Manifest.json"
+    }
   }
 }

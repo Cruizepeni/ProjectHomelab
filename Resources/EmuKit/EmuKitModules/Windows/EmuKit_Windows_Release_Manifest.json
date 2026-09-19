@@ -1,0 +1,73 @@
+{
+  "SchemaVersion": 1,
+  "Platform": "Windows",
+  "Modules": {
+    "ares": {
+      "Name": "Ares",
+      "Aliases": [
+        "Ares Emulator"
+      ],
+      "Version": "1.0.0",
+      "Package": "Ares/Ares_1.0.0_Windows_x86_64.zip",
+      "SHA256": "d40a296968d28905536c2ee6a21c14f54a2ec5046a467b16a1c3be50d85c9ae5"
+    },
+    "duckstation": {
+      "Name": "DuckStation",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "DuckStation/DuckStation_1.0.0_Windows_x86_64.zip",
+      "SHA256": "86ac115e1ec82da15d49ab21e17664ebac8b705b473ea9baebbaa41b0c80311a"
+    },
+    "melonds": {
+      "Name": "MelonDS",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "MelonDS/MelonDS_1.0.0_Windows_x86_64.zip",
+      "SHA256": "8a774111e5c3d5bc18048383c9abeb9af908983dd55ede437ae7eacd0a25a4b3"
+    },
+    "pcsx2": {
+      "Name": "PCSX2",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "PCSX2/PCSX2_1.0.0_Windows_x86_64.zip",
+      "SHA256": "0c6315431cea9eb57aa1b1f9cd910b31bd04c3fd7cc0f2c97e0c3bae2f8b6c6f"
+    },
+    "ppsspp": {
+      "Name": "PPSSPP",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "PPSSPP/PPSSPP_1.0.0_Windows_x86_64.zip",
+      "SHA256": "6b082416218ab4bbccf59762ff6afdd8eec0ea021a9a862079bac984324e6672"
+    },
+    "rpcs3": {
+      "Name": "RPCS3",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "RPCS3/RPCS3_1.0.0_Windows_x86_64.zip",
+      "SHA256": "20791a6e1960d323d14315f6dfe717713bff3c5c62827c746dcf5022eaf616a1"
+    },
+    "vita3k": {
+      "Name": "Vita3K",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "Vita3K/Vita3K_1.0.0_Windows_x86_64.zip",
+      "SHA256": "c167d1677acd3ab101aa82a6ec8b4793f0ccfc8b55e530dff82baf8c0a4ec050"
+    },
+    "xemu": {
+      "Name": "Xemu",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "Xemu/Xemu_1.0.0_Windows_x86_64.zip",
+      "SHA256": "8f0a528289f49925e56d978b6ef3b9cbba79b6956f87335da9d0d06a8d6e977c"
+    },
+    "xenia": {
+      "Name": "Xenia Canary",
+      "Aliases": [
+        "Xenia"
+      ],
+      "Version": "1.0.0",
+      "Package": "Xenia/Xenia_1.0.0_Windows_x86_64.zip",
+      "SHA256": "53b52291f9251a77f62dc6abbbf9615bc4ed29d3a38e07b0ca4a5f8881bd3891"
+    }
+  }
+}

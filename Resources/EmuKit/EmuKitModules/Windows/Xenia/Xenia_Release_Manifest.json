@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "xenia",
+  "Name": "Xenia Canary",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "a5a18f5_canary_experimental",
+      "Package": "Xenia_1.0.0_Windows_x86_64.zip",
+      "SHA256": "53b52291f9251a77f62dc6abbbf9615bc4ed29d3a38e07b0ca4a5f8881bd3891"
+    }
+  }
+}
