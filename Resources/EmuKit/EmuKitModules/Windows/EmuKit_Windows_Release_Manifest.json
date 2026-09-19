@@ -15,56 +15,56 @@
       ],
       "Version": "1.0.0",
       "Package": "Ares/Ares_1.0.0_Windows_x86_64.zip",
-      "SHA256": "d40a296968d28905536c2ee6a21c14f54a2ec5046a467b16a1c3be50d85c9ae5"
+      "SHA256": "0386152d6e48800859ebeeeef5cdf97ab1bd4cc15caea29727131a9fd7e1d5a6"
     },
     "duckstation": {
       "Name": "DuckStation",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0_Windows_x86_64.zip",
-      "SHA256": "86ac115e1ec82da15d49ab21e17664ebac8b705b473ea9baebbaa41b0c80311a"
+      "SHA256": "fa6193d7f5e0b33f783d5397f90f6a10e7f81b7002e26ee4f4642fc7c5074a39"
     },
     "melonds": {
       "Name": "MelonDS",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "MelonDS/MelonDS_1.0.0_Windows_x86_64.zip",
-      "SHA256": "8a774111e5c3d5bc18048383c9abeb9af908983dd55ede437ae7eacd0a25a4b3"
+      "SHA256": "e1a5566a2a5ec53750a8b2cff4d563c3d5e2e2d514048d3de295d0c25e93d237"
     },
     "pcsx2": {
       "Name": "PCSX2",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0_Windows_x86_64.zip",
-      "SHA256": "0c6315431cea9eb57aa1b1f9cd910b31bd04c3fd7cc0f2c97e0c3bae2f8b6c6f"
+      "SHA256": "3a250da71b16fd257b3c7c280a3ef25f669413baa56881a7ecac75c48c968feb"
     },
     "ppsspp": {
       "Name": "PPSSPP",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "PPSSPP/PPSSPP_1.0.0_Windows_x86_64.zip",
-      "SHA256": "6b082416218ab4bbccf59762ff6afdd8eec0ea021a9a862079bac984324e6672"
+      "SHA256": "cd5fffba8c11381dbc978d8f30ef4740ac68c8d9a9b2434a90a800c750391300"
     },
     "rpcs3": {
       "Name": "RPCS3",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0_Windows_x86_64.zip",
-      "SHA256": "20791a6e1960d323d14315f6dfe717713bff3c5c62827c746dcf5022eaf616a1"
+      "SHA256": "892dfe24c34557a8d950eb4429643d77f8c060a16f5d267d44ebf879e0b1d30a"
     },
     "vita3k": {
       "Name": "Vita3K",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0_Windows_x86_64.zip",
-      "SHA256": "c167d1677acd3ab101aa82a6ec8b4793f0ccfc8b55e530dff82baf8c0a4ec050"
+      "SHA256": "a088316d0c7098f46f8046eac0a75de18ce601cdb10585934537774b92e32415"
     },
     "xemu": {
       "Name": "Xemu",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0_Windows_x86_64.zip",
-      "SHA256": "8f0a528289f49925e56d978b6ef3b9cbba79b6956f87335da9d0d06a8d6e977c"
+      "SHA256": "712f333cd6b7266c8f43091dd81cf9e3c3b6931ae60b1727bffec4675d14bb83"
     },
     "xenia": {
       "Name": "Xenia Canary",
@@ -73,7 +73,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0_Windows_x86_64.zip",
-      "SHA256": "53b52291f9251a77f62dc6abbbf9615bc4ed29d3a38e07b0ca4a5f8881bd3891"
+      "SHA256": "dab07a19dd072b9bf4041c43883d0b1e2c06a8e73e65eb37a6af2db2c3fe5fc3"
     }
   }
 }
