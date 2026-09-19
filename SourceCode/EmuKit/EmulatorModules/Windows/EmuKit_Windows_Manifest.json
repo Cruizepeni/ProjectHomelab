@@ -9,7 +9,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0.zip",
-      "SHA256": "f235c4039328fad34f5adb69ba6dd081b87fecaba70ed2d5532c086ec30256e8"
+      "SHA256": "c82fea023d821c56da9ffbeeec56ee598919efcc81c3747ebaa9b60d344e683a"
     },
     "xenia": {
       "Name": "Xenia Canary",
@@ -18,7 +18,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0.zip",
-      "SHA256": "8ec9cdf86e415a9650fed4158ac7fa5b57f9a11bd0e11b7967a5112ac379cffd"
+      "SHA256": "b8f94138a2b994729738062a6066ff1567872076fc64cc49a22c2b9f93efadfd"
     },
     "duckstation": {
       "Name": "DuckStation",
@@ -30,7 +30,7 @@
       ],
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0.zip",
-      "SHA256": "ca4b863f3c72617e21bceaa57632606b74183f92ad5043c741fb91a5e09b22cf"
+      "SHA256": "5521f0cc6e58fa366396563190a5fae92f8234360d473ed872dda40d5172e9b4"
     },
     "pcsx2": {
       "Name": "PCSX2",
@@ -40,7 +40,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0.zip",
-      "SHA256": "a857173d9c189e02c8def6d7657583b2425694f1085fc38386eb33bae448351d"
+      "SHA256": "f7f28e740ecc96b34885eb8359382ffb88983e22e27d5a94897d558e6393b4cf"
     },
     "ppsspp": {
       "Name": "PPSSPP",
@@ -50,7 +50,7 @@
       ],
       "Version": "1.0.0",
       "Package": "PPSSPP/PPSSPP_1.0.0.zip",
-      "SHA256": "2fa5b15baef2a9294c241e7fece13e987ea7dc38929a179bacd2865a1462fed6"
+      "SHA256": "c268f57b25ac0ea9a294a7cd1465a57012a1fdcb2d7db2a0ae11c3ba81a5045e"
     },
     "rpcs3": {
       "Name": "RPCS3",
@@ -60,7 +60,7 @@
       ],
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0.zip",
-      "SHA256": "8dfbe70f15eaa7fe9b4044942d94eb5d261b3bffeaea4afac742e25eb41a21bb"
+      "SHA256": "97185f9e4e8c76c24366ebab28fbe468671b9aaae9c6ebad0bc6debfb8a6ed68"
     },
     "vita3k": {
       "Name": "Vita3K",
@@ -72,7 +72,7 @@
       ],
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0.zip",
-      "SHA256": "6ade206ae702399d51d6ec2e1c2e37b4781f832443ad905f093628ab8cb91378"
+      "SHA256": "3ec2bdf9fc4600785ec4dfa498874f5712f47efe6df38ca539d79eb34b5889f2"
     },
     "ares": {
       "Name": "Ares",
@@ -81,10 +81,10 @@
       ],
       "Version": "1.0.0",
       "Package": "Ares/Ares_1.0.0.zip",
-      "SHA256": "aa416455f844aa96ecd4e22424ffc3105bb4e985880503d04159e41083351da5"
+      "SHA256": "8fb24eee7f20d960670875facce736f260066d130997ae5aaa15145eaa79b693"
     },
     "melonds": {
-      "Name": "melonDS",
+      "Name": "MelonDS",
       "Aliases": [
         "MelonDS",
         "Nintendo DS",
@@ -95,7 +95,7 @@
       ],
       "Version": "1.0.0",
       "Package": "MelonDS/MelonDS_1.0.0.zip",
-      "SHA256": "f1270ce2cdafbe19cfbfe4e939a3778d0de1a5f2e1084a5d041500ecc302158d"
+      "SHA256": "3c0ad0b194b9f485aabd67f831eea24f5d239d209a0e1a0b826820b68288f9cb"
     }
   }
 }
