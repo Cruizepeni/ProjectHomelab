@@ -82,6 +82,20 @@
       "Version": "1.0.0",
       "Package": "Ares/Ares_1.0.0.zip",
       "SHA256": "aa416455f844aa96ecd4e22424ffc3105bb4e985880503d04159e41083351da5"
+    },
+    "melonds": {
+      "Name": "melonDS",
+      "Aliases": [
+        "MelonDS",
+        "Nintendo DS",
+        "NDS",
+        "DS",
+        "Nintendo DSi",
+        "DSi"
+      ],
+      "Version": "1.0.0",
+      "Package": "MelonDS/MelonDS_1.0.0.zip",
+      "SHA256": "ae2f9f69153feb24367ab5a6a4e753638d52a8c252f59a7593cbc112d943633b"
     }
   }
 }

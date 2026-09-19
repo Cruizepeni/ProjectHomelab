@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "melonds",
+  "Name": "melonDS",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "1.1",
+      "Package": "MelonDS_1.0.0.zip",
+      "SHA256": "ae2f9f69153feb24367ab5a6a4e753638d52a8c252f59a7593cbc112d943633b"
+    }
+  }
+}
