@@ -33,7 +33,8 @@ class EmuKitManager:
     CORE_VERSION = "1.0.0"
     REGISTRY_VERSION = 2
     MODULE_INFO_VERSION = 1
-    REMOTE_MANIFEST_SCHEMA = 1
+    REMOTE_MANIFEST_SCHEMAS = {1, 2}
+    CATALOGUE_SCHEMA = 1
     MODULE_INFO_PATTERN = "EmuKit*Info.json"
 
     REPOSITORY = "Cruizepeni/ProjectHomelab"
@@ -79,9 +80,9 @@ class EmuKitManager:
 
         self.registry_path = self.project_root / "Appdata" / "Registry" / "EmuKitRegistry.json"
         self.staging_root = self.project_root / "Appdata" / "Cache" / "EmuKit" / "ModuleStaging"
-
         self.host_platform = self._canonical_platform()
         self.host_architecture = self._canonical_architecture()
+        self.catalogue_cache_path = self.project_root / "Appdata" / "Cache" / "EmuKit" / "Catalogues" / f"EmuKit_{self.host_platform}_Catalogue.json"
 
         self.channel = self._resolve_channel(channel)
         feed_override = os.environ.get("EMUKIT_FEED_BASE_URL", "").strip()
@@ -122,6 +123,8 @@ class EmuKitManager:
         self._remote_manifest: dict[str, Any] | None = None
         self._remote_manifest_error: dict[str, Any] | None = None
         self._remote_manifest_loaded = False
+        self._remote_catalogue: dict[str, Any] | None = None
+        self._remote_catalogue_error: dict[str, Any] | None = None
 
 
     @staticmethod
@@ -1097,9 +1100,6 @@ class EmuKitManager:
             ):
                 return False, f'System "{system_id}" has invalid "FullscreenArgument".'
 
-            if "Default" in system_info and not isinstance(system_info.get("Default"), bool):
-                return False, f'System "{system_id}" "Default" must be a boolean.'
-
             if "IsolateLaunchConsole" in system_info and not isinstance(
                 system_info.get("IsolateLaunchConsole"),
                 bool,
@@ -1184,7 +1184,6 @@ class EmuKitManager:
                 system_info["Platform"]["Aliases"] = list(
                     system_info["Platform"].get("Aliases") or []
                 )
-                system_info["Default"] = system_info.get("Default", False)
 
             registration["ModulePath"] = self._portable_path(info_path.parent)
             registration["InfoPath"] = self._portable_path(info_path)
@@ -1221,7 +1220,6 @@ class EmuKitManager:
         platforms: dict[str, dict[str, Any]] = {}
         systems: dict[str, dict[str, Any]] = {}
         errors: list[dict[str, Any]] = []
-        defaults: dict[str, list[str]] = {}
 
         for module_id, module_info in sorted(modules.items()):
             for system_id, system_info in module_info["Systems"].items():
@@ -1314,27 +1312,17 @@ class EmuKitManager:
                     platforms[platform_id]["Systems"].append(system_id)
                 if module_id not in systems[system_id]["Modules"]:
                     systems[system_id]["Modules"].append(module_id)
-                if system_info.get("Default"):
-                    defaults.setdefault(system_id, []).append(module_id)
 
         for record in brands.values():
             record["Systems"].sort()
         for record in platforms.values():
             record["Systems"].sort()
+        recommendations = self._catalogue_recommendations()
         for system_id, record in systems.items():
             record["Modules"].sort()
-            candidates = defaults.get(system_id, [])
-            if len(candidates) == 1:
-                record["DefaultModule"] = candidates[0]
-            elif len(candidates) > 1:
-                errors.append({
-                    "system": system_id,
-                    "error": "multiple_default_modules",
-                    "message": (
-                        f'System "{system_id}" has multiple modules marked as default.'
-                    ),
-                    "details": candidates,
-                })
+            recommended = recommendations.get(system_id)
+            if recommended in record["Modules"]:
+                record["DefaultModule"] = recommended
 
         return brands, platforms, systems, errors
 
@@ -1414,22 +1402,42 @@ class EmuKitManager:
         return self._resolve_from_records(query, self.get_registry()["Systems"])
 
 
+    def _validate_catalogue_descriptor(self, value: Any) -> tuple[bool, str | None]:
+        if not isinstance(value, dict):
+            return False, 'Remote manifest "Catalogue" must be an object.'
+        if value.get("SchemaVersion") != self.CATALOGUE_SCHEMA:
+            return False, f'Remote catalogue descriptor "SchemaVersion" must be {self.CATALOGUE_SCHEMA}.'
+        version = value.get("Version")
+        if not isinstance(version, int) or isinstance(version, bool) or version < 1:
+            return False, 'Remote catalogue descriptor "Version" must be a positive integer.'
+        if not self._valid_string(value.get("File")):
+            return False, 'Remote catalogue descriptor "File" must be a non-empty string.'
+        file_path = Path(value["File"])
+        if file_path.is_absolute() or ".." in file_path.parts:
+            return False, 'Remote catalogue descriptor "File" must be a safe platform-feed-relative path.'
+        if not self._valid_sha256(value.get("SHA256")):
+            return False, 'Remote catalogue descriptor must provide a lowercase SHA-256.'
+        return True, None
+
     def _validate_remote_manifest(
         self,
         manifest: Any,
     ) -> tuple[bool, str | None]:
         if not isinstance(manifest, dict):
             return False, "Remote manifest root must be an object."
-        if manifest.get("SchemaVersion") != self.REMOTE_MANIFEST_SCHEMA:
-            return False, (
-                f'Remote manifest "SchemaVersion" must be '
-                f"{self.REMOTE_MANIFEST_SCHEMA}."
-            )
+        schema = manifest.get("SchemaVersion")
+        if schema not in self.REMOTE_MANIFEST_SCHEMAS:
+            allowed = ", ".join(str(value) for value in sorted(self.REMOTE_MANIFEST_SCHEMAS))
+            return False, f'Remote manifest "SchemaVersion" must be one of: {allowed}.'
         if manifest.get("Platform") != self.host_platform:
             return False, (
                 f'Remote manifest Platform must be "{self.host_platform}" '
                 f'on this host.'
             )
+        if schema >= 2:
+            valid_catalogue, catalogue_reason = self._validate_catalogue_descriptor(manifest.get("Catalogue"))
+            if not valid_catalogue:
+                return False, catalogue_reason
         modules = manifest.get("Modules")
         if not isinstance(modules, dict):
             return False, 'Remote manifest "Modules" must be an object.'
@@ -1456,10 +1464,217 @@ class EmuKitManager:
             package = Path(entry["Package"])
             if package.is_absolute() or ".." in package.parts:
                 return False, (
-                    f'Remote module "{module_id}" Package must be a safe '
-                    "platform-feed-relative path."
+                    f'Remote module "{module_id}" Package must be a safe relative path.'
                 )
         return True, None
+
+    def _validate_remote_catalogue(
+        self,
+        catalogue: Any,
+        manifest: dict[str, Any] | None = None,
+    ) -> tuple[bool, str | None]:
+        if not isinstance(catalogue, dict):
+            return False, "Remote catalogue root must be an object."
+        if catalogue.get("SchemaVersion") != self.CATALOGUE_SCHEMA:
+            return False, f'Remote catalogue "SchemaVersion" must be {self.CATALOGUE_SCHEMA}.'
+        version = catalogue.get("Version")
+        if not isinstance(version, int) or isinstance(version, bool) or version < 1:
+            return False, 'Remote catalogue "Version" must be a positive integer.'
+        if catalogue.get("Platform") != self.host_platform:
+            return False, f'Remote catalogue Platform must be "{self.host_platform}" on this host.'
+        emulators = catalogue.get("Emulators")
+        brands = catalogue.get("Brands")
+        if not isinstance(emulators, dict) or not isinstance(brands, dict):
+            return False, 'Remote catalogue must contain "Emulators" and "Brands" objects.'
+
+        emulator_systems: dict[str, set[str]] = {}
+        for emulator_id, emulator in emulators.items():
+            if not self._valid_id(emulator_id):
+                return False, f'Remote catalogue emulator id "{emulator_id}" is invalid.'
+            if not isinstance(emulator, dict) or not self._valid_string(emulator.get("Name")):
+                return False, f'Remote catalogue emulator "{emulator_id}" has invalid metadata.'
+            if not self._valid_aliases(emulator.get("Aliases")):
+                return False, f'Remote catalogue emulator "{emulator_id}" has invalid aliases.'
+            supported = emulator.get("Systems")
+            if not isinstance(supported, list) or not supported or not all(self._valid_id(item) for item in supported):
+                return False, f'Remote catalogue emulator "{emulator_id}" must provide valid systems.'
+            if len(set(supported)) != len(supported):
+                return False, f'Remote catalogue emulator "{emulator_id}" contains duplicate systems.'
+            emulator_systems[emulator_id] = set(supported)
+
+        seen_systems: set[str] = set()
+        system_emulators: dict[str, set[str]] = {}
+        for brand_id, brand in brands.items():
+            if not self._valid_id(brand_id):
+                return False, f'Remote catalogue brand id "{brand_id}" is invalid.'
+            if not isinstance(brand, dict) or not self._valid_string(brand.get("Name")):
+                return False, f'Remote catalogue brand "{brand_id}" has invalid metadata.'
+            if not self._valid_aliases(brand.get("Aliases")):
+                return False, f'Remote catalogue brand "{brand_id}" has invalid aliases.'
+            systems = brand.get("Systems")
+            if not isinstance(systems, dict) or not systems:
+                return False, f'Remote catalogue brand "{brand_id}" must contain systems.'
+            for system_id, system in systems.items():
+                if not self._valid_id(system_id):
+                    return False, f'Remote catalogue system id "{system_id}" is invalid.'
+                if system_id in seen_systems:
+                    return False, f'Remote catalogue system "{system_id}" is registered under multiple brands.'
+                seen_systems.add(system_id)
+                if not isinstance(system, dict) or not self._valid_string(system.get("Name")):
+                    return False, f'Remote catalogue system "{system_id}" has invalid metadata.'
+                if not self._valid_aliases(system.get("Aliases")):
+                    return False, f'Remote catalogue system "{system_id}" has invalid aliases.'
+                supporting = system.get("Emulators")
+                if not isinstance(supporting, list) or not supporting or not all(self._valid_id(item) for item in supporting):
+                    return False, f'Remote catalogue system "{system_id}" must provide valid emulators.'
+                if len(set(supporting)) != len(supporting):
+                    return False, f'Remote catalogue system "{system_id}" contains duplicate emulators.'
+                recommended = system.get("RecommendedPrimary")
+                if not self._valid_id(recommended) or recommended not in supporting:
+                    return False, f'Remote catalogue system "{system_id}" has an invalid RecommendedPrimary.'
+                system_emulators[system_id] = set(supporting)
+
+        for emulator_id, supported in emulator_systems.items():
+            for system_id in supported:
+                if system_id not in system_emulators:
+                    return False, f'Remote catalogue emulator "{emulator_id}" references unknown system "{system_id}".'
+                if emulator_id not in system_emulators[system_id]:
+                    return False, f'Remote catalogue relationship "{emulator_id}" -> "{system_id}" is not bidirectional.'
+        for system_id, supporting in system_emulators.items():
+            for emulator_id in supporting:
+                if emulator_id not in emulator_systems:
+                    return False, f'Remote catalogue system "{system_id}" references unknown emulator "{emulator_id}".'
+                if system_id not in emulator_systems[emulator_id]:
+                    return False, f'Remote catalogue relationship "{system_id}" -> "{emulator_id}" is not bidirectional.'
+
+        if isinstance(manifest, dict):
+            manifest_modules = set(manifest.get("Modules", {}))
+            if manifest_modules != set(emulators):
+                return False, "Remote catalogue emulator ids must exactly match the Windows module manifest."
+            descriptor = manifest.get("Catalogue")
+            if isinstance(descriptor, dict):
+                if descriptor.get("SchemaVersion") != catalogue.get("SchemaVersion"):
+                    return False, "Remote catalogue schema does not match its manifest descriptor."
+                if descriptor.get("Version") != catalogue.get("Version"):
+                    return False, "Remote catalogue version does not match its manifest descriptor."
+        return True, None
+
+    def _catalogue_recommendations(self) -> dict[str, str]:
+        with self._state_lock:
+            catalogue = copy.deepcopy(self._remote_catalogue)
+        if not isinstance(catalogue, dict):
+            return {}
+        recommendations: dict[str, str] = {}
+        for brand in catalogue.get("Brands", {}).values():
+            if not isinstance(brand, dict):
+                continue
+            for system_id, system in brand.get("Systems", {}).items():
+                if not isinstance(system, dict):
+                    continue
+                recommended = system.get("RecommendedPrimary")
+                if self._valid_id(system_id) and self._valid_id(recommended):
+                    recommendations[system_id] = recommended
+        return recommendations
+
+    def _load_cached_catalogue(self, expected_sha256: str | None = None) -> dict[str, Any] | None:
+        if not self.catalogue_cache_path.is_file():
+            return None
+        try:
+            raw = self.catalogue_cache_path.read_bytes()
+            if expected_sha256 is not None and hashlib.sha256(raw).hexdigest() != expected_sha256:
+                return None
+            catalogue = json.loads(raw.decode("utf-8"))
+            valid, reason = self._validate_remote_catalogue(catalogue)
+            if not valid:
+                raise ValueError(reason or "Cached catalogue is invalid.")
+            return catalogue
+        except Exception:
+            return None
+
+    def _refresh_remote_catalogue(self, manifest: dict[str, Any]) -> dict[str, Any]:
+        descriptor = manifest.get("Catalogue")
+        if not isinstance(descriptor, dict):
+            cached = self._load_cached_catalogue()
+            with self._state_lock:
+                self._remote_catalogue = cached
+                self._remote_catalogue_error = None
+            return {
+                "success": True,
+                "operation": "remote_catalogue",
+                "state": "not_advertised",
+                "message": "Remote manifest does not advertise a platform catalogue.",
+                "details": None,
+            }
+
+        expected_sha = descriptor["SHA256"]
+        cached = self._load_cached_catalogue(expected_sha)
+        if cached is not None:
+            valid, reason = self._validate_remote_catalogue(cached, manifest)
+            if valid:
+                with self._state_lock:
+                    self._remote_catalogue = copy.deepcopy(cached)
+                    self._remote_catalogue_error = None
+                return {
+                    "success": True,
+                    "operation": "remote_catalogue",
+                    "state": "cached",
+                    "message": f'Using cached EmuKit {self.host_platform} catalogue.',
+                    "details": {
+                        "version": cached["Version"],
+                        "sha256": expected_sha,
+                        "path": str(self.catalogue_cache_path),
+                    },
+                }
+            raise ValueError(reason or "Cached catalogue is invalid.")
+
+        catalogue_url = urllib.parse.urljoin(self.platform_feed_base_url, descriptor["File"])
+        try:
+            request = urllib.request.Request(
+                catalogue_url,
+                headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
+            )
+            with urllib.request.urlopen(request, timeout=15) as response:
+                raw = response.read()
+            actual_sha = hashlib.sha256(raw).hexdigest()
+            if actual_sha != expected_sha:
+                raise ValueError(f'Catalogue SHA-256 mismatch: expected {expected_sha}, got {actual_sha}.')
+            catalogue = json.loads(raw.decode("utf-8"))
+            valid, reason = self._validate_remote_catalogue(catalogue, manifest)
+            if not valid:
+                raise ValueError(reason or "Remote catalogue is invalid.")
+            self.catalogue_cache_path.parent.mkdir(parents=True, exist_ok=True)
+            temp_path = self.catalogue_cache_path.with_suffix(self.catalogue_cache_path.suffix + ".tmp")
+            temp_path.write_bytes(raw)
+            temp_path.replace(self.catalogue_cache_path)
+            with self._state_lock:
+                self._remote_catalogue = copy.deepcopy(catalogue)
+                self._remote_catalogue_error = None
+            return {
+                "success": True,
+                "operation": "remote_catalogue",
+                "state": "downloaded",
+                "message": f'Loaded EmuKit {self.host_platform} catalogue version {catalogue["Version"]}.',
+                "details": {
+                    "version": catalogue["Version"],
+                    "sha256": actual_sha,
+                    "url": catalogue_url,
+                    "path": str(self.catalogue_cache_path),
+                },
+            }
+        except Exception as exc:
+            fallback = self._load_cached_catalogue()
+            error = {
+                "success": False,
+                "operation": "remote_catalogue",
+                "state": "unavailable",
+                "error": "catalogue_unavailable",
+                "message": "Remote EmuKit platform catalogue is unavailable.",
+                "details": str(exc),
+            }
+            with self._state_lock:
+                self._remote_catalogue = fallback
+                self._remote_catalogue_error = copy.deepcopy(error)
+            return error
 
     def refresh_remote_manifest(self) -> dict[str, Any]:
         try:
@@ -1483,10 +1698,11 @@ class EmuKitManager:
                 self._remote_manifest_error = None
                 self._remote_manifest_loaded = True
 
+            catalogue = self._refresh_remote_catalogue(normalized)
             return {
-                "success": True,
+                "success": bool(catalogue.get("success", True)),
                 "operation": "remote_manifest",
-                "state": "loaded",
+                "state": "loaded" if catalogue.get("success", True) else "loaded_with_catalogue_error",
                 "message": (
                     f'Loaded EmuKit {self.host_platform} module manifest '
                     f'from the {self.channel} channel.'
@@ -1496,9 +1712,11 @@ class EmuKitManager:
                     "platform": self.host_platform,
                     "url": self.remote_manifest_url,
                     "module_count": len(normalized["Modules"]),
+                    "catalogue": catalogue,
                 },
             }
         except Exception as exc:
+            cached = self._load_cached_catalogue()
             error = {
                 "success": False,
                 "operation": "remote_manifest",
@@ -1514,6 +1732,7 @@ class EmuKitManager:
                 self._remote_manifest = None
                 self._remote_manifest_error = copy.deepcopy(error)
                 self._remote_manifest_loaded = True
+                self._remote_catalogue = cached
             return error
 
     def _ensure_remote_manifest(self) -> dict[str, Any] | None:
@@ -1833,16 +2052,24 @@ class EmuKitManager:
 
         return module_dir, info, info_path
 
+    def _module_package_url(self, package: str) -> str:
+        normalized = package.replace("\\", "/")
+        if normalized.startswith("Resources/"):
+            if self.feed_relative_root == "<override>":
+                return urllib.parse.urljoin(self.feed_base_url, f"../../{normalized}")
+            return (
+                f"https://raw.githubusercontent.com/{self.REPOSITORY}/"
+                f"{self.REPOSITORY_BRANCH}/{normalized}"
+            )
+        return urllib.parse.urljoin(self.platform_feed_base_url, normalized)
+
     def _download_module_package(
         self,
         module_id: str,
         entry: dict[str, Any],
         destination: Path,
     ) -> None:
-        package_url = urllib.parse.urljoin(
-            self.platform_feed_base_url,
-            entry["Package"],
-        )
+        package_url = self._module_package_url(entry["Package"])
         request = urllib.request.Request(
             package_url,
             headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
@@ -3005,9 +3232,9 @@ class EmuKitManager:
                 },
             }
 
+        remote = self.refresh_remote_manifest()
         registry = self.sync_registry()
         settings = self.sync_settings()
-        remote = self.refresh_remote_manifest()
         reconcile = self.reconcile()
 
         with self._state_lock:
@@ -3045,6 +3272,8 @@ class EmuKitManager:
         with self._state_lock:
             remote_error = copy.deepcopy(self._remote_manifest_error)
             manifest = copy.deepcopy(self._remote_manifest)
+            catalogue = copy.deepcopy(self._remote_catalogue)
+            catalogue_error = copy.deepcopy(self._remote_catalogue_error)
 
         registry = self.get_registry()
         return {
@@ -3061,6 +3290,9 @@ class EmuKitManager:
             "remote_manifest_url": self.remote_manifest_url,
             "remote_manifest_available": manifest is not None,
             "remote_manifest_error": remote_error,
+            "remote_catalogue_available": catalogue is not None,
+            "remote_catalogue_version": catalogue.get("Version") if isinstance(catalogue, dict) else None,
+            "remote_catalogue_error": catalogue_error,
             "remote_module_count": (
                 len(manifest.get("Modules", {}))
                 if isinstance(manifest, dict)

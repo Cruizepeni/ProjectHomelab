@@ -16,7 +16,7 @@ except ImportError:
 
 
 class EmuKit:
-    ROOT_MARKER = ".ProjectHomelabRoot"
+    ROOT_MARKER = ".AppRoot"
 
     def __init__(
         self,
