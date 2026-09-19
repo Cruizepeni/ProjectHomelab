@@ -10,6 +10,9 @@ from typing import Any
 
 
 class EmuKitSettings:
+    # EmuKit 1.0.0 is still pre-release. Keep the existing settings schema
+    # version while normalizing the old SystemAssignments key into the final
+    # SystemPrimaryOverrides representation.
     SETTINGS_VERSION = 2
 
     def __init__(self, project_root: str | Path) -> None:
@@ -24,7 +27,7 @@ class EmuKitSettings:
             "Version": self.SETTINGS_VERSION,
             "Fullscreen": True,
             "Modules": {},
-            "SystemAssignments": {},
+            "SystemPrimaryOverrides": {},
         }
 
     def _normalize(self, data: Any) -> dict[str, Any]:
@@ -50,21 +53,27 @@ class EmuKitSettings:
                     enabled = entry["Installed"]
             normalized_modules[module_id] = {"Enabled": enabled}
 
-        assignments = source.get("SystemAssignments", {})
-        if not isinstance(assignments, dict):
-            assignments = {}
+        overrides = source.get("SystemPrimaryOverrides")
+        if not isinstance(overrides, dict):
+            # Pre-release compatibility with the old assignment model. The
+            # manager later removes entries equal to catalogue recommendations,
+            # leaving only genuine user overrides.
+            overrides = source.get("SystemAssignments", {})
+        if not isinstance(overrides, dict):
+            overrides = {}
 
-        normalized_assignments: dict[str, str | None] = {}
-        for system_id, module_id in assignments.items():
+        normalized_overrides: dict[str, str] = {}
+        for system_id, module_id in overrides.items():
             if not isinstance(system_id, str) or not system_id.strip():
                 continue
-            normalized_assignments[system_id] = module_id if isinstance(module_id, str) else None
+            if isinstance(module_id, str) and module_id.strip():
+                normalized_overrides[system_id] = module_id
 
         return {
             "Version": self.SETTINGS_VERSION,
             "Fullscreen": fullscreen,
             "Modules": normalized_modules,
-            "SystemAssignments": normalized_assignments,
+            "SystemPrimaryOverrides": normalized_overrides,
         }
 
     def _backup_corrupt_file(self) -> None:
@@ -170,13 +179,13 @@ class EmuKitSettings:
             return True
 
     def remove_module(self, module_id: str) -> bool:
+        # Primary preferences intentionally survive module removal/uninstall.
+        # They remain user preferences until explicitly restored, unless the
+        # catalogue itself no longer considers them valid.
         with self._lock:
             if module_id not in self._data["Modules"]:
                 return False
             del self._data["Modules"][module_id]
-            for system_id, assigned_module in list(self._data["SystemAssignments"].items()):
-                if assigned_module == module_id:
-                    self._data["SystemAssignments"][system_id] = None
             self.save()
             return True
 
@@ -198,36 +207,57 @@ class EmuKitSettings:
     def set_module_installed(self, module_id: str, installed: bool) -> None:
         self.set_module_enabled(module_id, installed)
 
-    def get_system_assignment(self, system_id: str) -> str | None:
+    def get_system_primary_override(self, system_id: str) -> str | None:
         with self._lock:
-            value = self._data["SystemAssignments"].get(system_id)
+            value = self._data["SystemPrimaryOverrides"].get(system_id)
             return value if isinstance(value, str) else None
 
-    def has_system_assignment(self, system_id: str) -> bool:
+    def get_system_primary_overrides(self) -> dict[str, str]:
         with self._lock:
-            return system_id in self._data["SystemAssignments"]
+            return copy.deepcopy(self._data["SystemPrimaryOverrides"])
+
+    def set_system_primary_override(self, system_id: str, module_id: str) -> None:
+        if not isinstance(module_id, str) or not module_id.strip():
+            raise TypeError("module_id must be a non-empty string.")
+        with self._lock:
+            self._data["SystemPrimaryOverrides"][system_id] = module_id
+            self.save()
+
+    def remove_system_primary_override(self, system_id: str) -> bool:
+        with self._lock:
+            if system_id not in self._data["SystemPrimaryOverrides"]:
+                return False
+            del self._data["SystemPrimaryOverrides"][system_id]
+            self.save()
+            return True
+
+    def clear_system_primary_overrides(self) -> int:
+        with self._lock:
+            count = len(self._data["SystemPrimaryOverrides"])
+            if count:
+                self._data["SystemPrimaryOverrides"] = {}
+                self.save()
+            return count
+
+    # Compatibility aliases for integrations written against the pre-release
+    # assignment API. These do not reintroduce the old assignment semantics.
+    def get_system_assignment(self, system_id: str) -> str | None:
+        return self.get_system_primary_override(system_id)
+
+    def has_system_assignment(self, system_id: str) -> bool:
+        return self.get_system_primary_override(system_id) is not None
 
     def ensure_system_assignment(self, system_id: str, module_id: str | None) -> bool:
-        if module_id is not None and not isinstance(module_id, str):
-            raise TypeError("module_id must be a string or None.")
-        with self._lock:
-            if system_id in self._data["SystemAssignments"]:
-                return False
-            self._data["SystemAssignments"][system_id] = module_id
-            self.save()
-            return True
+        if module_id is None or self.get_system_primary_override(system_id) is not None:
+            return False
+        self.set_system_primary_override(system_id, module_id)
+        return True
 
     def set_system_assignment(self, system_id: str, module_id: str | None) -> None:
-        if module_id is not None and not isinstance(module_id, str):
-            raise TypeError("module_id must be a string or None.")
-        with self._lock:
-            self._data["SystemAssignments"][system_id] = module_id
-            self.save()
+        if module_id is None:
+            self.remove_system_primary_override(system_id)
+        else:
+            self.set_system_primary_override(system_id, module_id)
 
     def remove_system_assignment(self, system_id: str) -> bool:
-        with self._lock:
-            if system_id not in self._data["SystemAssignments"]:
-                return False
-            del self._data["SystemAssignments"][system_id]
-            self.save()
-            return True
+        return self.remove_system_primary_override(system_id)

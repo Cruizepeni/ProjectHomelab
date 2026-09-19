@@ -25,8 +25,10 @@ from typing import Any, Callable
 
 try:
     from .EmuKitLauncher import EmuKitLauncher
+    from .EmuKitEmulatorLifecycleManager import EmuKitEmulatorLifecycleManager
 except ImportError:
     from EmuKitLauncher import EmuKitLauncher
+    from EmuKitEmulatorLifecycleManager import EmuKitEmulatorLifecycleManager
 
 
 class EmuKitManager:
@@ -41,6 +43,14 @@ class EmuKitManager:
     REPOSITORY_BRANCH = "main"
     DEVELOPMENT_FEED = "SourceCode/EmuKit"
     RELEASE_FEED = "Resources/EmuKit"
+    CORE_RELEASE_MANIFEST_URL = (
+        "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/"
+        "main/Releases/EmuKit/EmuKit_Core_Release_Manifest.json"
+    )
+    CORE_RELEASE_BASE_URL = (
+        "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/"
+        "main/Releases/EmuKit/"
+    )
 
     CORE_DEPENDENCIES = {
         "7zip": {
@@ -109,6 +119,7 @@ class EmuKitManager:
         self.remote_manifest_url = f"{self.platform_feed_base_url}{platform_manifest_name}"
 
         self.launcher = EmuKitLauncher(settings=self.settings, project_root=self.project_root)
+        self.lifecycle = EmuKitEmulatorLifecycleManager(project_root=self.project_root)
 
         self._operation_lock = threading.RLock()
         self._state_lock = threading.RLock()
@@ -1037,6 +1048,13 @@ class EmuKitManager:
         if "IsolateLaunchConsole" in info and not isinstance(info.get("IsolateLaunchConsole"), bool):
             return False, 'Module "IsolateLaunchConsole" must be a boolean.'
 
+        lifecycle = info.get("Lifecycle")
+        if lifecycle is not None:
+            if not isinstance(lifecycle, dict):
+                return False, 'Module "Lifecycle" must be an object when provided.'
+            if "ProcessName" in lifecycle and not self._valid_string(lifecycle.get("ProcessName")):
+                return False, 'Module "Lifecycle.ProcessName" must be a non-empty string.'
+
         if "WorkingDirectory" in info and not self._valid_string(info.get("WorkingDirectory")):
             return False, 'Module "WorkingDirectory" must be a non-empty string.'
 
@@ -1279,7 +1297,6 @@ class EmuKitManager:
                         "BrandId": brand_id,
                         "PlatformId": platform_id,
                         "Modules": [],
-                        "DefaultModule": None,
                     }
                 else:
                     if existing_system["Name"].casefold() != system_info["Name"].casefold():
@@ -1317,12 +1334,8 @@ class EmuKitManager:
             record["Systems"].sort()
         for record in platforms.values():
             record["Systems"].sort()
-        recommendations = self._catalogue_recommendations()
-        for system_id, record in systems.items():
+        for record in systems.values():
             record["Modules"].sort()
-            recommended = recommendations.get(system_id)
-            if recommended in record["Modules"]:
-                record["DefaultModule"] = recommended
 
         return brands, platforms, systems, errors
 
@@ -1392,14 +1405,10 @@ class EmuKitManager:
     def resolve_local_module_id(self, query: str) -> str | None:
         return self._resolve_from_records(query, self.get_modules())
 
-    def resolve_brand_id(self, query: str) -> str | None:
-        return self._resolve_from_records(query, self.get_registry()["Brands"])
 
     def resolve_platform_id(self, query: str) -> str | None:
         return self._resolve_from_records(query, self.get_registry()["Platforms"])
 
-    def resolve_system_id(self, query: str) -> str | None:
-        return self._resolve_from_records(query, self.get_registry()["Systems"])
 
 
     def _validate_catalogue_descriptor(self, value: Any) -> tuple[bool, str | None]:
@@ -1434,7 +1443,7 @@ class EmuKitManager:
                 f'Remote manifest Platform must be "{self.host_platform}" '
                 f'on this host.'
             )
-        if schema >= 2:
+        if "Catalogue" in manifest:
             valid_catalogue, catalogue_reason = self._validate_catalogue_descriptor(manifest.get("Catalogue"))
             if not valid_catalogue:
                 return False, catalogue_reason
@@ -1550,7 +1559,7 @@ class EmuKitManager:
         if isinstance(manifest, dict):
             manifest_modules = set(manifest.get("Modules", {}))
             if manifest_modules != set(emulators):
-                return False, "Remote catalogue emulator ids must exactly match the Windows module manifest."
+                return False, "Remote catalogue emulator ids must exactly match the active platform module manifest."
             descriptor = manifest.get("Catalogue")
             if isinstance(descriptor, dict):
                 if descriptor.get("SchemaVersion") != catalogue.get("SchemaVersion"):
@@ -1760,44 +1769,7 @@ class EmuKitManager:
     def resolve_remote_module_id(self, query: str) -> str | None:
         return self._resolve_from_records(query, self.get_remote_modules())
 
-    def resolve_module_id(self, query: str) -> str | None:
-        local_id = self.resolve_local_module_id(query)
-        if local_id is not None:
-            return local_id
-        return self.resolve_remote_module_id(query)
 
-    def get_module_info(self, module_id: str) -> dict[str, Any] | None:
-        local = self.get_local_module_info(module_id)
-        if local is not None:
-            remote = self.get_remote_modules().get(module_id)
-            local["LocalInstalled"] = True
-            local["RemoteAvailable"] = remote is not None
-            if isinstance(remote, dict):
-                local["RemoteModuleVersion"] = remote.get("Version")
-                local["ModuleUpdateAvailable"] = (
-                    self._version_key(remote.get("Version"))
-                    > self._version_key(local.get("ModuleVersion"))
-                )
-            else:
-                local["RemoteModuleVersion"] = None
-                local["ModuleUpdateAvailable"] = False
-            return local
-
-        remote = self.get_remote_modules().get(module_id)
-        if not isinstance(remote, dict):
-            return None
-        return {
-            "Id": module_id,
-            "Name": remote["Name"],
-            "Aliases": list(remote.get("Aliases") or []),
-            "ModuleVersion": remote["Version"],
-            "RemoteModuleVersion": remote["Version"],
-            "LocalInstalled": False,
-            "RemoteAvailable": True,
-            "ModuleUpdateAvailable": False,
-            "Distribution": copy.deepcopy(remote),
-            "Systems": {},
-        }
 
     def get_available_modules(self) -> list[dict[str, Any]]:
         local = self.get_modules()
@@ -1818,18 +1790,7 @@ class EmuKitManager:
         return result
 
 
-    def get_supported_modules(self) -> list[dict[str, Any]]:
-        return self.get_available_modules()
 
-    def get_supported_brands(self) -> list[dict[str, Any]]:
-        brands = self.get_registry()["Brands"]
-        return [
-            copy.deepcopy(brands[brand_id])
-            for brand_id in sorted(
-                brands,
-                key=lambda item: brands[item]["Name"].casefold(),
-            )
-        ]
 
     def get_supported_platforms(self) -> list[dict[str, Any]]:
         platforms = self.get_registry()["Platforms"]
@@ -1841,48 +1802,7 @@ class EmuKitManager:
             )
         ]
 
-    def get_supported_systems(
-        self,
-        *,
-        brand: str | None = None,
-        platform: str | None = None,
-    ) -> list[dict[str, Any]]:
-        registry = self.get_registry()
-        brand_id = self.resolve_brand_id(brand) if brand is not None else None
-        platform_id = (
-            self.resolve_platform_id(platform)
-            if platform is not None
-            else None
-        )
-        if brand is not None and brand_id is None:
-            return []
-        if platform is not None and platform_id is None:
-            return []
 
-        values: list[dict[str, Any]] = []
-        for system in registry["Systems"].values():
-            if brand_id is not None and system["BrandId"] != brand_id:
-                continue
-            if platform_id is not None and system["PlatformId"] != platform_id:
-                continue
-            item = copy.deepcopy(system)
-            brand_info = registry["Brands"].get(item["BrandId"], {})
-            item["BrandName"] = brand_info.get("Name", item["BrandId"])
-            item["DisplayName"] = f'{item["BrandName"]} {item["Name"]}'
-            values.append(item)
-        return sorted(values, key=lambda item: item["DisplayName"].casefold())
-
-    def get_brand_info(self, query: str) -> dict[str, Any] | None:
-        brand_id = self.resolve_brand_id(query)
-        if brand_id is None:
-            return None
-        registry = self.get_registry()
-        result = copy.deepcopy(registry["Brands"][brand_id])
-        result["SystemDetails"] = [
-            copy.deepcopy(registry["Systems"][system_id])
-            for system_id in result["Systems"]
-        ]
-        return result
 
     def get_platform_info(self, query: str) -> dict[str, Any] | None:
         platform_id = self.resolve_platform_id(query)
@@ -1895,82 +1815,6 @@ class EmuKitManager:
             for system_id in result["Systems"]
         ]
         return result
-
-    def get_system_info(self, query: str) -> dict[str, Any] | None:
-        system_id = self.resolve_system_id(query)
-        if system_id is None:
-            return None
-        registry = self.get_registry()
-        result = copy.deepcopy(registry["Systems"][system_id])
-        result["Brand"] = copy.deepcopy(
-            registry["Brands"][result["BrandId"]]
-        )
-        result["Platform"] = copy.deepcopy(
-            registry["Platforms"][result["PlatformId"]]
-        )
-        result["AssignedModule"] = self.settings.get_system_assignment(system_id)
-        result["DisplayName"] = f'{result["Brand"]["Name"]} {result["Name"]}'
-        return result
-
-    def sync_settings(self) -> dict[str, Any]:
-        registry = self.get_registry()
-        modules = registry["Modules"]
-        systems = registry["Systems"]
-
-        added_modules: list[str] = []
-        removed_modules: list[str] = []
-        added_systems: list[str] = []
-        removed_systems: list[str] = []
-        cleared_assignments: list[str] = []
-
-        for module_id, info in modules.items():
-            if self.settings.ensure_module(
-                module_id,
-                enabled=info.get("DefaultInstalled", False),
-            ):
-                added_modules.append(module_id)
-
-        snapshot = self.settings.snapshot()
-        for module_id in sorted(set(snapshot["Modules"]) - set(modules)):
-            if self.settings.remove_module(module_id):
-                removed_modules.append(module_id)
-
-        for system_id, info in systems.items():
-            if self.settings.ensure_system_assignment(
-                system_id,
-                info.get("DefaultModule"),
-            ):
-                added_systems.append(system_id)
-
-        snapshot = self.settings.snapshot()
-        for system_id in sorted(
-            set(snapshot["SystemAssignments"]) - set(systems)
-        ):
-            if self.settings.remove_system_assignment(system_id):
-                removed_systems.append(system_id)
-
-        snapshot = self.settings.snapshot()
-        for system_id, module_id in snapshot["SystemAssignments"].items():
-            if module_id is None:
-                continue
-            supported = systems.get(system_id, {}).get("Modules", [])
-            if module_id not in supported:
-                self.settings.set_system_assignment(system_id, None)
-                cleared_assignments.append(system_id)
-
-        return {
-            "success": True,
-            "operation": "settings_sync",
-            "state": "synced",
-            "message": "EmuKit settings synchronized.",
-            "details": {
-                "added_modules": added_modules,
-                "removed_modules": removed_modules,
-                "added_systems": added_systems,
-                "removed_systems": removed_systems,
-                "cleared_assignments": cleared_assignments,
-            },
-        }
 
 
     @staticmethod
@@ -2836,7 +2680,31 @@ class EmuKitManager:
         module_id = self.resolve_local_module_id(module_query)
         if module_id is None:
             remote_id = self.resolve_remote_module_id(module_query)
+            refresh_result: dict[str, Any] | None = None
             if remote_id is None:
+                # A startup manifest fetch can fail transiently (for example
+                # immediately after a repository push). Retry before deciding
+                # that a known emulator does not exist.
+                refresh_result = self.refresh_remote_manifest()
+                remote_id = self.resolve_remote_module_id(module_query)
+
+            if remote_id is None:
+                remote_error = None
+                with self._state_lock:
+                    remote_error = copy.deepcopy(self._remote_manifest_error)
+                if isinstance(remote_error, dict):
+                    return {
+                        "success": False,
+                        "module": module_query,
+                        "operation": "install",
+                        "state": "install_failed",
+                        "error": "manifest_unavailable",
+                        "message": (
+                            f'Cannot resolve module "{module_query}" because the '
+                            "remote EmuKit module manifest is unavailable."
+                        ),
+                        "details": remote_error.get("details") or remote_error.get("message"),
+                    }
                 return self._fallback_result(
                     module_query,
                     "install",
@@ -2876,16 +2744,6 @@ class EmuKitManager:
             )
         return self._run_serialized_operation(module_id, "repair")
 
-    def update(self, module_query: str) -> dict[str, Any]:
-        module_id = self.resolve_local_module_id(module_query)
-        if module_id is None:
-            return self._fallback_result(
-                module_query,
-                "update",
-                message=f'Module "{module_query}" is not installed locally.',
-                error="module_not_installed",
-            )
-        return self._run_serialized_operation(module_id, "update")
 
     def install_all(self) -> dict[str, Any]:
         remote_modules = self.get_remote_modules()
@@ -3007,61 +2865,6 @@ class EmuKitManager:
         }
 
 
-    def assign_system(
-        self,
-        system_query: str,
-        module_query: str | None,
-    ) -> dict[str, Any]:
-        system_id = self.resolve_system_id(system_query)
-        if system_id is None:
-            return {
-                "success": False,
-                "operation": "assign_system",
-                "state": "assignment_failed",
-                "error": "system_not_found",
-                "message": (
-                    f'System "{system_query}" is not registered with EmuKit.'
-                ),
-                "details": None,
-            }
-
-        module_id = None
-        if module_query is not None:
-            module_id = self.resolve_local_module_id(module_query)
-            if module_id is None:
-                return {
-                    "success": False,
-                    "operation": "assign_system",
-                    "state": "assignment_failed",
-                    "error": "module_not_installed",
-                    "message": (
-                        f'Module "{module_query}" is not installed locally.'
-                    ),
-                    "details": None,
-                }
-
-            supported = self.get_registry()["Systems"][system_id]["Modules"]
-            if module_id not in supported:
-                return {
-                    "success": False,
-                    "module": module_id,
-                    "operation": "assign_system",
-                    "state": "assignment_failed",
-                    "error": "system_not_supported",
-                    "message": (
-                        f'Module "{module_id}" does not support system "{system_id}".'
-                    ),
-                    "details": None,
-                }
-
-        self.settings.set_system_assignment(system_id, module_id)
-        return {
-            "success": True,
-            "operation": "assign_system",
-            "state": "saved",
-            "message": f'System "{system_id}" assignment updated.',
-            "details": {"system": system_id, "module": module_id},
-        }
 
     def _prepare_emulator_for_launch(
         self,
@@ -3120,11 +2923,504 @@ class EmuKitManager:
 
         return None
 
+
+
+    # ------------------------------------------------------------------
+    # Final 1.0.0 catalogue / primary / lifecycle public model.
+    # These definitions intentionally supersede the earlier pre-release
+    # assignment/local-catalogue helpers above while preserving compatibility
+    # for integrations that still call them.
+
+    def _catalogue_snapshot(self) -> dict[str, Any] | None:
+        with self._state_lock:
+            catalogue = copy.deepcopy(self._remote_catalogue)
+        if isinstance(catalogue, dict):
+            return catalogue
+        cached = self._load_cached_catalogue()
+        if isinstance(cached, dict):
+            with self._state_lock:
+                self._remote_catalogue = copy.deepcopy(cached)
+            return cached
+
+        # If startup could not obtain the catalogue, catalogue commands should
+        # make one fresh attempt rather than remaining empty for the whole run.
+        self.refresh_remote_manifest()
+        with self._state_lock:
+            catalogue = copy.deepcopy(self._remote_catalogue)
+        return catalogue if isinstance(catalogue, dict) else None
+
+    def get_catalogue(self) -> dict[str, Any] | None:
+        return self._catalogue_snapshot()
+
+    def get_emulator_catalogue(self) -> dict[str, Any] | None:
+        catalogue = self._catalogue_snapshot()
+        if not isinstance(catalogue, dict):
+            return None
+        return {
+            "SchemaVersion": catalogue.get("SchemaVersion"),
+            "Version": catalogue.get("Version"),
+            "Platform": catalogue.get("Platform"),
+            "Emulators": copy.deepcopy(catalogue.get("Emulators", {})),
+        }
+
+    def get_system_catalogue(self) -> dict[str, Any] | None:
+        catalogue = self._catalogue_snapshot()
+        if not isinstance(catalogue, dict):
+            return None
+        return {
+            "SchemaVersion": catalogue.get("SchemaVersion"),
+            "Version": catalogue.get("Version"),
+            "Platform": catalogue.get("Platform"),
+            "Brands": copy.deepcopy(catalogue.get("Brands", {})),
+        }
+
+    def _catalogue_emulator_records(self) -> dict[str, dict[str, Any]]:
+        catalogue = self._catalogue_snapshot()
+        if not isinstance(catalogue, dict):
+            return {}
+        values = catalogue.get("Emulators", {})
+        if not isinstance(values, dict):
+            return {}
+        result: dict[str, dict[str, Any]] = {}
+        for emulator_id, value in values.items():
+            if not isinstance(value, dict):
+                continue
+            item = copy.deepcopy(value)
+            item["Id"] = emulator_id
+            result[emulator_id] = item
+        return result
+
+    def _catalogue_brand_records(self) -> dict[str, dict[str, Any]]:
+        catalogue = self._catalogue_snapshot()
+        if not isinstance(catalogue, dict):
+            return {}
+        values = catalogue.get("Brands", {})
+        if not isinstance(values, dict):
+            return {}
+        result: dict[str, dict[str, Any]] = {}
+        for brand_id, value in values.items():
+            if not isinstance(value, dict):
+                continue
+            item = copy.deepcopy(value)
+            item["Id"] = brand_id
+            result[brand_id] = item
+        return result
+
+    def _catalogue_system_records(self) -> dict[str, dict[str, Any]]:
+        result: dict[str, dict[str, Any]] = {}
+        for brand_id, brand in self._catalogue_brand_records().items():
+            systems = brand.get("Systems", {})
+            if not isinstance(systems, dict):
+                continue
+            for system_id, value in systems.items():
+                if not isinstance(value, dict):
+                    continue
+                item = copy.deepcopy(value)
+                item["Id"] = system_id
+                item["BrandId"] = brand_id
+                item["BrandName"] = brand.get("Name", brand_id)
+                item["BrandAliases"] = list(brand.get("Aliases") or [])
+                item["DisplayName"] = f'{item["BrandName"]} {item.get("Name", system_id)}'
+                result[system_id] = item
+        return result
+
+    def resolve_brand_id(self, query: str) -> str | None:
+        return self._resolve_from_records(query, self._catalogue_brand_records())
+
+    def resolve_module_id(self, query: str) -> str | None:
+        local_id = self.resolve_local_module_id(query)
+        if local_id is not None:
+            return local_id
+        catalogue_id = self._resolve_from_records(query, self._catalogue_emulator_records())
+        if catalogue_id is not None:
+            return catalogue_id
+        return self.resolve_remote_module_id(query)
+
+    def resolve_catalogue_emulator_id(self, query: str) -> str | None:
+        return self.resolve_module_id(query)
+
+    def resolve_system_matches(self, query: str) -> list[str]:
+        target = self._lookup_key(query)
+        if not target:
+            return []
+        matches: list[str] = []
+        for system_id, system in self._catalogue_system_records().items():
+            values: list[str] = [system_id, system.get("Name", ""), *system.get("Aliases", [])]
+            brand_names = [system.get("BrandName", ""), *system.get("BrandAliases", [])]
+            system_names = [system.get("Name", ""), *system.get("Aliases", [])]
+            for brand_name in brand_names:
+                for system_name in system_names:
+                    if brand_name and system_name:
+                        values.append(f"{brand_name} {system_name}")
+            if any(
+                self._lookup_key(value) == target
+                for value in values
+                if isinstance(value, str) and value
+            ):
+                matches.append(system_id)
+        return sorted(set(matches))
+
+    def resolve_system_id(self, query: str) -> str | None:
+        matches = self.resolve_system_matches(query)
+        return matches[0] if len(matches) == 1 else None
+
+    def get_module_info(self, module_id: str) -> dict[str, Any] | None:
+        local = self.get_local_module_info(module_id)
+        remote = self.get_remote_modules().get(module_id)
+        catalogue_emulator = self._catalogue_emulator_records().get(module_id)
+
+        if local is not None:
+            local["LocalInstalled"] = True
+            local["RemoteAvailable"] = isinstance(remote, dict)
+            if isinstance(remote, dict):
+                local["RemoteModuleVersion"] = remote.get("Version")
+                local["ModuleUpdateAvailable"] = (
+                    self._version_key(remote.get("Version"))
+                    > self._version_key(local.get("ModuleVersion"))
+                )
+            else:
+                local["RemoteModuleVersion"] = None
+                local["ModuleUpdateAvailable"] = False
+            if isinstance(catalogue_emulator, dict):
+                local["CatalogueSystems"] = list(catalogue_emulator.get("Systems") or [])
+            return local
+
+        if not isinstance(remote, dict) and not isinstance(catalogue_emulator, dict):
+            return None
+
+        remote = remote if isinstance(remote, dict) else {}
+        catalogue_emulator = catalogue_emulator if isinstance(catalogue_emulator, dict) else {}
+        systems: dict[str, dict[str, Any]] = {}
+        catalogue_systems = self._catalogue_system_records()
+        for system_id in catalogue_emulator.get("Systems", []):
+            system = catalogue_systems.get(system_id)
+            if not isinstance(system, dict):
+                continue
+            systems[system_id] = {
+                "Name": system.get("Name", system_id),
+                "Aliases": list(system.get("Aliases") or []),
+                "Brand": {
+                    "Id": system.get("BrandId"),
+                    "Name": system.get("BrandName"),
+                    "Aliases": list(system.get("BrandAliases") or []),
+                },
+            }
+        return {
+            "Id": module_id,
+            "Name": remote.get("Name") or catalogue_emulator.get("Name") or module_id,
+            "Aliases": list(remote.get("Aliases") or catalogue_emulator.get("Aliases") or []),
+            "ModuleVersion": remote.get("Version"),
+            "RemoteModuleVersion": remote.get("Version"),
+            "LocalInstalled": False,
+            "RemoteAvailable": bool(remote),
+            "ModuleUpdateAvailable": False,
+            "Distribution": copy.deepcopy(remote) if remote else None,
+            "Systems": systems,
+            "CatalogueSystems": list(catalogue_emulator.get("Systems") or []),
+        }
+
+    def get_supported_modules(self) -> list[dict[str, Any]]:
+        emulator_records = self._catalogue_emulator_records()
+        if not emulator_records:
+            return self.get_available_modules()
+        values = []
+        for module_id in sorted(emulator_records, key=lambda item: emulator_records[item]["Name"].casefold()):
+            info = self.get_module_info(module_id)
+            if info is not None:
+                values.append(info)
+        return values
+
+    def get_supported_brands(self) -> list[dict[str, Any]]:
+        brands = self._catalogue_brand_records()
+        result: list[dict[str, Any]] = []
+        for brand_id in sorted(brands, key=lambda item: brands[item]["Name"].casefold()):
+            brand = copy.deepcopy(brands[brand_id])
+            systems = brand.get("Systems", {})
+            brand["Systems"] = sorted(systems) if isinstance(systems, dict) else []
+            result.append(brand)
+        return result
+
+    def get_supported_systems(
+        self,
+        *,
+        brand: str | None = None,
+        platform: str | None = None,
+    ) -> list[dict[str, Any]]:
+        brand_id = self.resolve_brand_id(brand) if brand is not None else None
+        if brand is not None and brand_id is None:
+            return []
+        values: list[dict[str, Any]] = []
+        local_systems = self.get_registry().get("Systems", {})
+        for system_id, system in self._catalogue_system_records().items():
+            if brand_id is not None and system.get("BrandId") != brand_id:
+                continue
+            if platform is not None:
+                local = local_systems.get(system_id, {})
+                platform_id = local.get("PlatformId")
+                resolved_platform = self.resolve_platform_id(platform)
+                if resolved_platform is None or platform_id != resolved_platform:
+                    continue
+            item = copy.deepcopy(system)
+            item["UserPrimary"] = self.settings.get_system_primary_override(system_id)
+            item["EffectivePrimary"] = item["UserPrimary"] or item.get("RecommendedPrimary")
+            values.append(item)
+        return sorted(values, key=lambda item: item["DisplayName"].casefold())
+
+    def get_brand_info(self, query: str) -> dict[str, Any] | None:
+        brand_id = self.resolve_brand_id(query)
+        if brand_id is None:
+            return None
+        brand = self._catalogue_brand_records()[brand_id]
+        systems = brand.get("Systems", {})
+        result = {
+            "Id": brand_id,
+            "Name": brand.get("Name", brand_id),
+            "Aliases": list(brand.get("Aliases") or []),
+            "Systems": sorted(systems) if isinstance(systems, dict) else [],
+            "SystemDetails": [],
+        }
+        for system_id in result["Systems"]:
+            info = self.get_system_info(system_id)
+            if info is not None:
+                result["SystemDetails"].append(info)
+        return result
+
+    def get_system_info(self, query: str) -> dict[str, Any] | None:
+        system_id = self.resolve_system_id(query)
+        if system_id is None:
+            return None
+        system = copy.deepcopy(self._catalogue_system_records()[system_id])
+        brand = self._catalogue_brand_records().get(system["BrandId"], {})
+        local_system = self.get_registry().get("Systems", {}).get(system_id, {})
+        local_platform = self.get_registry().get("Platforms", {}).get(local_system.get("PlatformId"), {})
+        user_primary = self.settings.get_system_primary_override(system_id)
+        effective = user_primary or system.get("RecommendedPrimary")
+        system["Brand"] = {
+            "Id": system["BrandId"],
+            "Name": brand.get("Name", system["BrandId"]),
+            "Aliases": list(brand.get("Aliases") or []),
+        }
+        if local_platform:
+            system["Platform"] = copy.deepcopy(local_platform)
+        system["Modules"] = list(system.get("Emulators") or [])
+        system["RecommendedPrimary"] = system.get("RecommendedPrimary")
+        system["UserPrimary"] = user_primary
+        system["EffectivePrimary"] = effective
+        system["PrimaryModuleAvailable"] = effective in self.get_modules() if effective else False
+        return system
+
+    def sync_settings(self) -> dict[str, Any]:
+        modules = self.get_registry()["Modules"]
+        systems = self._catalogue_system_records()
+        added_modules: list[str] = []
+        removed_modules: list[str] = []
+        removed_overrides: list[str] = []
+        normalized_recommendations: list[str] = []
+
+        for module_id, info in modules.items():
+            if self.settings.ensure_module(
+                module_id,
+                enabled=info.get("DefaultInstalled", False),
+            ):
+                added_modules.append(module_id)
+
+        snapshot = self.settings.snapshot()
+        for module_id in sorted(set(snapshot.get("Modules", {})) - set(modules)):
+            if self.settings.remove_module(module_id):
+                removed_modules.append(module_id)
+
+        for system_id, module_id in list(self.settings.get_system_primary_overrides().items()):
+            system = systems.get(system_id)
+            if not isinstance(system, dict):
+                if self.settings.remove_system_primary_override(system_id):
+                    removed_overrides.append(system_id)
+                continue
+            if module_id not in system.get("Emulators", []):
+                if self.settings.remove_system_primary_override(system_id):
+                    removed_overrides.append(system_id)
+                continue
+            if module_id == system.get("RecommendedPrimary"):
+                if self.settings.remove_system_primary_override(system_id):
+                    normalized_recommendations.append(system_id)
+
+        return {
+            "success": True,
+            "operation": "settings_sync",
+            "state": "synced",
+            "message": "EmuKit settings synchronized.",
+            "details": {
+                "added_modules": added_modules,
+                "removed_modules": removed_modules,
+                "removed_invalid_primary_overrides": removed_overrides,
+                "normalized_recommended_primaries": normalized_recommendations,
+            },
+        }
+
+    def get_primary_state(self, system_query: str) -> dict[str, Any] | None:
+        system_id = self.resolve_system_id(system_query)
+        if system_id is None:
+            return None
+        system = self._catalogue_system_records()[system_id]
+        recommended = system.get("RecommendedPrimary")
+        user = self.settings.get_system_primary_override(system_id)
+        effective = user or recommended
+        return {
+            "SystemId": system_id,
+            "SystemName": system.get("Name", system_id),
+            "RecommendedPrimary": recommended,
+            "UserPrimary": user,
+            "EffectivePrimary": effective,
+            "PrimaryModuleAvailable": effective in self.get_modules() if effective else False,
+        }
+
+    def set_system_primary(
+        self,
+        system_query: str,
+        module_query: str,
+        *,
+        install_if_missing: bool = True,
+    ) -> dict[str, Any]:
+        system_id = self.resolve_system_id(system_query)
+        if system_id is None:
+            return {
+                "success": False,
+                "operation": "set_primary",
+                "state": "set_primary_failed",
+                "error": "system_not_found_or_ambiguous",
+                "message": f'System "{system_query}" was not found or is ambiguous.',
+                "details": {"matches": self.resolve_system_matches(system_query)},
+            }
+        module_id = self.resolve_catalogue_emulator_id(module_query)
+        if module_id is None:
+            return {
+                "success": False,
+                "operation": "set_primary",
+                "state": "set_primary_failed",
+                "error": "emulator_not_found",
+                "message": f'Emulator "{module_query}" was not found.',
+                "details": None,
+            }
+        system = self._catalogue_system_records()[system_id]
+        if module_id not in system.get("Emulators", []):
+            return {
+                "success": False,
+                "module": module_id,
+                "operation": "set_primary",
+                "state": "set_primary_failed",
+                "error": "system_not_supported",
+                "message": f'Emulator "{module_id}" does not support system "{system_id}".',
+                "details": None,
+            }
+
+        install_result = None
+        if module_id not in self.get_modules() and install_if_missing:
+            install_result = self.install(module_id)
+            if not install_result.get("success"):
+                return {
+                    "success": False,
+                    "module": module_id,
+                    "operation": "set_primary",
+                    "state": "set_primary_failed",
+                    "error": "emulator_install_failed",
+                    "message": f'Emulator "{module_id}" could not be installed, so the primary was not changed.',
+                    "details": install_result,
+                }
+        elif module_id in self.get_modules() and install_if_missing:
+            try:
+                check = self.check_module(module_id)
+                if check.get("success") and check.get("state") == "missing":
+                    install_result = self.install(module_id)
+                    if not install_result.get("success"):
+                        return {
+                            "success": False,
+                            "module": module_id,
+                            "operation": "set_primary",
+                            "state": "set_primary_failed",
+                            "error": "emulator_install_failed",
+                            "message": f'Emulator "{module_id}" could not be installed, so the primary was not changed.',
+                            "details": install_result,
+                        }
+            except Exception:
+                pass
+
+        if module_id == system.get("RecommendedPrimary"):
+            self.settings.remove_system_primary_override(system_id)
+            override = None
+        else:
+            self.settings.set_system_primary_override(system_id, module_id)
+            override = module_id
+        return {
+            "success": True,
+            "module": module_id,
+            "system": system_id,
+            "operation": "set_primary",
+            "state": "saved",
+            "message": f'Primary emulator for "{system.get("Name", system_id)}" is now "{module_id}".',
+            "details": {
+                "recommended": system.get("RecommendedPrimary"),
+                "user_override": override,
+                "install": install_result,
+            },
+        }
+
+    def restore_system_primary(self, system_query: str) -> dict[str, Any]:
+        system_id = self.resolve_system_id(system_query)
+        if system_id is None:
+            return {
+                "success": False,
+                "operation": "restore_primary",
+                "state": "restore_primary_failed",
+                "error": "system_not_found_or_ambiguous",
+                "message": f'System "{system_query}" was not found or is ambiguous.',
+                "details": {"matches": self.resolve_system_matches(system_query)},
+            }
+        system = self._catalogue_system_records()[system_id]
+        removed = self.settings.remove_system_primary_override(system_id)
+        return {
+            "success": True,
+            "system": system_id,
+            "operation": "restore_primary",
+            "state": "restored",
+            "message": (
+                f'Primary for "{system.get("Name", system_id)}" restored to recommended emulator '
+                f'"{system.get("RecommendedPrimary")}".'
+            ),
+            "details": {"override_removed": removed, "recommended": system.get("RecommendedPrimary")},
+        }
+
+    def restore_all_system_primaries(self) -> dict[str, Any]:
+        count = self.settings.clear_system_primary_overrides()
+        return {
+            "success": True,
+            "operation": "restore_all_primaries",
+            "state": "restored",
+            "message": "All systems now use their recommended primary emulator.",
+            "details": {"overrides_removed": count},
+        }
+
+    def assign_system(self, system_query: str, module_query: str | None) -> dict[str, Any]:
+        # Compatibility wrapper for the old pre-release API.
+        if module_query is None:
+            return self.restore_system_primary(system_query)
+        return self.set_system_primary(system_query, module_query)
+
+    def _selected_module_for_system(self, system_id: str) -> tuple[str | None, dict[str, Any]]:
+        system = self._catalogue_system_records().get(system_id, {})
+        recommended = system.get("RecommendedPrimary")
+        user = self.settings.get_system_primary_override(system_id)
+        selected = user or recommended
+        return selected, {
+            "recommended": recommended,
+            "user_override": user,
+            "selected": selected,
+        }
+
     def launch(
         self,
         *,
         system: str,
         game_path: str | Path,
+        module: str | None = None,
     ) -> dict[str, Any]:
         system_id = self.resolve_system_id(system)
         if system_id is None:
@@ -3132,48 +3428,73 @@ class EmuKitManager:
                 "success": False,
                 "operation": "launch",
                 "state": "launch_failed",
-                "error": "system_not_found",
-                "message": f'System "{system}" is not registered with EmuKit.',
-                "details": None,
+                "error": "system_not_found_or_ambiguous",
+                "message": f'System "{system}" was not found or is ambiguous.',
+                "details": {"matches": self.resolve_system_matches(system)},
             }
+        system_info = self._catalogue_system_records()[system_id]
 
-        module_id = self.settings.get_system_assignment(system_id)
-        if not module_id:
-            return {
-                "success": False,
-                "operation": "launch",
-                "state": "launch_failed",
-                "error": "system_unassigned",
-                "message": (
-                    f'System "{system_id}" does not currently have a module assigned.'
-                ),
-                "details": None,
-            }
+        if module is not None:
+            module_id = self.resolve_catalogue_emulator_id(module)
+            if module_id is None:
+                return {
+                    "success": False,
+                    "operation": "launch",
+                    "state": "launch_failed",
+                    "error": "emulator_not_found",
+                    "message": f'Emulator "{module}" was not found.',
+                    "details": None,
+                }
+            if module_id not in system_info.get("Emulators", []):
+                return {
+                    "success": False,
+                    "module": module_id,
+                    "system": system_id,
+                    "operation": "launch",
+                    "state": "launch_failed",
+                    "error": "system_not_supported",
+                    "message": f'Emulator "{module_id}" does not support system "{system_id}".',
+                    "details": None,
+                }
+            primary_details = None
+        else:
+            module_id, primary_details = self._selected_module_for_system(system_id)
+            if not module_id:
+                return {
+                    "success": False,
+                    "operation": "launch",
+                    "state": "launch_failed",
+                    "error": "primary_not_configured",
+                    "message": f'System "{system_id}" does not have a primary emulator.',
+                    "details": None,
+                }
 
         if module_id not in self.get_modules():
             return {
                 "success": False,
                 "module": module_id,
+                "system": system_id,
                 "operation": "launch",
                 "state": "launch_failed",
-                "error": "module_not_registered",
+                "error": "primary_module_not_installed" if module is None else "module_not_installed",
                 "message": (
-                    f'System "{system_id}" is assigned to module "{module_id}", '
-                    "but that module is not installed locally."
+                    f'Primary emulator "{module_id}" for "{system_info.get("Name", system_id)}" is not installed.'
+                    if module is None else
+                    f'Emulator "{module_id}" is not installed locally.'
                 ),
-                "details": None,
+                "details": primary_details,
             }
 
-        if module_id not in self.get_registry()["Systems"][system_id]["Modules"]:
+        local_systems = self.get_modules()[module_id].get("Systems", {})
+        if system_id not in local_systems:
             return {
                 "success": False,
                 "module": module_id,
+                "system": system_id,
                 "operation": "launch",
                 "state": "launch_failed",
-                "error": "system_not_supported",
-                "message": (
-                    f'Module "{module_id}" does not support system "{system_id}".'
-                ),
+                "error": "module_metadata_mismatch",
+                "message": f'Installed module "{module_id}" does not declare catalogue system "{system_id}".',
                 "details": None,
             }
 
@@ -3181,12 +3502,15 @@ class EmuKitManager:
         if preparation_failure is not None:
             return preparation_failure
 
-        return self.launcher.launch_game(
+        result = self.launcher.launch_game(
             game_path=game_path,
             system_id=system_id,
             module_id=module_id,
             registry=self.get_registry(),
         )
+        if result.get("success"):
+            self.lifecycle.remember_launch(module_id, result.get("pid"))
+        return result
 
     def launch_emulator(self, module_query: str) -> dict[str, Any]:
         module_id = self.resolve_local_module_id(module_query)
@@ -3196,18 +3520,409 @@ class EmuKitManager:
                 "operation": "launch_emulator",
                 "state": "launch_failed",
                 "error": "module_not_installed",
-                "message": f'Module "{module_query}" is not installed locally.',
+                "message": f'Emulator "{module_query}" is not installed locally.',
                 "details": None,
             }
-
         preparation_failure = self._prepare_emulator_for_launch(module_id)
         if preparation_failure is not None:
             return preparation_failure
+        result = self.launcher.launch_emulator(module_id=module_id, registry=self.get_registry())
+        if result.get("success"):
+            self.lifecycle.remember_launch(module_id, result.get("pid"))
+        return result
 
-        return self.launcher.launch_emulator(
-            module_id=module_id,
-            registry=self.get_registry(),
+    def _resolve_lifecycle_target(self, query: str) -> tuple[str | None, str | None, dict[str, Any] | None]:
+        module_id = self.resolve_catalogue_emulator_id(query)
+        system_matches = self.resolve_system_matches(query)
+        system_id = system_matches[0] if len(system_matches) == 1 else None
+
+        if module_id is not None and system_id is not None:
+            return None, None, {
+                "success": False,
+                "operation": "lifecycle_resolve",
+                "state": "ambiguous",
+                "error": "ambiguous_target",
+                "message": f'"{query}" matches both an emulator and a system.',
+                "details": {"emulator": module_id, "system": system_id},
+            }
+        if module_id is not None:
+            if module_id not in self.get_modules():
+                return None, None, {
+                    "success": False,
+                    "operation": "lifecycle_resolve",
+                    "state": "unavailable",
+                    "error": "module_not_installed",
+                    "message": f'Emulator module "{module_id}" is not installed locally.',
+                    "details": None,
+                }
+            return "emulator", module_id, None
+        if system_id is not None:
+            selected, state = self._selected_module_for_system(system_id)
+            if not selected:
+                return None, None, {
+                    "success": False,
+                    "operation": "lifecycle_resolve",
+                    "state": "unavailable",
+                    "error": "primary_not_configured",
+                    "message": f'System "{system_id}" has no primary emulator.',
+                    "details": state,
+                }
+            if selected not in self.get_modules():
+                return None, None, {
+                    "success": False,
+                    "operation": "lifecycle_resolve",
+                    "state": "unavailable",
+                    "error": "primary_module_not_installed",
+                    "message": f'Primary emulator "{selected}" for system "{system_id}" is not installed locally.',
+                    "details": state,
+                }
+            return "system", selected, None
+        return None, None, {
+            "success": False,
+            "operation": "lifecycle_resolve",
+            "state": "not_found",
+            "error": "target_not_found_or_ambiguous",
+            "message": f'"{query}" was not found as an emulator or unambiguous system.',
+            "details": {"system_matches": system_matches},
+        }
+
+    def close_emulator(self, query: str) -> dict[str, Any]:
+        kind, module_id, error = self._resolve_lifecycle_target(query)
+        if error is not None:
+            return error
+        assert module_id is not None
+        info = self.get_local_module_info(module_id)
+        assert info is not None
+        result = self.lifecycle.close(module_id, info)
+        result["target_kind"] = kind
+        return result
+
+    def is_emulator_running(self, query: str) -> dict[str, Any]:
+        kind, module_id, error = self._resolve_lifecycle_target(query)
+        if error is not None:
+            return error
+        assert module_id is not None
+        info = self.get_local_module_info(module_id)
+        assert info is not None
+        result = self.lifecycle.is_running(module_id, info)
+        result["target_kind"] = kind
+        return result
+
+    def restart_emulator(self, query: str) -> dict[str, Any]:
+        kind, module_id, error = self._resolve_lifecycle_target(query)
+        if error is not None:
+            return error
+        assert module_id is not None
+        info = self.get_local_module_info(module_id)
+        assert info is not None
+        close_result = self.lifecycle.close(module_id, info)
+        if not close_result.get("success"):
+            return {
+                "success": False,
+                "module": module_id,
+                "operation": "restart_emulator",
+                "state": "restart_failed",
+                "error": "close_failed",
+                "message": f'Could not close emulator "{module_id}" before restart.',
+                "details": close_result,
+            }
+        launch_result = self.launch_emulator(module_id)
+        return {
+            "success": bool(launch_result.get("success")),
+            "module": module_id,
+            "operation": "restart_emulator",
+            "state": "restarted" if launch_result.get("success") else "restart_failed",
+            "message": (
+                f'Restarted emulator "{module_id}".'
+                if launch_result.get("success") else
+                f'Emulator "{module_id}" could not be restarted.'
+            ),
+            "details": {"target_kind": kind, "close": close_result, "launch": launch_result},
+        }
+
+    def get_running_emulators(self) -> list[dict[str, Any]]:
+        values: list[dict[str, Any]] = []
+        modules = self.get_modules()
+        for module_id in sorted(modules, key=lambda item: modules[item].get("Name", item).casefold()):
+            info = modules[module_id]
+            status = self.lifecycle.is_running(module_id, info)
+            if status.get("state") != "running":
+                continue
+            values.append({
+                "Id": module_id,
+                "Name": info.get("Name", module_id),
+                "Processes": status.get("details", {}).get("processes", []),
+            })
+        return values
+
+    def _batch_module_operation(
+        self,
+        operation: str,
+        module_queries: list[str],
+    ) -> dict[str, Any]:
+        handlers = {
+            "install": self.install,
+            "uninstall": self.uninstall,
+            "repair": self.repair,
+            "update": self.update,
+            "remove": self.remove_module,
+        }
+        handler = handlers[operation]
+        results = [handler(query) for query in module_queries]
+        failures = [item for item in results if not item.get("success")]
+        return {
+            "success": not failures,
+            "operation": f"{operation}_many",
+            "state": "complete" if not failures else "complete_with_errors",
+            "message": (
+                f'{operation.title()} completed successfully for {len(results)} emulator(s).'
+                if not failures else
+                f'{operation.title()} completed with one or more errors.'
+            ),
+            "details": results,
+        }
+
+    def install_many(self, module_queries: list[str]) -> dict[str, Any]:
+        return self._batch_module_operation("install", module_queries)
+
+    def uninstall_many(self, module_queries: list[str]) -> dict[str, Any]:
+        return self._batch_module_operation("uninstall", module_queries)
+
+    def repair_many(self, module_queries: list[str]) -> dict[str, Any]:
+        return self._batch_module_operation("repair", module_queries)
+
+    def update_many(self, module_queries: list[str]) -> dict[str, Any]:
+        return self._batch_module_operation("update", module_queries)
+
+    def remove_many(self, module_queries: list[str]) -> dict[str, Any]:
+        return self._batch_module_operation("remove", module_queries)
+
+    def uninstall_all(self) -> dict[str, Any]:
+        modules = self.get_modules()
+        if not modules:
+            return {
+                "success": True,
+                "operation": "uninstall_all",
+                "state": "nothing_to_uninstall",
+                "message": "No local emulator modules are available to uninstall.",
+                "details": [],
+            }
+        return self.uninstall_many(sorted(modules))
+
+    def update(self, module_query: str) -> dict[str, Any]:
+        local_id = self.resolve_local_module_id(module_query)
+        if local_id is None:
+            return self._fallback_result(
+                module_query,
+                "update",
+                message=f'Emulator "{module_query}" is not installed locally.',
+                error="module_not_installed",
+            )
+
+        package_result = self.update_module_package(local_id)
+        if not package_result.get("success"):
+            return {
+                "success": False,
+                "module": local_id,
+                "operation": "update",
+                "state": "update_failed",
+                "error": package_result.get("error") or "module_update_failed",
+                "message": f'Could not update EmuKit module "{local_id}".',
+                "details": {"module_package": package_result},
+            }
+
+        # The potentially new module package owns the emulator-specific update.
+        emulator_result = self._run_serialized_operation(local_id, "update")
+        return {
+            "success": bool(emulator_result.get("success")),
+            "module": local_id,
+            "operation": "update",
+            "state": "updated" if emulator_result.get("success") else "update_failed",
+            "message": (
+                f'Emulator "{local_id}" is up to date.'
+                if emulator_result.get("success") else
+                f'Emulator "{local_id}" could not be updated.'
+            ),
+            "details": {
+                "module_package": package_result,
+                "emulator": emulator_result,
+            },
+        }
+
+    def _core_target_key(self) -> str:
+        return f"{self.host_platform.casefold()}-{self.host_architecture}"
+
+    def check_core_update(self) -> dict[str, Any]:
+        try:
+            request = urllib.request.Request(
+                self.CORE_RELEASE_MANIFEST_URL,
+                headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
+            )
+            with urllib.request.urlopen(request, timeout=15) as response:
+                document = json.loads(response.read().decode("utf-8"))
+            latest = document.get("Latest")
+            versions = document.get("Versions", {})
+            latest_info = versions.get(latest, {}) if isinstance(versions, dict) else {}
+            targets = latest_info.get("Targets", {}) if isinstance(latest_info, dict) else {}
+            target = targets.get(self._core_target_key()) if isinstance(targets, dict) else None
+            available = (
+                isinstance(latest, str)
+                and self._version_key(latest) > self._version_key(self.CORE_VERSION)
+                and isinstance(target, dict)
+            )
+            return {
+                "success": True,
+                "operation": "check_core_update",
+                "state": "update_available" if available else "up_to_date",
+                "message": (
+                    f'EmuKit Core {latest} is available.'
+                    if available else
+                    "EmuKit Core is up to date."
+                ),
+                "details": {
+                    "installed": self.CORE_VERSION,
+                    "latest": latest,
+                    "available": available,
+                    "target": copy.deepcopy(target),
+                    "version": copy.deepcopy(latest_info),
+                    "manifest": copy.deepcopy(document),
+                },
+            }
+        except Exception as exc:
+            return {
+                "success": False,
+                "operation": "check_core_update",
+                "state": "unavailable",
+                "error": "core_manifest_unavailable",
+                "message": "EmuKit Core release information is unavailable.",
+                "details": str(exc),
+            }
+
+    def get_updates(self, *, refresh: bool = True) -> dict[str, Any]:
+        manifest_result = self.refresh_remote_manifest() if refresh else None
+        modules = []
+        for info in self.get_available_modules():
+            if info.get("LocalInstalled") and info.get("ModuleUpdateAvailable"):
+                modules.append({
+                    "Id": info.get("Id"),
+                    "Name": info.get("Name"),
+                    "Installed": info.get("ModuleVersion"),
+                    "Available": info.get("RemoteModuleVersion"),
+                })
+        core = self.check_core_update()
+        return {
+            "success": bool(core.get("success")) and (manifest_result is None or manifest_result.get("success", False)),
+            "operation": "updates",
+            "state": "checked",
+            "message": (
+                "Updates are available."
+                if modules or core.get("state") == "update_available" else
+                "Everything is up to date."
+            ),
+            "details": {
+                "core": core,
+                "modules": modules,
+                "module_manifest": manifest_result,
+            },
+        }
+
+    def _download_verified_file(self, url: str, sha256: str, destination: Path) -> None:
+        request = urllib.request.Request(
+            url,
+            headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
         )
+        with urllib.request.urlopen(request, timeout=60) as response:
+            raw = response.read()
+        actual = hashlib.sha256(raw).hexdigest()
+        if actual != sha256:
+            raise ValueError(f"SHA-256 mismatch: expected {sha256}, got {actual}.")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        temp = destination.with_suffix(destination.suffix + ".tmp")
+        temp.write_bytes(raw)
+        temp.replace(destination)
+
+    def update_core(self) -> dict[str, Any]:
+        check = self.check_core_update()
+        if not check.get("success"):
+            return check
+        details = check.get("details", {})
+        if not details.get("available"):
+            return {
+                "success": True,
+                "operation": "update_core",
+                "state": "up_to_date",
+                "message": "EmuKit Core is already up to date.",
+                "details": details,
+            }
+
+        version_info = details.get("version", {})
+        target = details.get("target", {})
+        updater = None
+        if isinstance(target, dict) and isinstance(target.get("Updater"), dict):
+            updater = target.get("Updater")
+        elif isinstance(version_info, dict) and isinstance(version_info.get("Updater"), dict):
+            updater = version_info.get("Updater")
+        elif isinstance(details.get("manifest"), dict) and isinstance(details["manifest"].get("Updater"), dict):
+            updater = details["manifest"].get("Updater")
+
+        if not isinstance(updater, dict):
+            return {
+                "success": False,
+                "operation": "update_core",
+                "state": "updater_not_published",
+                "error": "updater_not_published",
+                "message": "A newer EmuKit Core exists, but the disposable updater has not been published in the release manifest yet.",
+                "details": details,
+            }
+
+        for descriptor, label in ((target, "Core target"), (updater, "Updater")):
+            if not self._valid_string(descriptor.get("Package")) or not self._valid_sha256(descriptor.get("SHA256")):
+                return {
+                    "success": False,
+                    "operation": "update_core",
+                    "state": "invalid_release_descriptor",
+                    "error": "invalid_release_descriptor",
+                    "message": f"{label} release metadata is incomplete.",
+                    "details": descriptor,
+                }
+
+        latest = details.get("latest")
+        staging = self.project_root / "Appdata" / "Cache" / "EmuKit" / "CoreUpdate" / str(latest)
+        core_package = staging / Path(target["Package"]).name
+        updater_executable = self.emukit_root.parent / str(updater.get("Executable") or Path(updater["Package"]).name)
+        try:
+            self._download_verified_file(
+                urllib.parse.urljoin(self.CORE_RELEASE_BASE_URL, target["Package"]),
+                target["SHA256"],
+                core_package,
+            )
+            updater_url = updater.get("URL") or urllib.parse.urljoin(self.CORE_RELEASE_BASE_URL, updater["Package"])
+            self._download_verified_file(updater_url, updater["SHA256"], updater_executable)
+            command = [
+                str(updater_executable),
+                "--old-pid", str(os.getpid()),
+                "--from-version", self.CORE_VERSION,
+                "--to-version", str(latest),
+                "--core-package", str(core_package),
+                "--core-directory", str(self.emukit_root),
+            ]
+            subprocess.Popen(command, cwd=str(self.emukit_root.parent))
+            return {
+                "success": True,
+                "operation": "update_core",
+                "state": "handoff_started",
+                "message": f'EmuKit Core update to {latest} has been handed to the updater.',
+                "details": {"command": command, "updater": str(updater_executable), "package": str(core_package)},
+            }
+        except Exception as exc:
+            return {
+                "success": False,
+                "operation": "update_core",
+                "state": "update_failed",
+                "error": "core_update_handoff_failed",
+                "message": "EmuKit Core update could not be staged or handed off.",
+                "details": str(exc),
+            }
 
 
     def initialize(self) -> dict[str, Any]:
@@ -3300,9 +4015,9 @@ class EmuKitManager:
             ),
             "registered_modules": sorted(registry["Modules"]),
             "registered_count": len(registry["Modules"]),
-            "supported_brands": len(registry["Brands"]),
+            "supported_brands": len(self._catalogue_brand_records()) or len(registry["Brands"]),
             "supported_platforms": len(registry["Platforms"]),
-            "supported_systems": len(registry["Systems"]),
+            "supported_systems": len(self._catalogue_system_records()) or len(registry["Systems"]),
             "current_operation": copy.deepcopy(self._current_operation),
             "registry_sync_errors": copy.deepcopy(self._last_sync_errors),
             "core_dependencies": copy.deepcopy(self._core_dependency_status),
