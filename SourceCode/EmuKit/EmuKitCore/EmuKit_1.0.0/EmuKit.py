@@ -14,10 +14,12 @@ try:
     from .EmuKitManager import EmuKitManager
     from .EmuKitSettings import EmuKitSettings
     from .EmuKitMigration import EmuKitMigrationManager
+    from .EmuKitPlatformIntegration import EmuKitPlatformIntegration
 except ImportError:
     from EmuKitManager import EmuKitManager
     from EmuKitSettings import EmuKitSettings
     from EmuKitMigration import EmuKitMigrationManager
+    from EmuKitPlatformIntegration import EmuKitPlatformIntegration
 
 
 class EmuKit:
@@ -42,6 +44,19 @@ class EmuKit:
             if project_root is not None
             else self._resolve_project_root(self.emukit_root)
         )
+
+        # Frozen Windows builds brand their versioned Core folder with the icon
+        # embedded in EmuKit.exe. Source runs simply skip this because no frozen
+        # executable is present.
+        if getattr(sys, "frozen", False):
+            try:
+                executable = Path(sys.executable).resolve()
+                if executable.parent == self.emukit_root:
+                    EmuKitPlatformIntegration.apply_core_folder_identity(
+                        self.emukit_root, executable.name
+                    )
+            except Exception:
+                pass
 
         self.settings = EmuKitSettings(project_root=self.project_root)
         self.migration = EmuKitMigrationManager(self.settings)
@@ -112,7 +127,10 @@ class EmuKit:
         removed: list[str] = []
         errors: list[dict[str, str]] = []
 
-        old_executable = self.emukit_root / "EmuKitOld.exe"
+        runtime_name = Path(sys.executable).name if getattr(sys, "frozen", False) else "EmuKit.py"
+        runtime_path = Path(runtime_name)
+        old_name = f"{runtime_path.stem}Old{runtime_path.suffix}"
+        old_executable = self.emukit_root / old_name
         candidates: list[Path] = [old_executable]
         updater_path_raw = handoff.get("updater_path")
         if isinstance(updater_path_raw, str) and updater_path_raw.strip():
@@ -120,7 +138,15 @@ class EmuKit:
             # The updater is intentionally placed beside, not inside, the
             # versioned Core directory. Only delete that exact handed-in path
             # when it is in the expected parent directory.
-            if updater_path.parent == self.emukit_root.parent:
+            cache_root = (self.project_root / "Appdata" / "Cache" / "EmuKit").resolve()
+            allowed = updater_path.parent == self.emukit_root.parent
+            if not allowed:
+                try:
+                    updater_path.relative_to(cache_root)
+                    allowed = True
+                except ValueError:
+                    pass
+            if allowed:
                 candidates.append(updater_path)
         staging_raw = handoff.get("staging_path")
         if isinstance(staging_raw, str) and staging_raw.strip():
@@ -197,15 +223,6 @@ class EmuKit:
 
     def update(self, module: str) -> dict[str, Any]:
         return self.manager.update(module)
-
-    def update_module(self, module: str) -> dict[str, Any]:
-        return self.manager.update_module_package(module)
-
-    def check_module(self, module: str) -> dict[str, Any]:
-        return self.manager.check_module(module)
-
-    def refresh_modules(self) -> dict[str, Any]:
-        return self.manager.refresh_remote_manifest()
 
     def check_core_dependencies(self) -> dict[str, Any]:
         return self.manager.check_core_dependencies()
@@ -301,9 +318,6 @@ class EmuKit:
         info = self.manager.get_module_info(module_id) or {"Name": module_id}
         return {"Id": module_id, "Name": info["Name"], **value}
 
-    def assign_system(self, system: str, module: str | None) -> dict[str, Any]:
-        return self.manager.assign_system(system, module)
-
     def get_registry(self) -> dict[str, Any]:
         return self.manager.get_registry()
 
@@ -312,26 +326,6 @@ class EmuKit:
 
     def get_current_installs(self) -> list[dict[str, Any]]:
         return self.manager.get_current_installs()
-
-    def get_supported_modules(self) -> list[dict[str, Any]]:
-        return self.manager.get_supported_modules()
-
-    def get_supported_brands(self) -> list[dict[str, Any]]:
-        return self.manager.get_supported_brands()
-
-    def get_supported_platforms(self) -> list[dict[str, Any]]:
-        return self.manager.get_supported_platforms()
-
-    def get_supported_systems(
-        self,
-        *,
-        brand: str | None = None,
-        platform: str | None = None,
-    ) -> list[dict[str, Any]]:
-        return self.manager.get_supported_systems(
-            brand=brand,
-            platform=platform,
-        )
 
     def get_module_info(self, module: str) -> dict[str, Any] | None:
         module_id = self.manager.resolve_module_id(module)
@@ -343,9 +337,6 @@ class EmuKit:
 
     def get_brand_info(self, brand: str) -> dict[str, Any] | None:
         return self.manager.get_brand_info(brand)
-
-    def get_platform_info(self, platform: str) -> dict[str, Any] | None:
-        return self.manager.get_platform_info(platform)
 
     def get_system_info(self, system: str) -> dict[str, Any] | None:
         return self.manager.get_system_info(system)
@@ -493,29 +484,6 @@ class EmuKitConsole:
         elif verbose and result.get("details") is not None:
             self._json(result["details"])
 
-    @staticmethod
-    def _name_list(
-        title: str,
-        values: list[dict[str, Any]],
-        *,
-        display_key: str = "Name",
-    ) -> None:
-        print(title)
-        if not values:
-            print("  None")
-            return
-        for value in values:
-            name = value.get(display_key) or value.get("Name") or value.get("Id", "Unknown")
-            suffix = ""
-            if title == "Supported Modules":
-                if value.get("LocalInstalled"):
-                    suffix = " [Installed]"
-                elif value.get("RemoteAvailable"):
-                    suffix = " [Available]"
-                if value.get("ModuleUpdateAvailable"):
-                    suffix += " [Update Available]"
-            print(f"  {name}{suffix}")
-
     def _settings(self, settings: dict[str, Any]) -> None:
         print("EmuKit Settings")
         print(f'  Fullscreen: {"On" if settings.get("Fullscreen") else "Off"}')
@@ -605,12 +573,21 @@ class EmuKitConsole:
         platform = value.get("Platform")
         if isinstance(platform, dict) and platform.get("Name"):
             print(f'  Platform: {platform["Name"]}')
-        print(f'  Recommended Primary: {value.get("RecommendedPrimary") or "None"}')
-        print(f'  User Primary: {value.get("UserPrimary") or "None"}')
-        print(f'  Effective Primary: {value.get("EffectivePrimary") or "None"}')
-        print(f'  Primary Module Available: {"Yes" if value.get("PrimaryModuleAvailable") else "No"}')
-        emulators = value.get("Emulators") or value.get("Modules") or []
-        print(f'  Supported Emulators: {", ".join(emulators) or "None"}')
+        primary = value.get("PrimaryEmulator")
+        if isinstance(primary, dict):
+            print(f'  Primary Emulator: {primary.get("Name", primary.get("Id", "None"))}')
+            print(f'  Primary Source: {primary.get("Source", "Recommended")}')
+            print(f'  Installed: {"Yes" if primary.get("Installed") else "No"}')
+        else:
+            print("  Primary Emulator: None")
+            print("  Installed: No")
+
+        emulator_details = value.get("EmulatorDetails")
+        if isinstance(emulator_details, list) and emulator_details:
+            names = [str(item.get("Name") or item.get("Id")) for item in emulator_details if isinstance(item, dict)]
+        else:
+            names = [str(item) for item in (value.get("Emulators") or value.get("Modules") or [])]
+        print(f'  Supported Emulators: {", ".join(names) or "None"}')
 
     def _installs(self, values: list[dict[str, Any]]) -> None:
         print("Emulators Installed")
@@ -625,30 +602,6 @@ class EmuKitConsole:
             f"\n{len(values)} emulator module"
             f'{"s" if len(values) != 1 else ""} installed.'
         )
-
-    @staticmethod
-    def _filters(tokens: list[str]) -> tuple[str | None, str | None]:
-        brand = None
-        platform = None
-        index = 0
-        while index < len(tokens):
-            key = tokens[index].casefold()
-            if key not in {"brand", "platform"}:
-                index += 1
-                continue
-            end = index + 1
-            while (
-                end < len(tokens)
-                and tokens[end].casefold() not in {"brand", "platform"}
-            ):
-                end += 1
-            value = " ".join(tokens[index + 1:end]).strip()
-            if key == "brand":
-                brand = value or None
-            else:
-                platform = value or None
-            index = end
-        return brand, platform
 
     @staticmethod
     def _modifiers(
@@ -667,7 +620,12 @@ class EmuKitConsole:
         if not isinstance(value, dict):
             print("Platform catalogue is unavailable.")
             return
-        print(f'EmuKit {value.get("Platform", "Platform")} Catalogue v{value.get("Version", "?")}')
+        label = {
+            "all": "Catalogue",
+            "systems": "System Catalogue",
+            "emulators": "Emulator Catalogue",
+        }.get(kind, "Catalogue")
+        print(f'EmuKit {value.get("Platform", "Platform")} {label} v{value.get("Version", "?")}')
         if kind in {"all", "emulators"}:
             emulators = value.get("Emulators", {})
             print(f"  Emulators: {len(emulators) if isinstance(emulators, dict) else 0}")
@@ -685,7 +643,19 @@ class EmuKitConsole:
             if isinstance(brands, dict):
                 for brand_id, brand in sorted(brands.items(), key=lambda item: item[1].get("Name", item[0]).casefold()):
                     systems = brand.get("Systems", {})
-                    print(f'    {brand.get("Name", brand_id):<24} {len(systems) if isinstance(systems, dict) else 0} system(s)')
+                    brand_name = brand.get("Name", brand_id)
+                    if kind == "all":
+                        print(f'    {brand_name:<24} {len(systems) if isinstance(systems, dict) else 0} system(s)')
+                        continue
+                    print(f"  {brand_name}")
+                    if not isinstance(systems, dict) or not systems:
+                        print("    None")
+                        continue
+                    for system_id, system in sorted(
+                        systems.items(),
+                        key=lambda item: item[1].get("Name", item[0]).casefold(),
+                    ):
+                        print(f'    {system.get("Name", system_id)}')
 
     @staticmethod
     def _running(values: list[dict[str, Any]]) -> None:
@@ -888,21 +858,6 @@ class EmuKitConsole:
                 }[kind](value)
             return
 
-        # Backward-compatible discovery commands; catalogue-backed now.
-        if lowered == ["supported", "modules"]:
-            value = self.emukit.get_supported_modules()
-            self._json(value) if raw else self._name_list("Supported Modules", value)
-            return
-        if lowered == ["supported", "brands"]:
-            value = self.emukit.get_supported_brands()
-            self._json(value) if raw else self._name_list("Supported Brands", value)
-            return
-        if len(tokens) >= 2 and lowered[:2] == ["supported", "systems"]:
-            brand, platform = self._filters(tokens[2:])
-            value = self.emukit.get_supported_systems(brand=brand, platform=platform)
-            self._json(value) if raw else self._name_list("Supported Systems", value, display_key="DisplayName")
-            return
-
         print("Unknown Get command. Type Help for available commands.")
 
     def execute(self, command: str) -> bool:
@@ -1031,14 +986,6 @@ class EmuKitConsole:
             else:
                 game_path = " ".join(prefix)
                 self._result(self.emukit.launch(system, game_path), raw=raw, verbose=verbose)
-            return True
-
-        # Old pre-release spellings retained quietly for compatibility.
-        if action == "refresh" and lowered_args == ["modules"]:
-            self._result(self.emukit.refresh_modules(), raw=raw, verbose=True)
-            return True
-        if action == "check" and args:
-            self._result(self.emukit.check_module(" ".join(args)), raw=raw, verbose=verbose)
             return True
 
         print(f'Unknown command "{command}". Type Help for available commands.')

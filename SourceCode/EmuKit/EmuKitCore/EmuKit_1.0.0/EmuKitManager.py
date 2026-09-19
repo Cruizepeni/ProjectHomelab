@@ -51,6 +51,7 @@ class EmuKitManager:
         "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/"
         "main/Releases/EmuKit/"
     )
+    CORE_UPDATER_MODULE_ID = "updater"
 
     CORE_DEPENDENCIES = {
         "7zip": {
@@ -1475,6 +1476,29 @@ class EmuKitManager:
                 return False, (
                     f'Remote module "{module_id}" Package must be a safe relative path.'
                 )
+
+        internal_modules = manifest.get("InternalModules", {})
+        if internal_modules is not None and not isinstance(internal_modules, dict):
+            return False, 'Remote manifest "InternalModules" must be an object when present.'
+        for module_id, entry in (internal_modules or {}).items():
+            if not self._valid_id(module_id):
+                return False, f'Remote internal module id "{module_id}" is invalid.'
+            if not isinstance(entry, dict):
+                return False, f'Remote internal module "{module_id}" must be an object.'
+            for key in ("Name", "Kind", "Version", "Package", "RootDirectory", "Executable"):
+                if not self._valid_string(entry.get(key)):
+                    return False, f'Remote internal module "{module_id}" has invalid "{key}".'
+            if not self._valid_sha256(entry.get("SHA256")):
+                return False, f'Remote internal module "{module_id}" must provide a lowercase SHA-256.'
+            package = Path(entry["Package"])
+            if package.is_absolute() or ".." in package.parts:
+                return False, f'Remote internal module "{module_id}" Package must be a safe relative path.'
+            root_directory = Path(entry["RootDirectory"])
+            executable = Path(entry["Executable"])
+            if root_directory.is_absolute() or ".." in root_directory.parts:
+                return False, f'Remote internal module "{module_id}" RootDirectory must be safe and relative.'
+            if executable.is_absolute() or ".." in executable.parts:
+                return False, f'Remote internal module "{module_id}" Executable must be safe and relative.'
         return True, None
 
     def _validate_remote_catalogue(
@@ -2927,9 +2951,8 @@ class EmuKitManager:
 
     # ------------------------------------------------------------------
     # Final 1.0.0 catalogue / primary / lifecycle public model.
-    # These definitions intentionally supersede the earlier pre-release
-    # assignment/local-catalogue helpers above while preserving compatibility
-    # for integrations that still call them.
+    # The remote/cached platform catalogue is authoritative for supported
+    # emulators, brands, systems, aliases, and primary recommendations.
 
     def _catalogue_snapshot(self) -> dict[str, Any] | None:
         with self._state_lock:
@@ -3207,6 +3230,28 @@ class EmuKitManager:
         system["UserPrimary"] = user_primary
         system["EffectivePrimary"] = effective
         system["PrimaryModuleAvailable"] = effective in self.get_modules() if effective else False
+
+        emulator_records = self._catalogue_emulator_records()
+        emulator_details = []
+        for emulator_id in system["Modules"]:
+            emulator = emulator_records.get(emulator_id, {})
+            emulator_details.append({
+                "Id": emulator_id,
+                "Name": emulator.get("Name", emulator_id),
+                "Installed": emulator_id in self.get_modules(),
+            })
+        system["EmulatorDetails"] = emulator_details
+
+        if effective:
+            primary_record = emulator_records.get(effective, {})
+            system["PrimaryEmulator"] = {
+                "Id": effective,
+                "Name": primary_record.get("Name", effective),
+                "Installed": effective in self.get_modules(),
+                "Source": "User" if user_primary else "Recommended",
+            }
+        else:
+            system["PrimaryEmulator"] = None
         return system
 
     def sync_settings(self) -> dict[str, Any]:
@@ -3397,12 +3442,6 @@ class EmuKitManager:
             "message": "All systems now use their recommended primary emulator.",
             "details": {"overrides_removed": count},
         }
-
-    def assign_system(self, system_query: str, module_query: str | None) -> dict[str, Any]:
-        # Compatibility wrapper for the old pre-release API.
-        if module_query is None:
-            return self.restore_system_primary(system_query)
-        return self.set_system_primary(system_query, module_query)
 
     def _selected_module_for_system(self, system_id: str) -> tuple[str | None, dict[str, Any]]:
         system = self._catalogue_system_records().get(system_id, {})
@@ -3668,6 +3707,12 @@ class EmuKitManager:
             "remove": self.remove_module,
         }
         handler = handlers[operation]
+        if len(module_queries) == 1:
+            # Preserve the emulator module's own result/message for single-target
+            # operations. Batch summaries are only useful when there is actually
+            # more than one target.
+            return handler(module_queries[0])
+
         results = [handler(query) for query in module_queries]
         failures = [item for item in results if not item.get("success")]
         return {
@@ -3675,7 +3720,7 @@ class EmuKitManager:
             "operation": f"{operation}_many",
             "state": "complete" if not failures else "complete_with_errors",
             "message": (
-                f'{operation.title()} completed successfully for {len(results)} emulator(s).'
+                f'{operation.title()} completed successfully for {len(results)} emulators.'
                 if not failures else
                 f'{operation.title()} completed with one or more errors.'
             ),
@@ -3732,17 +3777,23 @@ class EmuKitManager:
             }
 
         # The potentially new module package owns the emulator-specific update.
+        # Preserve its user-facing result for a single emulator instead of
+        # replacing it with a generic Core summary.
         emulator_result = self._run_serialized_operation(local_id, "update")
+        success = bool(emulator_result.get("success"))
+        message = emulator_result.get("message")
+        if not message:
+            message = (
+                f'Emulator "{local_id}" is up to date.'
+                if success else
+                f'Emulator "{local_id}" could not be updated.'
+            )
         return {
-            "success": bool(emulator_result.get("success")),
+            "success": success,
             "module": local_id,
             "operation": "update",
-            "state": "updated" if emulator_result.get("success") else "update_failed",
-            "message": (
-                f'Emulator "{local_id}" is up to date.'
-                if emulator_result.get("success") else
-                f'Emulator "{local_id}" could not be updated.'
-            ),
+            "state": "updated" if success else "update_failed",
+            "message": message,
             "details": {
                 "module_package": package_result,
                 "emulator": emulator_result,
@@ -3841,6 +3892,58 @@ class EmuKitManager:
         temp.write_bytes(raw)
         temp.replace(destination)
 
+    def _release_platform_manifest_url(self) -> str:
+        return (
+            f"https://raw.githubusercontent.com/{self.REPOSITORY}/"
+            f"{self.REPOSITORY_BRANCH}/Resources/EmuKit/EmuKitModules/"
+            f"{self.host_platform}/EmuKit_{self.host_platform}_Release_Manifest.json"
+        )
+
+    def _release_platform_base_url(self) -> str:
+        return (
+            f"https://raw.githubusercontent.com/{self.REPOSITORY}/"
+            f"{self.REPOSITORY_BRANCH}/Resources/EmuKit/EmuKitModules/"
+            f"{self.host_platform}/"
+        )
+
+    def _fetch_release_platform_manifest(self) -> dict[str, Any]:
+        request = urllib.request.Request(
+            self._release_platform_manifest_url(),
+            headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
+        )
+        with urllib.request.urlopen(request, timeout=15) as response:
+            document = json.loads(response.read().decode("utf-8"))
+        valid, reason = self._validate_remote_manifest(document)
+        if not valid:
+            raise ValueError(reason or "Release platform manifest is invalid.")
+        return document
+
+    def _extract_internal_module_package(
+        self,
+        package: Path,
+        descriptor: dict[str, Any],
+        destination: Path,
+    ) -> Path:
+        if destination.exists():
+            shutil.rmtree(destination)
+        destination.mkdir(parents=True, exist_ok=True)
+        self._safe_extract_zip(package, destination)
+        module_root = (destination / descriptor["RootDirectory"]).resolve()
+        try:
+            module_root.relative_to(destination.resolve())
+        except ValueError as exc:
+            raise ValueError("Internal module RootDirectory escapes the extraction directory.") from exc
+        executable = (module_root / descriptor["Executable"]).resolve()
+        try:
+            executable.relative_to(module_root)
+        except ValueError as exc:
+            raise ValueError("Internal module Executable escapes the module root.") from exc
+        if not executable.is_file():
+            raise FileNotFoundError(
+                f'Internal module executable was not found after extraction: "{executable}".'
+            )
+        return executable
+
     def update_core(self) -> dict[str, Any]:
         check = self.check_core_update()
         if not check.get("success"):
@@ -3855,49 +3958,69 @@ class EmuKitManager:
                 "details": details,
             }
 
-        version_info = details.get("version", {})
         target = details.get("target", {})
-        updater = None
-        if isinstance(target, dict) and isinstance(target.get("Updater"), dict):
-            updater = target.get("Updater")
-        elif isinstance(version_info, dict) and isinstance(version_info.get("Updater"), dict):
-            updater = version_info.get("Updater")
-        elif isinstance(details.get("manifest"), dict) and isinstance(details["manifest"].get("Updater"), dict):
-            updater = details["manifest"].get("Updater")
-
-        if not isinstance(updater, dict):
-            return {
-                "success": False,
-                "operation": "update_core",
-                "state": "updater_not_published",
-                "error": "updater_not_published",
-                "message": "A newer EmuKit Core exists, but the disposable updater has not been published in the release manifest yet.",
-                "details": details,
-            }
-
-        for descriptor, label in ((target, "Core target"), (updater, "Updater")):
-            if not self._valid_string(descriptor.get("Package")) or not self._valid_sha256(descriptor.get("SHA256")):
+        if not isinstance(target, dict):
+            target = {}
+        for key in ("Package", "SHA256", "RootDirectory", "Executable"):
+            if key == "SHA256":
+                valid = self._valid_sha256(target.get(key))
+            else:
+                valid = self._valid_string(target.get(key))
+            if not valid:
                 return {
                     "success": False,
                     "operation": "update_core",
                     "state": "invalid_release_descriptor",
                     "error": "invalid_release_descriptor",
-                    "message": f"{label} release metadata is incomplete.",
-                    "details": descriptor,
+                    "message": f'Core release metadata is missing a valid "{key}".',
+                    "details": target,
                 }
+
+        try:
+            platform_manifest = self._fetch_release_platform_manifest()
+        except Exception as exc:
+            return {
+                "success": False,
+                "operation": "update_core",
+                "state": "updater_manifest_unavailable",
+                "error": "updater_manifest_unavailable",
+                "message": "EmuKit found a Core update, but the platform module manifest could not be loaded.",
+                "details": str(exc),
+            }
+
+        internal_modules = platform_manifest.get("InternalModules", {})
+        updater = internal_modules.get(self.CORE_UPDATER_MODULE_ID) if isinstance(internal_modules, dict) else None
+        if not isinstance(updater, dict) or updater.get("Kind") != "core-updater":
+            return {
+                "success": False,
+                "operation": "update_core",
+                "state": "updater_not_published",
+                "error": "updater_not_published",
+                "message": "A newer EmuKit Core exists, but the Core Updater module has not been published for this platform yet.",
+                "details": {"platform_manifest": platform_manifest},
+            }
 
         latest = details.get("latest")
         staging = self.project_root / "Appdata" / "Cache" / "EmuKit" / "CoreUpdate" / str(latest)
-        core_package = staging / Path(target["Package"]).name
-        updater_executable = self.emukit_root.parent / str(updater.get("Executable") or Path(updater["Package"]).name)
+        core_package = staging / "Core" / Path(target["Package"]).name
+        updater_package = staging / "Updater" / Path(updater["Package"]).name
+        updater_extract = staging / "Updater" / "Extracted"
+
         try:
             self._download_verified_file(
                 urllib.parse.urljoin(self.CORE_RELEASE_BASE_URL, target["Package"]),
                 target["SHA256"],
                 core_package,
             )
-            updater_url = updater.get("URL") or urllib.parse.urljoin(self.CORE_RELEASE_BASE_URL, updater["Package"])
-            self._download_verified_file(updater_url, updater["SHA256"], updater_executable)
+            self._download_verified_file(
+                urllib.parse.urljoin(self._release_platform_base_url(), updater["Package"]),
+                updater["SHA256"],
+                updater_package,
+            )
+            updater_executable = self._extract_internal_module_package(
+                updater_package, updater, updater_extract
+            )
+
             command = [
                 str(updater_executable),
                 "--old-pid", str(os.getpid()),
@@ -3905,14 +4028,20 @@ class EmuKitManager:
                 "--to-version", str(latest),
                 "--core-package", str(core_package),
                 "--core-directory", str(self.emukit_root),
+                "--core-executable", str(target["Executable"]),
             ]
-            subprocess.Popen(command, cwd=str(self.emukit_root.parent))
+            subprocess.Popen(command, cwd=str(updater_executable.parent))
             return {
                 "success": True,
                 "operation": "update_core",
                 "state": "handoff_started",
-                "message": f'EmuKit Core update to {latest} has been handed to the updater.',
-                "details": {"command": command, "updater": str(updater_executable), "package": str(core_package)},
+                "message": f'EmuKit Core update to {latest} has been handed to the Updater module.',
+                "details": {
+                    "command": command,
+                    "updater_module": copy.deepcopy(updater),
+                    "updater": str(updater_executable),
+                    "package": str(core_package),
+                },
             }
         except Exception as exc:
             return {
@@ -3920,7 +4049,7 @@ class EmuKitManager:
                 "operation": "update_core",
                 "state": "update_failed",
                 "error": "core_update_handoff_failed",
-                "message": "EmuKit Core update could not be staged or handed off.",
+                "message": "EmuKit Core update could not be staged or handed off to the Updater module.",
                 "details": str(exc),
             }
 

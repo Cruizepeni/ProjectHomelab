@@ -1,0 +1,22 @@
+{
+  "SchemaVersion": 1,
+  "Id": "updater",
+  "Name": "EmuKit Updater",
+  "Kind": "core-updater",
+  "Channel": "development",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "Package": "EmuKitUpdater_1.0.0.zip",
+      "SHA256": "f93240f0554b5da08ace4680ccba6b87846277267b77873c35bcf9125a4f602e",
+      "RootDirectory": "EmuKitUpdater_1.0.0",
+      "EntryPoint": "EmuKitUpdater.py",
+      "SupportedPlatforms": [
+        "Windows",
+        "Linux",
+        "Mac"
+      ]
+    }
+  }
+}
