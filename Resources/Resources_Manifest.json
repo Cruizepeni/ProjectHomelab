@@ -16,6 +16,12 @@
     "emukit": {
       "manifest": "EmuKit/EmuKit_Manifest.json"
     },
+    "icons": {
+      "path": "Icons",
+      "features": {
+        "emukit": "Icons/Features/EmuKit"
+      }
+    },
     "ffmpeg": {
       "manifest": "Ffmpeg/Ffmpeg_Manifest.json"
     },
