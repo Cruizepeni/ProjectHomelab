@@ -1,0 +1,30 @@
+{
+  "SchemaVersion": 1,
+  "Version": 1,
+  "Platform": "Windows",
+  "Emulators": {
+    "replace-with-module-id": {
+      "Name": "Replace With Emulator Name",
+      "Aliases": [],
+      "Systems": [
+        "replace-brand-id.replace-system-id"
+      ]
+    }
+  },
+  "Brands": {
+    "replace-brand-id": {
+      "Name": "Replace Brand Name",
+      "Aliases": [],
+      "Systems": {
+        "replace-brand-id.replace-system-id": {
+          "Name": "Replace System Name",
+          "Aliases": [],
+          "Emulators": [
+            "replace-with-module-id"
+          ],
+          "RecommendedPrimary": "replace-with-module-id"
+        }
+      }
+    }
+  }
+}

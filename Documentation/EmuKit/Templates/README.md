@@ -1,10 +1,10 @@
-# EmuKit Module Template Set
+# EmuKit Template Set
 
-These templates define the current ProjectHomelab starting point for a new EmuKit module.
+These templates represent the current EmuKit 1.0.0 contracts for emulator modules, the platform catalogue/manifests, Core release metadata, and the disposable Core Updater.
 
-## Source Files
+## Emulator Module Source Files
 
-For an emulator named `ExampleEmu`, copy and rename:
+For an emulator named `ExampleEmu`, copy/rename:
 
 ```text
 EmuKit_Module_Info_Template.json
@@ -26,9 +26,7 @@ EmuKit_Module_Common_Template.py
 → _ExampleEmuCommon.py
 ```
 
-Replace every `ReplaceModule`, `replace-with-*`, source URL, executable name, host rule, resource rule, system identity, and data-policy placeholder with emulator-specific values.
-
-The resulting development module normally has:
+Development module root:
 
 ```text
 ExampleEmu_1.0.0/
@@ -40,33 +38,9 @@ ExampleEmu_1.0.0/
 └── _ExampleEmuCommon.py
 ```
 
-## Lifecycle Contract
+## Root Contract
 
-Implement and test:
-
-```text
-check
-install
-uninstall
-repair
-update
-```
-
-Every lifecycle handler accepts `progress`.
-
-The manager template already contains the strict JSONL executable bridge used after compilation.
-
-Do not replace it with plain console output or a legacy single-JSON interface.
-
-## Root Resolution
-
-Keep the frozen-safe module-directory rule:
-
-```python
-MODULE_DIR = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
-```
-
-`.ProjectHomelabRoot` is the only ProjectHomelab root marker.
+`.AppRoot` is the sole host marker.
 
 Managed emulator files belong below:
 
@@ -74,82 +48,62 @@ Managed emulator files belong below:
 ROOT/Emulators/
 ```
 
-## External Processes
+## System Metadata
 
-`EmuKit_Module_Common_Template.py` includes `run_external_process(...)` for lifecycle child programs.
+System names and aliases in module Info must mirror the platform catalogue.
 
-Use it for extractors, firmware installers, emulator setup/maintenance commands, and other external tools started by the module.
+Do not use module aliases for console names.
 
-For routine lifecycle work:
+Do not add per-system `Default`; the catalogue owns `RecommendedPrimary` and user overrides live in settings.
 
-- capture or redirect child stdout/stderr
-- never allow child stdout to enter executable-manager JSONL stdout
-- include useful output tails in structured failure `details`
-- use `isolate_console=True` only for child programs that attach to or create unwanted consoles
-- keep source and frozen-manager behavior equivalent
+## Lifecycle Metadata
 
-On frozen Windows managers the helper temporarily restores the normal DLL search path while the external program is created, then restores the manager's PyInstaller runtime path.
-
-The Info templates also contain:
+Use:
 
 ```json
-"IsolateLaunchConsole": false
+"Lifecycle": {
+  "ProcessName": "ExampleEmu.exe"
+}
 ```
 
-Set that to `true` only when the emulator itself must be isolated from EmuKit's console during normal Core launching. A system may override it for a specific game-launch path.
+when an explicit process identity is useful. It enables Core lifecycle commands even for manually started emulator processes.
 
-## Development Package
-
-Package:
-
-```text
-ExampleEmu_1.0.0.zip
-└── ExampleEmu_1.0.0/
-    └── source files
-```
+## Development Distribution
 
 Use:
 
 ```text
 EmuKit_Module_Manifest_Template.json
 EmuKit_Platform_Manifest_Template.json
+EmuKit_Platform_Catalogue_Template.json
 ```
 
-Calculate SHA-256 from the exact development ZIP.
+Repository location:
 
-## Release Manager
+```text
+SourceCode/EmuKit/EmuKitModules/<OS>/<Module>/
+```
 
-On Windows, compile the manager from inside the completed source module directory:
+## Windows Release Distribution
+
+Compile the manager:
 
 ```powershell
 py -m PyInstaller --clean --noconfirm --onefile --console --name ExampleEmuManager ExampleEmuManager.py
 ```
 
-The resulting executable is:
+Release module:
 
 ```text
-dist/ExampleEmuManager.exe
+ExampleEmu_1.0.0/
+├── EmuKitExampleEmuInfo.json
+└── ExampleEmuManager.exe
 ```
 
-Create the release Info JSON from:
-
-```text
-EmuKit_Module_Info_Release_Template.json
-```
-
-with:
-
-```json
-"Manager": "ExampleEmuManager.exe"
-```
-
-The Windows x86_64 release package is:
+Release ZIP:
 
 ```text
 ExampleEmu_1.0.0_Windows_x86_64.zip
-└── ExampleEmu_1.0.0/
-    ├── EmuKitExampleEmuInfo.json
-    └── ExampleEmuManager.exe
 ```
 
 Use:
@@ -159,28 +113,82 @@ EmuKit_Module_Release_Manifest_Template.json
 EmuKit_Platform_Release_Manifest_Template.json
 ```
 
-Calculate SHA-256 from the exact release ZIP.
-
-Development and release hashes are independent.
-
-Before publication, test the actual compiled manager through the actual compiled EmuKit release executable. A Python-source-only test is not sufficient for Windows release acceptance because frozen process DLL and console inheritance must also be validated.
-
-## Display Name and Install Completion
-
-The module `Name` is the user-facing emulator display name and must begin with a capital letter even when upstream branding begins with lowercase. Do not apply this display rule to real upstream filenames, executables, package assets, URLs, repository identifiers, or other upstream-controlled identifiers.
-
-Successful install results use:
+Repository location:
 
 ```text
-<Module Name> version "<EmulatorVersion>" installed successfully.
+Resources/EmuKit/EmuKitModules/Windows/<Module>/
 ```
 
-Keep firmware, resource, profile, and system-specific completion information in structured `details` rather than extending the success sentence.
+## Catalogue + Hash Chain
+
+When module Info or catalogue metadata changes:
+
+```text
+change Info/catalogue
+→ rebuild affected module ZIPs
+→ calculate new module ZIP SHA values
+→ update per-module manifests
+→ update platform manifests
+→ calculate new catalogue SHA when catalogue changed
+→ update platform Catalogue.SHA256
+```
+
+## Updater Templates
+
+Use:
+
+```text
+EmuKit_Updater_Manifest_Template.json
+EmuKit_Updater_Release_Manifest_Template.json
+```
+
+Generic source location:
+
+```text
+SourceCode/EmuKit/EmuKitModules/Updater/
+```
+
+Windows release location:
+
+```text
+Resources/EmuKit/EmuKitModules/Windows/Updater/
+```
+
+The release Updater is advertised in platform `InternalModules`, not public `Modules`.
+
+See `../EmuKitUpdater.md` and `../Examples/Example_Updater_Package_Layout.md`.
+
+## Core Manifest Templates
+
+Use:
+
+```text
+EmuKit_Core_Manifest_Template.json
+EmuKit_Core_Release_Manifest_Template.json
+```
+
+Core releases are published below:
+
+```text
+Releases/EmuKit/
+```
+
+## Packaging Hygiene
+
+Never package:
+
+```text
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
+```
+
+unless a specific compiled release artifact is deliberately being copied from a build output into a clean release package.
 
 ## Source Policy
 
-Do not add comments or docstrings to EmuKit Core/module runtime Python or these reusable Python templates.
+Keep emulator-specific behavior inside modules and generic orchestration inside Core.
 
-Do not add legacy protocol fallbacks or obsolete EmuKit path compatibility.
-
-Keep emulator-specific behavior inside the module and generic orchestration inside Core.
+Do not add legacy path compatibility, alternate root markers, obsolete public command aliases, or old system-assignment behavior to new templates.

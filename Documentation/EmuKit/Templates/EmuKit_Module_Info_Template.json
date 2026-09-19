@@ -9,6 +9,9 @@
   "DependencyPath": "Emulators/ReplaceModule",
   "LaunchPath": "Emulators/ReplaceModule/replace-executable.exe",
   "WorkingDirectory": "Emulators/ReplaceModule",
+  "Lifecycle": {
+    "ProcessName": "replace-executable.exe"
+  },
   "IsolateLaunchConsole": false,
   "EmulatorLaunchArguments": [],
   "DefaultInstalled": true,
@@ -59,7 +62,7 @@
   },
   "Resources": {},
   "Systems": {
-    "replace-system-id": {
+    "replace-brand-id.replace-system-id": {
       "Name": "Replace System Name",
       "Aliases": [],
       "Brand": {
@@ -72,7 +75,6 @@
         "Name": "Console",
         "Aliases": []
       },
-      "Default": true,
       "LaunchArguments": [
         "{game}"
       ],

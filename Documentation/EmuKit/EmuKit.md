@@ -2,314 +2,133 @@
 
 ## Purpose
 
-`EmuKit` is ProjectHomelab's emulator-module manager.
+EmuKit is ProjectHomelab's emulator installation, catalogue, launch, lifecycle, and update manager.
 
-EmuKit Core provides shared orchestration while emulator-specific behavior belongs to emulator modules.
+EmuKit Core remains generic. Emulator-specific behavior belongs to emulator modules, while Core provides the shared orchestration required to discover, install, launch, close, restart, repair, update, and remove those modules consistently.
 
-Core is responsible for:
+Core owns:
 
-- ProjectHomelab and standalone root resolution
-- host operating-system and architecture detection
-- shared Core dependency preflight
-- local module discovery from `EmuKitModules`
-- registry generation
-- settings reconciliation
-- remote platform-manifest discovery
-- module package download and SHA-256 verification
-- safe module package extraction, installation, update, and removal
-- serialized lifecycle invocation
-- system-to-module assignment
+- `.AppRoot` root resolution and standalone fallback
+- host OS and architecture detection
+- shared dependency preflight
+- local module discovery and registry generation
+- settings and system-primary overrides
+- remote platform manifest and catalogue loading
+- module package download, SHA-256 verification, extraction, replacement, and removal
+- catalogue-driven brand/system/emulator resolution
 - emulator and game launching
-- external emulator process isolation and frozen-runtime launch sanitization
-- progress reporting
-- structured operation results
+- emulator process lifecycle control
+- module lifecycle invocation and progress forwarding
+- Core update discovery and handoff to the disposable Updater internal module
+- migration/fresh-update cleanup
+- host-specific presentation helpers such as the Windows Core folder icon
 
-Core is not responsible for emulator-specific download URLs, BIOS or firmware rules, emulator configuration, emulator repair logic, emulator uninstall policy, or emulator update logic.
+Core does not own emulator-specific download URLs, BIOS/firmware requirements, emulator configuration, emulator repair policy, emulator uninstall policy, or emulator-version update behavior. Those belong to the emulator module.
 
-Those responsibilities belong to each emulator module.
-
-## Core 1.0.0 Layout
-
-Core source lives in a versioned directory while the Python filenames themselves remain unversioned.
+## Core 1.0.0 Source Layout
 
 ```text
 SourceCode/
 └── EmuKit/
-    └── EmuKitCore/
-        └── EmuKit_1.0.0/
-            ├── EmuKit.py
-            ├── EmuKitManager.py
-            ├── EmuKitSettings.py
-            ├── EmuKitLauncher.py
-            ├── EmuKit.ico
-            ├── IconEmuKit.png
-            └── EmuKitModules/
+    ├── EmuKitCore/
+    │   ├── EmuKit_Core_Manifest.json
+    │   └── EmuKit_1.0.0/
+    │       ├── EmuKit.py
+    │       ├── EmuKitManager.py
+    │       ├── EmuKitSettings.py
+    │       ├── EmuKitLauncher.py
+    │       ├── EmuKitEmulatorLifecycleManager.py
+    │       ├── EmuKitMigration.py
+    │       └── EmuKitPlatformIntegration.py
+    └── EmuKitModules/
+        ├── Updater/
+        │   ├── EmuKitUpdater_Manifest.json
+        │   └── EmuKitUpdater_1.0.0.zip
+        └── Windows/
+            ├── EmuKit_Windows_Manifest.json
+            ├── EmuKit_Windows_Catalogue.json
+            └── <Emulator modules>/
 ```
 
-`EmuKit.ico` is the canonical Windows executable icon asset.
-
-`IconEmuKit.png` is the source artwork/reference image used to produce the Windows icon.
-
-Windows release builds embed `EmuKit.ico` into `EmuKit.exe`. The icon source files do not need to be distributed as separate runtime files inside the compiled Core release package.
-
-Do not create filenames such as:
-
-```text
-EmuKit_1.0.0.py
-EmuKitManager_1.0.0.py
-```
-
-Core version, module version, and emulator version are independent concepts.
-
-```text
-EmuKit Core Version
-Module Version
-Emulator Version
-```
-
-Changing one does not imply that either of the others changed.
+The Core source is platform-neutral wherever practical. Platform-specific distribution is expressed by platform manifests and platform-specific compiled packages, not separate Core source trees.
 
 ## Root Resolution
 
-`.ProjectHomelabRoot` is the sole ProjectHomelab root marker.
+`.AppRoot` is the sole host/root marker.
 
-When EmuKit starts, it searches upward from its runtime location for:
+Core begins at its own runtime directory and walks upward. The nearest directory containing:
 
 ```text
-.ProjectHomelabRoot
+.AppRoot
 ```
 
-If found, that directory becomes `ROOT`.
+becomes `ROOT`.
 
-If no marker is found, EmuKit operates in standalone mode and its own runtime directory becomes `ROOT`.
+If no `.AppRoot` file exists anywhere above the runtime, the Core runtime directory itself becomes `ROOT`. This is standalone mode.
 
-No secondary ProjectHomelab-host detection mechanism should be introduced.
+There is no ProjectHomelab-specific marker, registry lookup, executable-name check, or secondary host detector.
 
-A normal ProjectHomelab layout is:
+The same rule allows a standalone EmuKit directory to be moved into another host that provides `.AppRoot`, or removed from that host and used standalone again.
+
+## Runtime State
+
+Core stores shared state relative to `ROOT`:
 
 ```text
 ROOT/
-├── .ProjectHomelabRoot
 ├── Appdata/
 │   ├── Cache/
+│   │   └── EmuKit/
 │   ├── Registry/
+│   │   └── EmuKitRegistry.json
 │   └── Settings/
+│       └── EmuKitSettings.json
 ├── Dependencies/
 ├── Emulators/
-├── Modules/
-│   └── EmuKit/
-│       └── EmuKit_1.0.0/
-│           ├── EmuKit.exe
-│           └── EmuKitModules/
-├── SourceCode/
-│   └── EmuKit/
-│       └── EmuKitCore/
-│           └── EmuKit_1.0.0/
-│               ├── EmuKit.py
-│               └── EmuKitModules/
-├── Releases/
-├── Resources/
-└── Documentation/
+└── ...
 ```
 
-`SourceCode/EmuKit` is the development/source tree.
-
-Compiled HomeLab Core runtimes live below `Modules/EmuKit`.
-
-`EmuKitModules` remains inside the active Core runtime directory in both source and compiled operation. It is not moved to the higher-level `SourceCode/EmuKit` or `Modules/EmuKit` directory.
-
-A standalone EmuKit layout uses the same relative concepts locally:
+The active Core runtime has its own local module directory:
 
 ```text
-EmuKit_1.0.0/
-├── EmuKit.py or EmuKit.exe
-├── EmuKitModules/
-├── Emulators/
-├── Dependencies/
-└── Appdata/
-    ├── Cache/
-    ├── Registry/
-    └── Settings/
+<Core runtime>/EmuKitModules/
 ```
 
-## Local Module Location
-
-Installed module packages live under:
-
-```text
-<EmuKit runtime>/EmuKitModules/
-```
-
-The current ProjectHomelab module-source convention is:
-
-```text
-EmuKitModules/
-└── ExampleEmu_1.0.0/
-    ├── EmuKitExampleEmuInfo.json
-    ├── ExampleEmuManager.py
-    ├── ExampleEmuInstaller.py
-    ├── ExampleEmuRepair.py
-    ├── ExampleEmuUninstall.py
-    └── _ExampleEmuCommon.py
-```
-
-This split is the canonical pattern used by the current Windows modules.
-
-`ExampleEmuManager.py` owns the lifecycle gateway and status checks.
-
-`ExampleEmuInstaller.py` owns clean installation.
-
-`ExampleEmuRepair.py` owns repair behavior.
-
-`ExampleEmuUninstall.py` owns uninstall behavior.
-
-`_ExampleEmuCommon.py` owns shared paths, root resolution, resource helpers, checksums, progress helpers, host validation, and other module-wide utilities.
-
-Emulator-specific modules may add files where genuinely required, but new modules should begin from this structure instead of collapsing all behavior into one manager file.
-
-Release packages normally replace the Python manager with a compiled executable manager while retaining the external Info JSON:
-
-```text
-ExampleEmu_1.0.0/
-├── EmuKitExampleEmuInfo.json
-└── ExampleEmuManager.exe
-```
-
-A physically present valid module is locally installed even if it does not appear in any remote manifest.
-
-The local module directory answers:
-
-```text
-What module code is physically installed?
-```
-
-The generated registry answers:
-
-```text
-What valid local modules did Core discover and normalize?
-```
-
-The remote platform manifest answers:
-
-```text
-What module packages are available to download or update?
-```
-
-These are deliberately separate authorities.
-
-## Emulator Installation Location
-
-Modules manage emulator installations below:
+Installed emulator binaries remain below:
 
 ```text
 ROOT/Emulators/
 ```
 
-For example:
+A module's `DependencyPath` must resolve to a child of `ROOT/Emulators`.
 
-```text
-ROOT/Emulators/Xemu/
-```
+## Development and Release Feeds
 
-A module's `DependencyPath` must be relative to `ROOT`, must resolve inside `ROOT/Emulators`, and must identify a child directory of `Emulators`.
-
-The old `Dependencies/EmuKit/<Emulator>` emulator layout is not part of Core 1.0.0.
-
-The general `ROOT/Dependencies/` directory remains available for shared non-emulator dependencies.
-
-## Core Dependencies
-
-Core 1.0.0 performs dependency preflight before normal initialization.
-
-Required shared dependencies are:
-
-```text
-7-Zip 26.03
-  Windows: required
-  Linux:   required
-  Mac:     required
-
-Microsoft Visual C++ v14 Redistributable
-  Windows: required
-  Linux:   not required
-  Mac:     not required
-```
-
-If required dependencies are missing, EmuKit lists them and asks whether it should install them automatically.
-
-If the user chooses `No`, EmuKit closes instead of entering the normal CLI without required dependencies.
-
-If automatic installation fails and dependencies remain missing, EmuKit closes.
-
-### 7-Zip Resource Resolution
-
-Core pins the required 7-Zip version but does not hard-code each artifact filename or checksum.
-
-Core starts from:
-
-```text
-Resources/7Zip/7Zip_Manifest.json
-```
-
-The root resource manifest identifies the pinned version manifest, for example:
-
-```text
-26.03/7Zip_26.03_Manifest.json
-```
-
-Core then selects the target matching the current OS and architecture and consumes the target's:
-
-- artifact path
-- SHA-256
-- executable name
-- install method
-- silent installer arguments where applicable
-
-On Windows, the controlled installer is executed according to manifest metadata.
-
-On Linux and macOS, the controlled archive is extracted into the shared dependency area and `7zz` is made executable.
-
-Local controlled Resources are preferred when present and valid; otherwise Core can retrieve the controlled artifact from the resource manifest's raw repository location.
-
-### Visual C++ Redistributable
-
-On Windows, Core detects the installed Microsoft Visual C++ v14 runtime through the Windows registry.
-
-If missing and the user accepts automatic dependency installation, Core downloads the latest supported x64 redistributable from Microsoft's official `vc14` permalink, installs it quietly, and verifies detection afterward.
-
-## Development and Release Channels
-
-EmuKit uses the same Core behavior in development and release builds.
-
-The remote module feed changes by channel.
-
-Normal Python source execution defaults to:
+Development feed base:
 
 ```text
 SourceCode/EmuKit/
 ```
 
-Frozen executable builds default to:
+Platform development data:
 
 ```text
-Releases/EmuKit/
+SourceCode/EmuKit/EmuKitModules/<OS>/
 ```
 
-Development platform manifests use:
+Release feed base:
 
 ```text
-SourceCode/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Manifest.json
+Resources/EmuKit/
 ```
 
-Release platform manifests use:
+Platform release data:
 
 ```text
-Releases/EmuKit/EmulatorModules/<OS>/EmuKit_<OS>_Release_Manifest.json
+Resources/EmuKit/EmuKitModules/<OS>/
 ```
 
-Source/development manifests always use `Name_Manifest.json`. Release-side mirrors always use `Name_Release_Manifest.json`.
-
-Canonical operating-system names are:
+Canonical OS names are:
 
 ```text
 Windows
@@ -317,598 +136,350 @@ Linux
 Mac
 ```
 
-Examples:
+For Windows the platform files are:
 
 ```text
-SourceCode/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Manifest.json
-Releases/EmuKit/EmulatorModules/Windows/EmuKit_Windows_Release_Manifest.json
+EmuKit_Windows_Manifest.json
+EmuKit_Windows_Catalogue.json
 ```
 
-`EMUKIT_CHANNEL` may explicitly select development or release behavior for testing.
-
-`EMUKIT_FEED_BASE_URL` may override the feed base for controlled development/testing scenarios.
-
-Development and release must not use different module lifecycle, validation, registry, or installer semantics.
-
-The channel changes the source of distributed module packages, not the module contract.
-
-## Distribution Layout
-
-The current source/development convention is:
+for development, and:
 
 ```text
-SourceCode/
-└── EmuKit/
-    └── EmulatorModules/
-        └── Windows/
-            ├── EmuKit_Windows_Manifest.json
-            └── ExampleEmu/
-                ├── ExampleEmu_Manifest.json
-                └── ExampleEmu_1.0.0.zip
+EmuKit_Windows_Release_Manifest.json
+EmuKit_Windows_Catalogue.json
 ```
 
-The Windows x86_64 release convention is:
+for release.
 
-```text
-Releases/
-└── EmuKit/
-    └── EmulatorModules/
-        └── Windows/
-            ├── EmuKit_Windows_Release_Manifest.json
-            └── ExampleEmu/
-                ├── ExampleEmu_Release_Manifest.json
-                └── ExampleEmu_1.0.0_Windows_x86_64.zip
-```
+## Catalogue Authority
 
-Core manifests follow the same development/release split:
+The platform catalogue is the public authority for:
 
-```text
-SourceCode/EmuKit/EmuKitCore/EmuKit_Core_Manifest.json
-Releases/EmuKit/EmuKitCore/EmuKit_Core_Release_Manifest.json
-```
-
-Core release packages sit directly beside the Core release manifest. There is no operating-system subdirectory below `Releases/EmuKit/EmuKitCore`.
-
-```text
-Releases/
-└── EmuKit/
-    └── EmuKitCore/
-        ├── EmuKit_Core_Release_Manifest.json
-        └── EmuKit_1.0.0_Windows_x86_64.zip
-```
-
-The Windows x86_64 Core release package is named:
-
-```text
-EmuKit_1.0.0_Windows_x86_64.zip
-```
-
-There is no extra `1.0.0/` directory between a module folder and its ZIP.
-
-The development ZIP contains its versioned source module directory:
-
-```text
-ExampleEmu_1.0.0.zip
-└── ExampleEmu_1.0.0/
-    ├── EmuKitExampleEmuInfo.json
-    ├── ExampleEmuManager.py
-    ├── ExampleEmuInstaller.py
-    ├── ExampleEmuRepair.py
-    ├── ExampleEmuUninstall.py
-    └── _ExampleEmuCommon.py
-```
-
-The release ZIP contains the versioned compiled module directory:
-
-```text
-ExampleEmu_1.0.0_Windows_x86_64.zip
-└── ExampleEmu_1.0.0/
-    ├── EmuKitExampleEmuInfo.json
-    └── ExampleEmuManager.exe
-```
-
-The release Info JSON must point `Manager` at the executable actually present in the release package.
-
-Core 1.0.0 consumes the platform manifest for runtime discovery, download, and update decisions.
-
-The development per-module `<Module>_Manifest.json` and release `<Module>_Release_Manifest.json` are retained module-version catalogues for their respective channels. They record available versions and package hashes, but Core 1.0.0 does not require a second lookup through those files to install a module advertised by the active platform manifest.
-
-Development and release packages are different artifacts and are hashed independently. Never copy the development ZIP checksum into a release manifest or the release ZIP checksum into a development manifest.
-
-## Development Workflow
-
-A normal module-development workflow is:
-
-```text
-Create the canonical source module locally
-→ place it under EmuKitModules
-→ run EmuKit
-→ local discovery registers the module
-→ develop and test check/install/uninstall/repair/update
-→ verify progress reporting
-→ package the source module
-→ calculate the exact development ZIP SHA-256
-→ update the development per-module manifest
-→ update the development platform manifest
-→ remove the local module copy
-→ install through the development feed
-→ verify package download, hash verification, extraction, discovery, progress, and emulator installation
-→ compile the manager for the release target
-→ create a release Info JSON pointing Manager at the compiled executable
-→ package the target-qualified release ZIP
-→ calculate the exact release ZIP SHA-256
-→ update the release per-module manifest
-→ update the release platform manifest
-→ test acquisition and lifecycle behavior through the release channel
-→ test the real compiled EmuKit executable with the compiled module manager
-→ verify install output is clean and no lifecycle child process leaks console text or opens an unwanted console window
-→ verify Launch Emulator and game launch from the compiled Core
-```
-
-A locally present development module does not need a remote platform-manifest entry.
-
-When a package is rebuilt in place while retaining the same `ModuleVersion`, every manifest that references that exact ZIP must receive the new SHA-256 before the package is published.
-
-## Installing a Module
-
-`Install <Module>` has two paths.
-
-If the module is already physically present:
-
-```text
-resolve local module
-→ enable it for management
-→ invoke module install()
-```
-
-If the module is not physically present:
-
-```text
-resolve module from platform manifest
-→ download package to staging
-→ verify SHA-256
-→ safely extract package
-→ locate exactly one valid module root
-→ validate module registration
-→ verify module ID and version against manifest metadata
-→ copy validated module into EmuKitModules
-→ rebuild registry
-→ reconcile settings
-→ invoke module install()
-```
-
-Validated modules are copied out of staging rather than renamed from the temporary extraction directory so the installed module inherits normal destination permissions.
-
-Core installs the module package.
-
-The module installs the emulator.
-
-## Install All
-
-`Install All` operates on the current host platform manifest.
-
-For each remote module:
-
-```text
-already local
-    → do not redownload unnecessarily
-missing locally
-    → acquire and install module package
-then
-    → invoke emulator install lifecycle
-```
-
-Failures are reported per module.
-
-## Updating
-
-There are two separate update concepts.
-
-### Module Package Update
-
-`Update Module <Module>` is owned by Core.
-
-Core compares the installed module's `ModuleVersion` with the version advertised by the current platform manifest.
-
-A replacement module is installed only after the package has downloaded, passed SHA-256 verification, and passed module-contract validation.
-
-### Emulator Update
-
-`Update <Module>` is owned by the module.
-
-Core invokes the module's:
-
-```text
-update()
-```
-
-handler.
-
-Core does not contain emulator-specific update knowledge.
-
-## Removing Modules and Uninstalling Emulators
-
-These are different operations.
-
-### Remove Module
-
-`Remove Module <Module>` removes the EmuKit module package from `EmuKitModules`.
-
-It does not invoke emulator uninstall logic.
-
-The emulator installation is left untouched.
-
-The registry is then rebuilt and invalid assignments are cleared.
-
-### Uninstall
-
-`Uninstall <Module>` invokes the module's emulator uninstall lifecycle.
-
-The module package remains available unless separately removed.
-
-## Registry
-
-The registry is generated state stored below:
-
-```text
-ROOT/Appdata/Registry/EmuKitRegistry.json
-```
-
-It must be rebuildable from valid physically present modules.
-
-The registry normalizes:
-
-- modules
-- brands
-- platforms
+- emulator identities and aliases
+- brand identities
 - systems
+- system aliases
+- emulator-to-system relationships
+- system-to-emulator relationships
+- `RecommendedPrimary`
 
-A missing module directory must eventually disappear from the registry.
+The catalogue is usable even when no emulator modules are installed locally.
 
-The registry is not the authority for whether module files physically exist.
+Module Info JSONs still contain their own supported-system metadata because the module must be self-describing after extraction. System identity and alias data in Info JSON should mirror the platform catalogue exactly.
 
-## Settings
+System aliases should represent real alternate names, regional names, or common abbreviations. Do not store formatting variants that Core normalization already handles, and do not use hardware model codes as aliases unless users genuinely identify the whole system by that code.
 
-Settings are stored below:
+## Primary Emulator Model
 
-```text
-ROOT/Appdata/Settings/EmuKitSettings.json
-```
+Every catalogue system declares one `RecommendedPrimary`.
 
-They preserve user choices independently from registry regeneration where possible.
-
-Settings include:
-
-- global fullscreen state
-- module enabled/managed state
-- per-system module assignment
-
-When a module is first discovered, `DefaultInstalled` is used to seed that module's enabled state.
-
-Registry synchronization should preserve unrelated user choices and clear assignments that can no longer be satisfied.
-
-## Systems and Assignments
-
-Modules declare the systems they support.
-
-Core combines those declarations into a normalized catalogue.
-
-A user may assign one module as the active module for a system.
-
-Supported-system presentation includes Brand + System to remain unambiguous.
-
-Examples:
-
-```text
-Nintendo GameCube
-Sony PlayStation 2
-Microsoft Xbox
-```
-
-## Launching
-
-EmuKit supports two launch modes.
-
-### Launch a Game
-
-```text
-Launch <GamePath> <System>
-```
-
-The system assignment determines which local module launches the game.
-
-Core resolves the module's executable, working directory, system launch arguments, fullscreen setting, and game path.
-
-### Launch an Emulator Without a Game
-
-```text
-Launch Emulator <Module>
-```
-
-This is used for emulator configuration, controller setup, graphics settings, maintenance, and emulator-native UI tasks.
-
-Module registration may provide `EmulatorLaunchArguments` separately from each system's game-launch arguments.
-
-## External Process Isolation
-
-EmuKit treats emulator launching and module lifecycle subprocesses as two separate process boundaries.
-
-Core owns the environment used when it launches an emulator for `Launch` or `Launch Emulator`.
-
-On frozen Windows builds, PyInstaller may temporarily place its own runtime directory in the process DLL search path. Core must clear that frozen-runtime DLL directory before creating an external emulator process and restore its own runtime directory immediately after process creation. This prevents an emulator from accidentally loading DLLs from EmuKit's `_MEI` extraction directory instead of the normal Windows runtime locations.
-
-Modules must not duplicate this Core behavior for normal emulator launching.
-
-A module may declare:
+Settings store only explicit user overrides:
 
 ```json
-"IsolateLaunchConsole": true
+{
+  "SystemPrimaryOverrides": {
+    "nintendo.n64": "ares"
+  }
+}
 ```
 
-when the emulator is known to attach to or write into its parent console. On Windows, Core then launches the emulator without inheriting EmuKit's console streams while still allowing the emulator's GUI to open normally. The default is `false`.
-
-A system registration may also provide `IsolateLaunchConsole` to override the module-level value for that system's game launch.
-
-Lifecycle subprocesses are different. Installer, repair, update, and uninstall code owns every child process it starts, including extractors, firmware installers, setup tools, and emulator maintenance commands. Those child processes must not write directly into EmuKit's user-facing terminal or executable-manager JSONL stdout. Modules should capture or redirect child stdout/stderr, suppress unnecessary child console windows, and include useful diagnostic output in structured failure `details` instead of printing it during successful operations.
-
-Reusable module code should use the common external-process helper for this boundary so source and frozen-manager behavior remain equivalent and frozen managers do not leak their PyInstaller DLL search directory into child programs.
-
-The resulting ownership boundary is:
+Resolution is:
 
 ```text
-EmuKit Core
-    → launches emulator UI/game process
-    → sanitizes frozen launch environment
-    → optionally isolates the emulator from EmuKit's console
-
-Module lifecycle code
-    → launches installer/extractor/firmware/maintenance child processes
-    → captures child output
-    → suppresses unwanted child console windows
-    → returns diagnostics through structured results
+user override, if present
+otherwise catalogue RecommendedPrimary
 ```
 
-## Current CLI Commands
+Core does not silently select an arbitrary installed alternative when the resolved primary is unavailable.
 
-Core 1.0.0 exposes:
+Public commands are:
 
 ```text
-Get Settings
-Get <Module> Settings
-Update Setting <Setting> <Value>
-Install <Module>
-Install All
-Uninstall <Module>
-Remove Module <Module>
-Repair <Module>
-Update <Module>
-Update Module <Module>
-Check <Module>
-Refresh Modules
-Get <Name> Info
-Get Module <Name> Info
-Get Brand <Name> Info
-Get Platform <Name> Info
-Get System <Name> Info
-Get Current Installs
-Get Supported Modules
-Get Supported Brands
-Get Supported Platforms
-Get Supported Systems [Brand <Name>] [Platform <Name>]
-Get Status
-Get Core Dependencies
-Assign System <System> <Module|None>
+Set <Emulator> as <System> Primary
+Restore <System> Primary
+Restore Systems Primary
+```
+
+`Restore` removes overrides; it does not install software.
+
+## Module Info and Local Discovery
+
+A valid local emulator module contains one `EmuKit*Info.json` file and the manager entry point named by that Info file.
+
+Typical source module:
+
+```text
+ExampleEmu_1.0.0/
+├── EmuKitExampleEmuInfo.json
+├── ExampleEmuManager.py
+├── ExampleEmuInstaller.py
+├── ExampleEmuRepair.py
+├── ExampleEmuUninstall.py
+└── _ExampleEmuCommon.py
+```
+
+Typical Windows release module:
+
+```text
+ExampleEmu_1.0.0/
+├── EmuKitExampleEmuInfo.json
+└── ExampleEmuManager.exe
+```
+
+The local module directory answers what module code is physically installed. The registry records what Core successfully discovered and normalized. The remote platform manifest records what packages may be downloaded. These authorities are deliberately separate.
+
+## Emulator Lifecycle Metadata
+
+Module Info may declare:
+
+```json
+"Lifecycle": {
+  "ProcessName": "ExampleEmu.exe"
+}
+```
+
+Core uses lifecycle metadata together with the resolved `LaunchPath` to identify running emulator processes.
+
+Lifecycle control must not depend on Core having launched the emulator. A user may manually start an emulator before EmuKit and still use:
+
+```text
+Is <Emulator> Running
+Close <Emulator>
+Restart <Emulator>
+```
+
+System forms resolve the current primary emulator:
+
+```text
+Is <System> Running
+Close <System>
+Restart <System>
+```
+
+`Get Running Emulators` reports known running emulator modules.
+
+## Launch Model
+
+Public launch forms are:
+
+```text
+Launch <Emulator>
 Launch <GamePath> <System>
-Launch Emulator <Module>
+Launch <Emulator> <GamePath> <System>
+```
+
+`Launch <Emulator>` opens the emulator without a game.
+
+`Launch <GamePath> <System>` resolves the system's primary emulator.
+
+The explicit emulator form bypasses primary selection but Core verifies that the requested emulator supports the requested system.
+
+System parsing supports multiword names and brand-qualified names. Resolver normalization is case-insensitive and tolerates common punctuation, spacing, underscore, and hyphen variations.
+
+## Core Dependencies
+
+Core 1.0.0 currently preflights:
+
+```text
+7-Zip 26.03
+  Windows: required
+  Linux: required
+  Mac: required
+
+Microsoft Visual C++ v14 Redistributable
+  Windows: required
+```
+
+Shared dependency acquisition belongs to Core. Emulator modules should not independently reinstall shared Core dependencies.
+
+## Module Operations
+
+Public module operations are:
+
+```text
+Install <Emulator(s)>
+Install All
+Uninstall <Emulator(s)>
+Uninstall All
+Repair <Emulator(s)>
+Remove <Emulator(s)>
+Update <Emulator(s)>
+```
+
+`Remove` removes the EmuKit module package only. It does not uninstall the emulator managed by that module.
+
+`Update <Emulator>` is the complete user-facing emulator update operation. Core first updates the EmuKit module package when a newer module exists, then invokes that module's `update` lifecycle operation so the module can update the emulator version it owns.
+
+A single-target operation preserves the module's specific result message. Multi-target operations may produce an aggregate summary.
+
+## Catalogue and Info Commands
+
+```text
+Get Catalogue
+Get System Catalogue
+Get Emulator Catalogue
+Get <Brand|System|Emulator> Info
+Get Current Installs
+Get Running Emulators
+Get Settings
+```
+
+`Get Catalogue` is the high-level catalogue summary.
+
+`Get System Catalogue` lists supported systems grouped by brand.
+
+`Get Emulator Catalogue` lists supported emulator modules.
+
+Detailed system information presents the public primary state as `Primary Emulator`, `Primary Source`, and installation availability rather than exposing internal resolver terminology.
+
+Both `Catalog` and `Catalogue` spellings are accepted for catalogue commands.
+
+## CLI Reference
+
+```text
+Get Catalogue
+Get System Catalogue
+Get Emulator Catalogue
+Get Settings
+Get Running Emulators
+Get Current Installs
+Get <Brand|System|Emulator> Info
+
+Set Feature Fullscreen True|False
+Set <Emulator> as <System> Primary
+Restore <System> Primary
+Restore Systems Primary
+
+Launch <Emulator>
+Launch <GamePath> <System>
+Launch <Emulator> <GamePath> <System>
+
+Close <Emulator|System>
+Restart <Emulator|System>
+Is <Emulator|System> Running
+
+Install <Emulator(s)>
+Install All
+Uninstall <Emulator(s)>
+Uninstall All
+Repair <Emulator(s)>
+Remove <Emulator(s)>
+Update <Emulator(s)>
+
+Updates
+Check Updates
+Check for Updates
+Get Updates
+Update EmuKit
+
 Help
 Close
 ```
 
-`--json` requests raw structured output where supported.
+`Close` by itself exits EmuKit.
 
-`--verbose` requests additional operation details where supported.
+`--json` requests raw structured output and `--verbose` requests additional operation detail where supported.
 
-Dependency installation is handled by startup preflight instead of a user-facing `Install Core ...` command.
+Obsolete pre-1.0 command vocabulary such as `Assign System`, `Launch Emulator`, `Update Module`, `Refresh Modules`, and `Get Supported Systems` is not part of the public 1.0.0 CLI.
 
-## Operation Serialization
+## Core Updates
 
-Mutation operations are serialized.
-
-Do not concurrently run install, uninstall, repair, emulator update, module-package replacement, or module removal operations that may mutate shared EmuKit/module state.
-
-## Structured Results
-
-Core and modules communicate using structured result objects.
-
-A normal result contains:
-
-```json
-{
-  "success": true,
-  "module": "exampleemu",
-  "operation": "install",
-  "state": "installed",
-  "message": "ExampleEmu version \"4.2.0\" installed successfully.",
-  "details": {}
-}
-```
-
-Important semantic fields are:
-
-- `success`
-- `operation`
-- `state`
-- `message`
-
-`module` should be present for module operations.
-
-`details` may contain operation-specific machine-readable information.
-
-Successful install messages use the concise canonical form:
+Core release metadata lives at:
 
 ```text
-<Module Name> version "<EmulatorVersion>" installed successfully.
+Releases/EmuKit/EmuKit_Core_Release_Manifest.json
 ```
 
-The module display name comes from its `Name` field and must begin with a capital letter even when upstream branding begins with lowercase. Extra information such as installed firmware, resources, profiles, or system coverage belongs in structured `details` rather than the final success sentence.
-
-Python lifecycle handlers return these dictionaries directly to Core.
-
-Executable managers wrap the final dictionary inside the strict JSONL result record described in the next section.
-
-## Progress
-
-Progress is part of the current module contract.
-
-Python lifecycle handlers must accept the `progress` keyword argument. Core invokes handlers as:
-
-```python
-handler(progress=progress)
-```
-
-A handler may report progress with:
-
-```python
-progress(percent=25, stage="Downloading", message="Downloading emulator package.")
-```
-
-The current executable-manager contract is strict newline-delimited JSON.
-
-Core invokes a compiled manager as:
+Target-qualified Core packages live beside that manifest, for example:
 
 ```text
-<Manager.exe> <operation> --json
+Releases/EmuKit/EmuKit_1.0.0_Windows_x86_64.zip
 ```
 
-The executable's stdout is a machine-only JSONL stream.
+A Core release descriptor supplies:
 
-Progress record:
+- `OS`
+- `Architecture`
+- `Package`
+- `SHA256`
+- `RootDirectory`
+- `Executable`
 
-```json
-{"type":"progress","percent":25,"stage":"Downloading","message":"Downloading emulator package."}
-```
+The disposable Updater is not bundled permanently into Core. It is published as an internal module in the platform release feed. See `EmuKitUpdater.md`.
 
-Final result record:
-
-```json
-{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu version \"4.2.0\" installed successfully.","details":{}}}
-```
-
-Executable managers must:
-
-- emit only JSON objects on stdout
-- emit one complete JSON object per line
-- flush progress records immediately
-- use `type: "progress"` for progress
-- use `type: "result"` for the final lifecycle result
-- emit exactly one final result
-- never emit progress after the final result
-- keep progress percent between `0` and `100` when a percentage is supplied
-- use `null` or strings for `stage` and `message`
-- use stderr for diagnostic text that is not part of the machine protocol
-- exit `0` when the final result is successful
-- exit non-zero when the final result is unsuccessful
-
-Blank stdout records, plain text, malformed JSON, unknown record types, duplicate final results, progress after the result, or a missing final result are protocol errors.
-
-There is no legacy plain-text or single-final-JSON fallback.
-
-Long operations should report meaningful stages and percentages. Instantaneous operations may report only a small number of progress events, but every lifecycle handler must support the progress interface.
-
-## Current Module Contract Policy
-
-Core 1.0.0 and current modules use one current contract.
-
-Do not add legacy manager-protocol fallbacks, old emulator installation paths, alternate host-detection systems, or compatibility branches for obsolete EmuKit layouts.
-
-When the contract intentionally changes during active development, update Core, the affected modules, the templates, the examples, and this documentation together.
-
-ProjectHomelab's current EmuKit source convention also avoids comments and docstrings in Core/module runtime code and reusable Python module templates. Keep implementation names and structure clear instead of adding explanatory source comments.
-
-Compiled managers must resolve their module directory from `sys.executable` when frozen. Source managers use `__file__`.
-
-Canonical module-directory selection is:
-
-```python
-MODULE_DIR = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
-```
-
-Module root resolution then searches upward for `.ProjectHomelabRoot`. If the marker is absent, the module may resolve the nearby standalone EmuKit runtime/`EmuKitModules` relationship, but it must not introduce a second ProjectHomelab host marker.
-
-## Security and Validation
-
-Before installing a remote module package, Core must:
-
-- download into staging
-- verify package SHA-256
-- reject absolute or traversal archive paths
-- reject unsafe symbolic-link package entries
-- reject packages with no valid module
-- reject packages containing multiple valid module roots
-- reject a package whose module ID does not match the requested manifest entry
-- reject a package whose module version does not match the manifest entry
-- validate `DependencyPath` inside `ROOT/Emulators`
-- preserve the previous module during replacement until the new package has validated
-
-A failed module-package update should leave the previous valid module recoverable.
-
-## Documentation Scope
-
-General EmuKit documentation belongs under:
+## Core Update Flow
 
 ```text
-Documentation/EmuKit/
+Update EmuKit
+→ check EmuKit_Core_Release_Manifest.json
+→ identify target package
+→ load the release platform manifest
+→ locate InternalModules.updater
+→ download and verify the Core ZIP
+→ download and verify the Updater ZIP
+→ safely extract the Updater
+→ launch the Updater with handoff arguments
+→ Core exits
+→ Updater replaces Core and launches the new Core
+→ new Core migrates/validates
+→ new Core removes updater/staging/old backup after successful handoff
 ```
 
-Reusable contributor aids belong under:
+The Updater is disposable and is never treated as an emulator in the public catalogue.
+
+## Windows Core Folder Icon
+
+Frozen Windows Core builds apply their own embedded executable icon to the versioned Core folder.
+
+Core creates:
 
 ```text
-Documentation/EmuKit/Templates/
+EmuKit_1.0.0/
+├── EmuKit.exe
+└── desktop.ini
 ```
 
-Generic non-runtime examples belong under:
+with an Explorer shell entry equivalent to:
+
+```ini
+[.ShellClassInfo]
+IconResource=EmuKit.exe,0
+```
+
+Core marks `desktop.ini` hidden/system and applies the Windows folder customization attribute. The Updater applies the same identity after installing a new Core.
+
+Linux and Mac treat this integration as not applicable.
+
+The release package therefore does not need to ship a separate icon file solely for the folder icon; Windows uses the icon embedded in `EmuKit.exe`.
+
+## Frozen Runtime Boundary
+
+Core must prevent PyInstaller runtime state from leaking into external emulator processes or module lifecycle child processes.
+
+Core owns the launch boundary for normal emulator launches. Modules own every external process they start during install, repair, update, or uninstall.
+
+Compiled release validation must include emulator-only launch, game launch, lifecycle operations, and manually started emulator process detection.
+
+## Release Acceptance
+
+Before considering a Core build releasable, verify at minimum:
 
 ```text
-Documentation/EmuKit/Examples/
+standalone mode without .AppRoot
+hosted mode with .AppRoot
+online development feed
+online release feed
+offline cached catalogue behavior
+catalogue and Info lookup
+system aliases and brand-qualified resolution
+primary override and restore
+all three Launch forms
+manual and Core-started lifecycle detection
+Close / Restart / Is Running / Get Running Emulators
+Install / Repair / Update / Uninstall / Remove
+batch operations
+Core update handoff
+fresh-update migration and cleanup
+Windows folder identity on frozen builds
 ```
-
-Individual emulator-module documentation is maintained separately as modules are documented.
-
-Generic Core documentation should not become a collection of emulator-specific instructions.
-
-## Validation Checklist
-
-Before publishing or relying on a Core/module set:
-
-- Core still resolves ProjectHomelab only through `.ProjectHomelabRoot`
-- standalone root behavior still works
-- shared Core dependency preflight still succeeds
-- source modules are discoverable below `EmuKitModules`
-- module Info JSON paths resolve below `ROOT/Emulators`
-- Python lifecycle handlers accept `progress`
-- compiled managers use frozen-safe `sys.executable` module-directory resolution
-- compiled managers implement strict JSONL progress/result stdout
-- compiled managers emit no plain-text stdout
-- module lifecycle child processes do not inherit executable-manager stdout or leak routine console output into EmuKit
-- source and compiled module lifecycle behavior is equivalent
-- frozen Windows module managers sanitize the PyInstaller DLL search path before starting external child programs
-- unwanted lifecycle child console windows are suppressed where the module requires it
-- `check`, `install`, `uninstall`, `repair`, and `update` all return valid structured results
-- long lifecycle operations report live progress
-- game launch works from source Core
-- emulator-only launch works from source Core
-- compiled EmuKit launches external emulators without leaking PyInstaller `_MEI` DLL search state
-- `IsolateLaunchConsole` is enabled only for emulators/systems that require parent-console isolation
-- game launch works from the real compiled EmuKit release executable
-- emulator-only launch works from the real compiled EmuKit release executable
-- launched emulator processes do not pollute the EmuKit terminal when console isolation is requested
-- development package SHA-256 matches the exact development ZIP
-- development per-module and platform manifests agree
-- release package uses the target-qualified filename
-- release Info JSON points at the compiled manager
-- release package SHA-256 matches the exact release ZIP
-- release per-module and platform manifests agree
-- no stale checksum remains after rebuilding a package in place
-- no obsolete EmuKit compatibility path or protocol has been reintroduced
-- Core/module runtime Python source and reusable Python templates contain no comments or docstrings
-

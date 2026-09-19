@@ -12,7 +12,7 @@ from typing import Any, Callable
 
 MODULE_DIR = Path(sys.executable).resolve().parent if getattr(sys, "frozen", False) else Path(__file__).resolve().parent
 INFO_PATH = MODULE_DIR / "EmuKitReplaceModuleInfo.json"
-ROOT_MARKER = ".ProjectHomelabRoot"
+ROOT_MARKER = ".AppRoot"
 ProgressCallback = Callable[[int | None, str | None, str | None], None]
 
 
@@ -20,9 +20,6 @@ def resolve_root() -> Path:
     current = MODULE_DIR.resolve()
     for candidate in (current, *current.parents):
         if (candidate / ROOT_MARKER).is_file():
-            return candidate
-    for candidate in (current, *current.parents):
-        if (candidate / "EmuKit.py").is_file() and (candidate / "EmuKitModules").is_dir():
             return candidate
     if MODULE_DIR.parent.name.casefold() == "emukitmodules":
         return MODULE_DIR.parent.parent

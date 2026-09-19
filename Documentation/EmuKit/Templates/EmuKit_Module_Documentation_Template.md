@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Describe which emulator this module manages and why the module exists.
+Describe which emulator this module manages and the scope of the module.
 
 ## Module Identity
 
@@ -13,12 +13,7 @@ Emulator Version:
 Managed Emulator Path:
 Development Manager:
 Release Manager:
-```
-
-The managed emulator path should be below:
-
-```text
-ROOT/Emulators/
+Lifecycle Process Name:
 ```
 
 ## Supported Hosts
@@ -27,35 +22,23 @@ Document each supported operating system and architecture.
 
 ## Supported Systems
 
-List each system declared by the module and any meaningful compatibility limitations.
+List each system ID, public name, and meaningful aliases exactly as represented in the platform catalogue.
+
+Do not document a per-system default. Catalogue `RecommendedPrimary` owns recommendation policy.
 
 ## Emulator Source
 
-Document the upstream emulator source, exact tested version/build, asset naming, version policy, and pinned checksum behavior.
-
-If upstream uses a rolling release, document how the module prevents changed upstream bytes from silently replacing the tested build.
+Document the upstream source, exact tested build/version, asset naming, version policy, and checksum behavior.
 
 ## Core Dependencies
 
-Document which shared Core dependencies the module relies on.
-
-Do not duplicate shared Core dependency installation inside the module.
+Document shared Core dependencies relied upon by this module. Do not duplicate Core dependency installation inside the module.
 
 ## Controlled Resources
 
-Describe any ProjectHomelab Resources consumed by the module.
-
-Record:
-
-- resource manifest used
-- required resource paths
-- checksum requirements
-- install destinations
-- configuration references
+Record resource manifests, required paths, checksums, destinations, and generated configuration references.
 
 ## Source Layout
-
-Record the module source files and any intentional deviations from:
 
 ```text
 <Module>_1.0.0/
@@ -67,25 +50,25 @@ Record the module source files and any intentional deviations from:
 └── _<Module>Common.py
 ```
 
+Document intentional deviations.
+
 ## Root and Path Resolution
 
-Document unusual path behavior if any.
+`.AppRoot` is the sole host marker.
 
-Compiled managers must use frozen-safe module-directory resolution.
+The managed emulator path must resolve below:
 
-`.ProjectHomelabRoot` remains the only ProjectHomelab root marker.
+```text
+ROOT/Emulators/
+```
 
 ## Installation
 
-Describe meaningful module-specific installation behavior.
-
-Include download verification, extraction/installer behavior, resource placement, receipts, portable-mode behavior, and initial configuration where applicable.
+Describe download verification, extraction/install behavior, controlled resources, receipts, and initial configuration.
 
 ## Progress
 
-Describe the meaningful install/repair/update/uninstall stages reported to Core.
-
-The release manager uses strict JSONL progress/result stdout.
+List meaningful install/repair/update/uninstall stages reported to Core.
 
 ## Check States
 
@@ -97,102 +80,63 @@ installed
 broken
 ```
 
-List the files, receipts, versions, checksums, configuration, and resources that are validated.
-
 ## Configuration
 
-Document module-generated emulator configuration and any paths the module writes into that configuration.
+Document generated emulator configuration and managed paths.
 
 ## Repair
 
-Describe what repair restores.
-
-State whether repair replaces configuration, emulator binaries, writable images, or other managed state.
+Describe exactly what repair restores/replaces.
 
 ## Emulator Update
 
-Describe the emulator-update policy.
+Describe the emulator-version update policy implemented by the module.
 
-Module-package update behavior belongs to EmuKit Core.
+The user-facing command is `Update <Emulator>`. Core owns module-package replacement before invoking module update.
 
 ## Uninstall and Data Policy
 
-Document exactly what the module removes and what it preserves.
-
-Consider:
-
-- saves
-- states
-- screenshots
-- controller profiles
-- configuration
-- user-supplied firmware/BIOS
-- caches
-- writable disk images or equivalent emulator state
+Document exactly what uninstall removes and preserves, including saves, states, screenshots, profiles, config, firmware, caches, and writable media.
 
 ## Launch Behavior
 
-Document non-obvious launch arguments, fullscreen behavior, working directory behavior, or per-system differences.
+Document non-obvious launch paths, working directories, module/system launch arguments, fullscreen behavior, and `IsolateLaunchConsole` requirements.
 
-Record whether module-level or system-level `IsolateLaunchConsole` is required and why. Leave it disabled when the emulator behaves correctly with normal Core launching.
+## Lifecycle Process Behavior
+
+Document `Lifecycle.ProcessName` when present and explain any case where the long-running process differs from `LaunchPath`.
+
+Confirm lifecycle detection works for an emulator started manually before EmuKit.
 
 ## Lifecycle External Processes
 
-Document every external tool started during install, repair, update, or uninstall.
+For every external program started during install/repair/update/uninstall document why it runs, stdout/stderr handling, console isolation, diagnostic propagation, and frozen Windows DLL-search handling.
 
-For each one record:
+## User-Facing Completion
 
-- why it is launched
-- whether stdout/stderr is captured or redirected
-- whether console isolation is required
-- how failures return diagnostic output through structured `details`
-- whether frozen Windows DLL-search sanitization is required
+Record expected successful result messages and structured `details` fields.
 
-Source and compiled-manager lifecycle behavior should remain equivalent.
-
-## User-Facing Identity and Completion
-
-Record the exact module display `Name`. It must begin with a capital letter even when the upstream project's branding begins with lowercase.
-
-Successful install results should use:
-
-```text
-<Module Name> version "<EmulatorVersion>" installed successfully.
-```
-
-Document additional firmware, resource, profile, or system-specific completion data as structured result `details` rather than adding it to the success sentence.
+Single-target Core operations preserve the module's own result message.
 
 ## Development Distribution
 
-Record:
-
 ```text
-<Module>_1.0.0.zip
+SourceCode/EmuKit/EmuKitModules/<OS>/<Module>/
 ```
 
-and its development manifest locations.
-
-The development ZIP is hashed independently.
+Record development package filename and exact SHA-256.
 
 ## Release Distribution
 
-For Windows x86_64 record:
-
 ```text
-<Module>_1.0.0_Windows_x86_64.zip
+Resources/EmuKit/EmuKitModules/<OS>/<Module>/
 ```
 
-and its release manifest locations.
-
-The release Info JSON points at the compiled `.exe` manager.
-
-The release ZIP is hashed independently from the development ZIP.
+Record target-qualified package filename and exact SHA-256.
 
 ## Release Validation
 
-Record the results of testing the actual compiled module through the actual compiled EmuKit release executable.
-
-At minimum cover:
+At minimum test:
 
 ```text
 check
@@ -200,12 +144,14 @@ install
 repair
 update
 uninstall
-Launch Emulator
+Launch <Emulator>
 game launch
+Is <Emulator> Running
+Close <Emulator>
+Restart <Emulator>
+manual-start lifecycle detection
 ```
-
-Confirm that lifecycle subprocesses do not leak routine output into EmuKit, no unwanted child console windows appear, and emulator launches do not inherit PyInstaller runtime DLLs.
 
 ## Known Constraints
 
-Preserve upstream quirks, pinned-version reasons, compatibility constraints, and deliberate unsupported hosts that future maintainers need to know.
+Preserve upstream quirks, pinned-version reasons, compatibility constraints, and deliberate unsupported hosts.

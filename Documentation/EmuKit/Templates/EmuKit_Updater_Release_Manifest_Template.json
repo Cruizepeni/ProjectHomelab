@@ -1,0 +1,18 @@
+{
+  "SchemaVersion": 1,
+  "Id": "updater",
+  "Name": "EmuKit Updater",
+  "Kind": "core-updater",
+  "Platform": "Windows",
+  "Channel": "release",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "Package": "EmuKitUpdater_1.0.0_Windows_x86_64.zip",
+      "SHA256": "replace-with-64-character-lowercase-release-package-sha256",
+      "RootDirectory": "EmuKitUpdater_1.0.0",
+      "Executable": "EmuKitUpdater.exe"
+    }
+  }
+}

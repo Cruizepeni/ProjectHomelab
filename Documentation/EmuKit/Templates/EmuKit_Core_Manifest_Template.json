@@ -1,0 +1,14 @@
+{
+  "SchemaVersion": 1,
+  "Id": "emukit-core",
+  "Name": "EmuKit Core",
+  "Channel": "development",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "Source": "EmuKit_1.0.0",
+      "EntryPoint": "EmuKit.py"
+    }
+  }
+}

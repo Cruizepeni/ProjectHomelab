@@ -75,5 +75,16 @@
       "Package": "Xenia/Xenia_1.0.0_Windows_x86_64.zip",
       "SHA256": "eadc09a79d7c1ec80737297624f3c8a4654382232105fd1adb63b36920d7007c"
     }
+  },
+  "InternalModules": {
+    "updater": {
+      "Name": "EmuKit Updater",
+      "Kind": "core-updater",
+      "Version": "1.0.0",
+      "Package": "Updater/EmuKitUpdater_1.0.0_Windows_x86_64.zip",
+      "SHA256": "9243a17e8e24b7c342742ceef1791a7e87c1f429d610f4eb130c3cb6dba669ea",
+      "RootDirectory": "EmuKitUpdater_1.0.0",
+      "Executable": "EmuKitUpdater.exe"
+    }
   }
 }

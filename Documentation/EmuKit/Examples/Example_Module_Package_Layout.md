@@ -1,6 +1,4 @@
-# Example EmuKit Module Package Layout
-
-The current ProjectHomelab module convention uses a multi-file source module and a compact compiled release module.
+# Example EmuKit Emulator Module Package Layout
 
 ## Development Package
 
@@ -18,25 +16,21 @@ ExampleEmu_1.0.0.zip
 The source Info JSON contains:
 
 ```json
-"Manager": "ExampleEmuManager.py"
+"Manager": "ExampleEmuManager.py",
+"Lifecycle": {
+  "ProcessName": "ExampleEmu.exe"
+}
 ```
 
-If the emulator must not attach to EmuKit's console when launched, the same Info JSON may also declare:
-
-```json
-"IsolateLaunchConsole": true
-```
-
-The default is `false`.
-
-Development-feed layout:
+Development repository layout:
 
 ```text
-backend/
+SourceCode/
 └── EmuKit/
-    └── EmulatorModules/
+    └── EmuKitModules/
         └── Windows/
             ├── EmuKit_Windows_Manifest.json
+            ├── EmuKit_Windows_Catalogue.json
             └── ExampleEmu/
                 ├── ExampleEmu_Manifest.json
                 └── ExampleEmu_1.0.0.zip
@@ -57,43 +51,59 @@ The release Info JSON contains:
 "Manager": "ExampleEmuManager.exe"
 ```
 
-Release-feed layout:
+Release repository layout:
 
 ```text
-Releases/
+Resources/
 └── EmuKit/
-    └── EmulatorModules/
+    └── EmuKitModules/
         └── Windows/
             ├── EmuKit_Windows_Release_Manifest.json
+            ├── EmuKit_Windows_Catalogue.json
             └── ExampleEmu/
                 ├── ExampleEmu_Release_Manifest.json
                 └── ExampleEmu_1.0.0_Windows_x86_64.zip
 ```
 
-Backend/source manifests use `Name_Manifest.json`.
+There is no extra version directory around either repository ZIP.
 
-Release-side mirrors use `Name_Release_Manifest.json`.
-
-There is no extra version directory around either ZIP.
-
-After Core downloads and validates a package, the versioned top-level directory is installed under:
+After acquisition Core installs the ZIP's versioned root below the active Core runtime:
 
 ```text
-<EmuKit runtime>/EmuKitModules/ExampleEmu_1.0.0/
+<Core runtime>/EmuKitModules/ExampleEmu_1.0.0/
 ```
 
-The development and release ZIPs are independent exact byte artifacts.
+The actual emulator is managed separately below:
 
-The backend platform and per-module manifests contain the development ZIP SHA-256.
+```text
+ROOT/Emulators/ExampleEmu/
+```
 
-The release platform and per-module manifests contain the release ZIP SHA-256.
+## Metadata Synchronization
 
-The compiled manager must implement:
+The module Info system metadata mirrors the platform catalogue.
+
+If a system alias changes:
+
+```text
+update platform catalogue
+→ update matching module Info JSON(s)
+→ rebuild development/release module ZIPs
+→ update module package SHA values
+→ update platform manifest package SHA values
+→ update platform manifest catalogue SHA
+```
+
+Do not add per-system `Default`. The catalogue owns `RecommendedPrimary`.
+
+## Manager Protocol
+
+A compiled manager implements:
 
 ```text
 ExampleEmuManager.exe <check|install|uninstall|repair|update> --json
 ```
 
-and emit only strict JSONL progress/result records on stdout.
+and emits strict JSONL progress/result records on stdout.
 
-Lifecycle child programs must be contained by the module rather than writing into manager stdout. The release package must also be tested through the real compiled EmuKit executable because frozen Core/module process behavior can differ from Python-source execution if DLL or console state is inherited incorrectly.
+Lifecycle child programs must not leak routine output into manager stdout.

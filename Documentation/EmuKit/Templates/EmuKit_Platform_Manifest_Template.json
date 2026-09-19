@@ -1,13 +1,19 @@
 {
   "SchemaVersion": 1,
   "Platform": "Windows",
+  "Catalogue": {
+    "SchemaVersion": 1,
+    "Version": 1,
+    "File": "EmuKit_Windows_Catalogue.json",
+    "SHA256": "replace-with-64-character-lowercase-catalogue-sha256"
+  },
   "Modules": {
     "replace-with-module-id": {
       "Name": "Replace With Emulator Name",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "ReplaceModule/ReplaceModule_1.0.0.zip",
-      "SHA256": "replace-with-64-character-lowercase-sha256"
+      "SHA256": "replace-with-64-character-lowercase-package-sha256"
     }
   }
 }
