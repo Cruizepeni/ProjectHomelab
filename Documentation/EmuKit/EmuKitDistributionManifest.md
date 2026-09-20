@@ -63,6 +63,32 @@ Linux
 Mac
 ```
 
+## Windows Core Build Contract
+
+The canonical Windows Core release is built from `EmuKit.py` as one console-subsystem executable. `--console` is intentional: it preserves the interactive terminal UI and also allows another process to launch the same executable without a visible window while redirecting its standard streams. Do not publish a second `--noconsole` Core build for the same target.
+
+The canonical EmuKit icon is a shared resource, not a loose Core source file:
+
+```text
+Resources/Icons/Features/EmuKit/EmuKit/Icon_EmuKit.ico
+```
+
+A Windows build therefore uses the equivalent of:
+
+```powershell
+py -m PyInstaller --clean --noconfirm --onefile --console --icon "<repo>/Resources/Icons/Features/EmuKit/EmuKit/Icon_EmuKit.ico" --paths "." --name "EmuKit" EmuKit.py
+```
+
+The release ZIP contains the compiled executable under the declared versioned root:
+
+```text
+EmuKit_<Version>_Windows_x86_64.zip
+└── EmuKit_<Version>/
+    └── EmuKit.exe
+```
+
+The SHA-256 advertised by `EmuKit_Core_Release_Manifest.json` is the SHA-256 of the exact release ZIP bytes, not the executable inside it.
+
 ## Platform Manifest
 
 The platform manifest is Core's runtime distribution index.

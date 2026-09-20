@@ -19,6 +19,7 @@ Core owns:
 - emulator and game launching
 - emulator process lifecycle control
 - module lifecycle invocation and progress forwarding
+- dependency-free terminal presentation for interactive use
 - Core update discovery and handoff to the disposable Updater internal module
 - migration/fresh-update cleanup
 - host-specific presentation helpers such as the Windows Core folder icon
@@ -39,7 +40,8 @@ SourceCode/
     │       ├── EmuKitLauncher.py
     │       ├── EmuKitEmulatorLifecycleManager.py
     │       ├── EmuKitMigration.py
-    │       └── EmuKitPlatformIntegration.py
+    │       ├── EmuKitPlatformIntegration.py
+    │       └── EmuKitTerminalUI.py
     └── EmuKitModules/
         ├── Updater/
         │   ├── EmuKitUpdater_Manifest.json
@@ -151,6 +153,20 @@ EmuKit_Windows_Catalogue.json
 ```
 
 for release.
+
+## Terminal UI and Programmatic Control
+
+`EmuKitTerminalUI.py` is the dependency-free presentation layer for the interactive Core. It owns banners, runtime panels, tables, status markers, prompts, and progress-bar rendering. Core orchestration and emulator/module behavior remain outside the presentation layer.
+
+The canonical frozen Windows Core is a console-subsystem executable built with PyInstaller `--console`. EmuKit does not require a separate `--noconsole` release.
+
+Normal interactive launch displays the terminal UI. The UI enables Windows virtual-terminal support when available, uses colour only when stdout is an interactive terminal, honors the `NO_COLOR` environment variable, and falls back to uncoloured output when stdout is redirected. Presentation width is bounded so tables and panels remain readable across normal terminal sizes.
+
+The same `EmuKit.exe` may be hosted without a visible console window by another Windows process. A controlling process may launch it with `CREATE_NO_WINDOW`, redirect stdin/stdout/stderr, send normal EmuKit CLI commands through stdin, and request raw structured command output with `--json` where supported. The controlling process is responsible for stream lifecycle and for sending `Close` when the persistent Core session should end.
+
+Source integrations may also instantiate the `EmuKit` class directly and supply a `progress_callback` without using the terminal presentation layer.
+
+This keeps one canonical executable capable of both polished interactive use and developer-controlled hidden execution.
 
 ## Catalogue Authority
 
@@ -481,5 +497,7 @@ Install / Repair / Update / Uninstall / Remove
 batch operations
 Core update handoff
 fresh-update migration and cleanup
+terminal UI startup, tables, prompts, and progress rendering
+redirected/no-window Core control using the same console-subsystem executable
 Windows folder identity on frozen builds
 ```

@@ -173,6 +173,18 @@ Core releases are published below:
 Releases/EmuKit/
 ```
 
+## Windows Core Build
+
+The canonical Windows Core uses one console-subsystem executable so the same build supports both the visible terminal UI and hidden/programmatic hosting with redirected standard streams.
+
+Build from the unpacked Core source directory using the shared EmuKit icon:
+
+```powershell
+py -m PyInstaller --clean --noconfirm --onefile --console --icon "<repo>/Resources/Icons/Features/EmuKit/EmuKit/Icon_EmuKit.ico" --paths "." --name "EmuKit" EmuKit.py
+```
+
+Do not copy the icon into Core source solely for compilation. Do not publish a parallel `--noconsole` Core binary for the same platform target.
+
 ## Packaging Hygiene
 
 Never package:

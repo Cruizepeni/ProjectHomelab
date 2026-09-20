@@ -105,13 +105,19 @@ Module display names shown in progress and result output must begin with a capit
 
 This keeps one authoritative completion event and one concise completion sentence for every module.
 
-## Console Output
+## Terminal UI Rendering
 
-The interactive console should display:
+The interactive terminal UI renders known-percentage progress in this order:
 
-`<Module>  <Stage>  <Percent>  <Message>`
+`<Module>  <Progress Bar>  <Percent>  <Stage>  <Message>`
 
-The message is omitted when empty and is suppressed on the final 100 percent result line to avoid duplicating the success message that Core prints immediately afterward.
+When percent is unavailable, the progress bar and percent are omitted and the module/stage remain visible.
+
+The message is omitted when empty and is suppressed on a 100 percent progress line to avoid duplicating the normalized result message that Core prints immediately afterward.
+
+Consecutive completed progress stages are separated by a single blank line so stacked progress bars remain visually distinct. Core should not add an unnecessary extra blank line between the final progress stage and its normalized operation result.
+
+Terminal rendering is presentation only. Modules continue to emit structured progress events and must not format their own bars, ANSI colours, or terminal control sequences.
 
 ## Output Discipline
 
