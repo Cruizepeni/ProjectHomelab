@@ -7,9 +7,9 @@
   "Versions": {
     "1.0.0": {
       "Status": "supported",
-      "EmulatorVersion": "a5a18f5_canary_experimental",
+      "EmulatorVersion": "aee0871",
       "Package": "Xenia_1.0.0_Windows_x86_64.zip",
-      "SHA256": "eadc09a79d7c1ec80737297624f3c8a4654382232105fd1adb63b36920d7007c"
+      "SHA256": "7fb95c36a0affa694119bad9f2029aed9b1ce115ab530fa3e1cfcb6f12853689"
     }
   }
 }

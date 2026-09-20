@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "mgba",
+  "Name": "MGBA",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "0.10.5",
+      "Package": "MGBA_1.0.0_Windows_x86_64.zip",
+      "SHA256": "21f89407983d3a25898ab25b8348d358d121ad1cbeada1d256a9047c18596e23"
+    }
+  }
+}

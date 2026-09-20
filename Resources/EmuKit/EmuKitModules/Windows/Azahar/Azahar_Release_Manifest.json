@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "azahar",
+  "Name": "Azahar",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "2126.1.1",
+      "Package": "Azahar_1.0.0_Windows_x86_64.zip",
+      "SHA256": "e94aa14a608662e3fc5e624440171282f13e51ff3c56dbff0a660d5e92503b7a"
+    }
+  }
+}

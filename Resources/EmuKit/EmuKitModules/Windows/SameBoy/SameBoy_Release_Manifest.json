@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "sameboy",
+  "Name": "SameBoy",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "1.0.3",
+      "Package": "SameBoy_1.0.0_Windows_x86_64.zip",
+      "SHA256": "8b5c4ad683fc46884416c45a0dc2066725e340e3b7087c5815cd632904fbd59d"
+    }
+  }
+}

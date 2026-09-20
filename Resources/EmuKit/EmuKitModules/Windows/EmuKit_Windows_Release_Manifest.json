@@ -5,7 +5,7 @@
     "SchemaVersion": 1,
     "Version": 1,
     "File": "EmuKit_Windows_Catalogue.json",
-    "SHA256": "10299ea2a35920a684fbca514b6ac5b11724094f2936bb6019cdb9c7c231e1c8"
+    "SHA256": "0350863cfcf70c51cb72e0aa7486f0e3d174f74abf2c3f160245707124ffe8d9"
   },
   "Modules": {
     "ares": {
@@ -15,56 +15,56 @@
       ],
       "Version": "1.0.0",
       "Package": "Ares/Ares_1.0.0_Windows_x86_64.zip",
-      "SHA256": "67ac64cc5581cbfe89ee0a749f2d24e29f5ee88ed957153d9e5da23022d84379"
+      "SHA256": "d4d2dcf25ef78a4e12fc6a97ca2cbd1740664bb6e9cb97f0fceee48c564394a2"
     },
     "duckstation": {
       "Name": "DuckStation",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "DuckStation/DuckStation_1.0.0_Windows_x86_64.zip",
-      "SHA256": "209ad9d45de595129a999584e5cd7e4eb55e743a793958545d110ea223f78a32"
+      "SHA256": "4f11604a09c9e179de6abaaac3dc0211b3b206925b06e84534c804905971defc"
     },
     "melonds": {
       "Name": "MelonDS",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "MelonDS/MelonDS_1.0.0_Windows_x86_64.zip",
-      "SHA256": "e1a5566a2a5ec53750a8b2cff4d563c3d5e2e2d514048d3de295d0c25e93d237"
+      "SHA256": "7a0b16441572e41011605d3460be3e8b962f3d7a215855dfb2bb53c5528cde8b"
     },
     "pcsx2": {
       "Name": "PCSX2",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "PCSX2/PCSX2_1.0.0_Windows_x86_64.zip",
-      "SHA256": "ac33f5f7bbd118283028503f118ce4058c2efe504891fc84f0348b1c73c13b17"
+      "SHA256": "4376f4ba85498261fd7ef48a8a5e780642ec060aefde7974ac346ef9a3ae0452"
     },
     "ppsspp": {
       "Name": "PPSSPP",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "PPSSPP/PPSSPP_1.0.0_Windows_x86_64.zip",
-      "SHA256": "cd5fffba8c11381dbc978d8f30ef4740ac68c8d9a9b2434a90a800c750391300"
+      "SHA256": "a17b42b6b771a969b79668d06a1179805c94ac090d3dc34cf6a4679574243a6b"
     },
     "rpcs3": {
       "Name": "RPCS3",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "RPCS3/RPCS3_1.0.0_Windows_x86_64.zip",
-      "SHA256": "bf46f00d2fd2436c1cc02c4d49f6d63d900e9303f08a030301a84e6e08992a39"
+      "SHA256": "1a11f01fa03f2d42ccec23c5edc9133f82419039294c707f8faca830734f6a13"
     },
     "vita3k": {
       "Name": "Vita3K",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "Vita3K/Vita3K_1.0.0_Windows_x86_64.zip",
-      "SHA256": "b664c74471dc7e951b209fb389ffd8aae73f7241806cc3a6abdcc5d40f86037b"
+      "SHA256": "b26dc2f2b493e26845db544ced62d0e0d087b73c97c458842dc4c23a62f6e0a7"
     },
     "xemu": {
       "Name": "Xemu",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "Xemu/Xemu_1.0.0_Windows_x86_64.zip",
-      "SHA256": "49487c72bfee9edf1efc2d005d3fb17c39918b149aa11e3a2e7979ad21eedc66"
+      "SHA256": "282a21cc42d0cfcbef8447b34351f8393faa92fa985a7fc872889c7039374ff8"
     },
     "xenia": {
       "Name": "Xenia Canary",
@@ -73,7 +73,80 @@
       ],
       "Version": "1.0.0",
       "Package": "Xenia/Xenia_1.0.0_Windows_x86_64.zip",
-      "SHA256": "eadc09a79d7c1ec80737297624f3c8a4654382232105fd1adb63b36920d7007c"
+      "SHA256": "7fb95c36a0affa694119bad9f2029aed9b1ce115ab530fa3e1cfcb6f12853689"
+    },
+    "sameboy": {
+      "Name": "SameBoy",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "SameBoy/SameBoy_1.0.0_Windows_x86_64.zip",
+      "SHA256": "8b5c4ad683fc46884416c45a0dc2066725e340e3b7087c5815cd632904fbd59d"
+    },
+    "cemu": {
+      "Name": "Cemu",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "Cemu/Cemu_1.0.0_Windows_x86_64.zip",
+      "SHA256": "76e150f86ae486e16d36899f3e593b978a7612d8e62dcb68328ed0ead7c3ce71"
+    },
+    "mgba": {
+      "Name": "MGBA",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "MGBA/MGBA_1.0.0_Windows_x86_64.zip",
+      "SHA256": "21f89407983d3a25898ab25b8348d358d121ad1cbeada1d256a9047c18596e23"
+    },
+    "yabasanshiro2": {
+      "Name": "Yaba Sanshiro 2",
+      "Aliases": [
+        "YabaSanshiro2"
+      ],
+      "Version": "1.0.0",
+      "Package": "YabaSanshiro2/YabaSanshiro2_1.0.0_Windows_x86_64.zip",
+      "SHA256": "37ae9c25642ef8e3363b06573993fcdf72097d3bc336bdc16610983a75d19f29"
+    },
+    "mesence": {
+      "Name": "MesenCE",
+      "Aliases": [
+        "Mesen CE",
+        "Mesen"
+      ],
+      "Version": "1.0.0",
+      "Package": "MesenCE/MesenCE_1.0.0_Windows_x86_64.zip",
+      "SHA256": "0e8412d747ca8e02643db53720ee233325a93b68db789ca92fa57df5c0f3bd91"
+    },
+    "mednafen": {
+      "Name": "Mednafen",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "Mednafen/Mednafen_1.0.0_Windows_x86_64.zip",
+      "SHA256": "628c6a1d098486456536ce46cf62643604c618526035ac9d4d958c66d0e93540"
+    },
+    "gopher64": {
+      "Name": "Gopher64",
+      "Aliases": [
+        "Gopher 64"
+      ],
+      "Version": "1.0.0",
+      "Package": "Gopher64/Gopher64_1.0.0_Windows_x86_64.zip",
+      "SHA256": "25d0e6191997ab40f564650d8e49ca29f84e45eb7a426feb08c13d6513c052b3"
+    },
+    "flycast": {
+      "Name": "Flycast",
+      "Aliases": [],
+      "Version": "1.0.0",
+      "Package": "Flycast/Flycast_1.0.0_Windows_x86_64.zip",
+      "SHA256": "97ad2a797550e241c258550c49170c6a9bcb9121b9015dfa509dbfe558b66248"
+    },
+    "azahar": {
+      "Name": "Azahar",
+      "Aliases": [
+        "Azahar Emulator",
+        "Nintendo 3DS Emulator"
+      ],
+      "Version": "1.0.0",
+      "Package": "Azahar/Azahar_1.0.0_Windows_x86_64.zip",
+      "SHA256": "e94aa14a608662e3fc5e624440171282f13e51ff3c56dbff0a660d5e92503b7a"
     }
   },
   "InternalModules": {
@@ -82,7 +155,7 @@
       "Kind": "core-updater",
       "Version": "1.0.0",
       "Package": "Updater/EmuKitUpdater_1.0.0_Windows_x86_64.zip",
-      "SHA256": "9243a17e8e24b7c342742ceef1791a7e87c1f429d610f4eb130c3cb6dba669ea",
+      "SHA256": "198a11b4ef34a7cc3773c4bd2587cc8fe9f9472fc297b02739aa4744c4c70adc",
       "RootDirectory": "EmuKitUpdater_1.0.0",
       "Executable": "EmuKitUpdater.exe"
     }

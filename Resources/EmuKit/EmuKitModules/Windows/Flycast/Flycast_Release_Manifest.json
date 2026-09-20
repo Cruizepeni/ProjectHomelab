@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "flycast",
+  "Name": "Flycast",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "2.7",
+      "Package": "Flycast_1.0.0_Windows_x86_64.zip",
+      "SHA256": "97ad2a797550e241c258550c49170c6a9bcb9121b9015dfa509dbfe558b66248"
+    }
+  }
+}

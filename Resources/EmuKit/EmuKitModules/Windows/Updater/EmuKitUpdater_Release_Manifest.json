@@ -10,7 +10,7 @@
     "1.0.0": {
       "Status": "supported",
       "Package": "EmuKitUpdater_1.0.0_Windows_x86_64.zip",
-      "SHA256": "9243a17e8e24b7c342742ceef1791a7e87c1f429d610f4eb130c3cb6dba669ea",
+      "SHA256": "198a11b4ef34a7cc3773c4bd2587cc8fe9f9472fc297b02739aa4744c4c70adc",
       "RootDirectory": "EmuKitUpdater_1.0.0",
       "Executable": "EmuKitUpdater.exe"
     }
