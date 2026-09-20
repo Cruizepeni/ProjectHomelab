@@ -193,6 +193,9 @@ class EmuKit:
     def uninstall_all(self) -> dict[str, Any]:
         return self.manager.uninstall_all()
 
+    def remove_all(self) -> dict[str, Any]:
+        return self.manager.remove_all()
+
     def install_many(self, modules: list[str]) -> dict[str, Any]:
         return self.manager.install_many(modules)
 
@@ -255,11 +258,29 @@ class EmuKit:
     def get_catalogue(self) -> dict[str, Any] | None:
         return self.manager.get_catalogue()
 
+    def get_brand_catalogue(self) -> dict[str, Any] | None:
+        return self.manager.get_brand_catalogue()
+
     def get_system_catalogue(self) -> dict[str, Any] | None:
         return self.manager.get_system_catalogue()
 
     def get_emulator_catalogue(self) -> dict[str, Any] | None:
         return self.manager.get_emulator_catalogue()
+
+    def get_brand_entity_catalogue(self, brand: str) -> dict[str, Any] | None:
+        return self.manager.get_brand_entity_catalogue(brand)
+
+    def get_system_entity_catalogue(self, system: str) -> dict[str, Any] | None:
+        return self.manager.get_system_entity_catalogue(system)
+
+    def get_emulator_entity_catalogue(self, emulator: str) -> dict[str, Any] | None:
+        return self.manager.get_emulator_entity_catalogue(emulator)
+
+    def resolve_entity_catalogue(
+        self,
+        query: str,
+    ) -> tuple[str | None, dict[str, Any] | None, list[str]]:
+        return self.manager.resolve_entity_catalogue(query)
 
     def set_system_primary(self, system: str, module: str) -> dict[str, Any]:
         return self.manager.set_system_primary(system, module)
@@ -322,6 +343,9 @@ class EmuKit:
 
     def get_current_installs(self) -> list[dict[str, Any]]:
         return self.manager.get_current_installs()
+
+    def get_current_modules(self) -> list[dict[str, Any]]:
+        return self.manager.get_current_modules()
 
     def get_module_info(self, module: str) -> dict[str, Any] | None:
         module_id = self.manager.resolve_module_id(module)
@@ -415,7 +439,7 @@ class EmuKitConsole:
             self._progress_rendered = rendered
         self._progress_active = True
 
-        if percent == 100:
+        if percent == 100 or stage.casefold().endswith("failed"):
             print()
             self._progress_active = False
             self._progress_rendered = None
@@ -510,11 +534,29 @@ class EmuKitConsole:
             [("Enabled", "Yes" if value.get("Enabled") else "No")],
         )
 
+    def _public_links(self, value: dict[str, Any]) -> list[tuple[str, Any]]:
+        links = value.get("Links")
+        if not isinstance(links, dict):
+            return []
+        fields = [
+            ("Website", "Website"),
+            ("Repository", "Repository"),
+            ("Wiki", "Wiki"),
+            ("Documentation", "Documentation"),
+            ("EmuKit Module Documentation", "EmuKitModuleDocumentation"),
+        ]
+        rows: list[tuple[str, Any]] = []
+        for label, key in fields:
+            link = links.get(key)
+            if isinstance(link, str) and link.strip():
+                rows.append((label, link))
+        return rows
+
     def _module_info(self, value: dict[str, Any]) -> None:
         rows: list[tuple[str, Any]] = [
-            ("Module ID", value["Id"]),
-            ("Installed", "Yes" if value.get("LocalInstalled") else "No"),
-            ("Remote", "Available" if value.get("RemoteAvailable") else "Unavailable"),
+            ("Emulator ID", value["Id"]),
+            ("Module Installed", "Yes" if value.get("LocalInstalled") else "No"),
+            ("Module Available", "Yes" if value.get("RemoteAvailable") else "No"),
         ]
         aliases = value.get("Aliases", [])
         if aliases:
@@ -523,26 +565,58 @@ class EmuKitConsole:
             rows.append(("Module Version", value.get("ModuleVersion")))
         if value.get("EmulatorVersion"):
             rows.append(("Emulator Version", value.get("EmulatorVersion")))
-        if value.get("RemoteModuleVersion"):
-            rows.append(("Remote Module", value.get("RemoteModuleVersion")))
-        rows.append(("Update", "Available" if value.get("ModuleUpdateAvailable") else "Current"))
+        if value.get("Channel"):
+            rows.append(("Channel", value.get("Channel")))
         if value.get("DependencyPath"):
-            rows.append(("Dependency", value["DependencyPath"]))
+            rows.append(("Dependency Path", value["DependencyPath"]))
         if value.get("LaunchPath"):
-            rows.append(("Launch", value["LaunchPath"]))
+            rows.append(("Launch Path", value["LaunchPath"]))
         self.ui.key_value_panel(value["Name"], rows)
-
+        description = value.get("Description")
+        if isinstance(description, str) and description.strip():
+            self.ui.panel("Description", [description.strip()])
+        link_rows = self._public_links(value)
+        if link_rows:
+            self.ui.key_value_panel("Links", link_rows)
+        license_info = value.get("License")
+        if isinstance(license_info, dict):
+            license_rows: list[tuple[str, Any]] = []
+            if license_info.get("Name"):
+                license_rows.append(("License", license_info["Name"]))
+            if license_info.get("Url"):
+                license_rows.append(("License Information", license_info["Url"]))
+            if license_rows:
+                self.ui.key_value_panel("License", license_rows)
+        source = value.get("Source")
+        if isinstance(source, dict):
+            source_rows: list[tuple[str, Any]] = []
+            if source.get("Provider"):
+                source_rows.append(("Provider", source["Provider"]))
+            if source.get("ReleaseTag"):
+                source_rows.append(("Release Tag", source["ReleaseTag"]))
+            if source.get("ReleaseName"):
+                source_rows.append(("Release Name", source["ReleaseName"]))
+            if source_rows:
+                self.ui.key_value_panel("Pinned Source", source_rows)
+        host_support = value.get("HostSupport")
+        if isinstance(host_support, dict):
+            host_rows = []
+            for host_name, support in host_support.items():
+                if not isinstance(support, dict):
+                    continue
+                supported = "Yes" if support.get("Supported") else "No"
+                architectures = ", ".join(support.get("Architectures") or [])
+                host_rows.append([host_name, supported, architectures or "-"])
+            if host_rows:
+                self.ui.table("Host Support", ["Host", "Supported", "Architectures"], host_rows)
         systems = value.get("Systems", {})
         if systems:
             self.ui.table(
                 "Supported Systems",
                 ["Brand", "System", "System ID"],
-                [
-                    [system["Brand"]["Name"], system["Name"], system_id]
-                    for system_id, system in sorted(
-                        systems.items(), key=lambda item: item[1]["Name"].casefold()
-                    )
-                ],
+                [[system["Brand"]["Name"], system["Name"], system_id] for system_id, system in sorted(
+                    systems.items(), key=lambda item: item[1]["Name"].casefold()
+                )],
             )
 
     def _brand_info(self, value: dict[str, Any]) -> None:
@@ -551,11 +625,18 @@ class EmuKitConsole:
         if aliases:
             rows.append(("Aliases", ", ".join(aliases)))
         self.ui.key_value_panel(value["Name"], rows)
+        description = value.get("Description")
+        if isinstance(description, str) and description.strip():
+            self.ui.panel("Description", [description.strip()])
+        links = self._public_links(value)
+        if links:
+            self.ui.key_value_panel("Links", links)
         self.ui.table(
             "Systems",
             ["System"],
-            [[system["Name"]] for system in sorted(
-                value.get("SystemDetails", []), key=lambda item: item["Name"].casefold()
+            [[system.get("DisplayName") or system["Name"]] for system in sorted(
+                value.get("SystemDetails", []),
+                key=lambda item: (item.get("DisplayName") or item["Name"]).casefold(),
             )],
         )
 
@@ -589,18 +670,20 @@ class EmuKitConsole:
             rows.extend([
                 ("Primary Emulator", primary.get("Name", primary.get("Id", "None"))),
                 ("Primary Source", primary.get("Source", "Recommended")),
-                ("Installed", "Yes" if primary.get("Installed") else "No"),
+                ("Primary Module Installed", "Yes" if primary.get("Installed") else "No"),
             ])
         else:
-            rows.extend([("Primary Emulator", "None"), ("Installed", "No")])
+            rows.append(("Primary Emulator", "None"))
         self.ui.key_value_panel(value.get("DisplayName") or value["Name"], rows)
-
+        description = value.get("Description")
+        if isinstance(description, str) and description.strip():
+            self.ui.panel("Description", [description.strip()])
+        links = self._public_links(value)
+        if links:
+            self.ui.key_value_panel("Links", links)
         emulator_details = value.get("EmulatorDetails")
         if isinstance(emulator_details, list) and emulator_details:
-            names = [
-                str(item.get("Name") or item.get("Id"))
-                for item in emulator_details if isinstance(item, dict)
-            ]
+            names = [str(item.get("Name") or item.get("Id")) for item in emulator_details if isinstance(item, dict)]
         else:
             names = [str(item) for item in (value.get("Emulators") or value.get("Modules") or [])]
         self.ui.table("Supported Emulators", ["Emulator"], [[name] for name in names])
@@ -616,7 +699,19 @@ class EmuKitConsole:
             "Installed Emulators",
             ["Emulator", "Version", "Status"],
             rows,
-            summary=f"{count} emulator module{'s' if count != 1 else ''} installed.",
+            summary=f"{count} emulator{'s' if count != 1 else ''} installed.",
+        )
+
+    def _modules(self, values: list[dict[str, Any]]) -> None:
+        rows = []
+        for value in values:
+            rows.append([value["Name"], value.get("ModuleVersion") or "Unknown", value.get("EmulatorVersion") or "Unknown"])
+        count = len(values)
+        self.ui.table(
+            "Installed Modules",
+            ["Module", "Module Version", "Emulator Version"],
+            rows,
+            summary=f"{count} EmuKit module{'s' if count != 1 else ''} installed.",
         )
 
     @staticmethod
@@ -636,68 +731,69 @@ class EmuKitConsole:
         if not isinstance(value, dict):
             self.ui.error("Platform catalogue is unavailable.")
             return
-        label = {
-            "all": "Catalogue",
-            "systems": "System Catalogue",
-            "emulators": "Emulator Catalogue",
-        }.get(kind, "Catalogue")
         platform = value.get("Platform", "Platform")
         version = value.get("Version", "?")
-        emulators = value.get("Emulators", {})
         brands = value.get("Brands", {})
-        total_systems = 0
-        if isinstance(brands, dict):
-            total_systems = sum(
-                len(brand.get("Systems", {}))
-                for brand in brands.values() if isinstance(brand, dict)
-            )
-        self.ui.key_value_panel(
-            f"EmuKit {platform} {label}",
-            [
-                ("Catalogue Version", version),
-                ("Emulators", len(emulators) if isinstance(emulators, dict) else 0),
-                ("Brands", len(brands) if isinstance(brands, dict) else 0),
-                ("Systems", total_systems),
-            ],
-        )
-
-        if kind in {"all", "emulators"} and isinstance(emulators, dict):
-            self.ui.table(
-                "Emulators",
-                ["Emulator", "Systems"],
-                [
-                    [emulator.get("Name", emulator_id), len(emulator.get("Systems", []))]
-                    for emulator_id, emulator in sorted(
-                        emulators.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
-                    )
-                ],
-            )
-
-        if kind == "all" and isinstance(brands, dict):
-            self.ui.table(
-                "Brands",
-                ["Brand", "Systems"],
-                [
-                    [brand.get("Name", brand_id), len(brand.get("Systems", {})) if isinstance(brand.get("Systems", {}), dict) else 0]
-                    for brand_id, brand in sorted(
-                        brands.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
-                    )
-                ],
-            )
-        elif kind == "systems" and isinstance(brands, dict):
-            system_rows = []
-            for brand_id, brand in sorted(
-                brands.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
-            ):
-                brand_name = brand.get("Name", brand_id)
-                systems = brand.get("Systems", {})
-                if not isinstance(systems, dict):
+        systems = value.get("Systems", {})
+        emulators = value.get("Emulators", {})
+        if kind == "all":
+            source_brands = brands if isinstance(brands, dict) else {}
+            source_emulators = emulators if isinstance(emulators, dict) else {}
+            source_systems: dict[str, dict[str, Any]] = {}
+            for brand_id, brand in source_brands.items():
+                if not isinstance(brand, dict):
                     continue
-                for system_id, system in sorted(
-                    systems.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
-                ):
-                    system_rows.append([brand_name, system.get("Name", system_id)])
-            self.ui.table("Systems", ["Brand", "System"], system_rows)
+                brand_name = brand.get("Name", brand_id)
+                for system_id, system in (brand.get("Systems") or {}).items():
+                    if not isinstance(system, dict):
+                        continue
+                    item = dict(system)
+                    item["DisplayName"] = f'{brand_name} {system.get("Name", system_id)}'
+                    source_systems[system_id] = item
+            self.ui.key_value_panel(
+                f"EmuKit {platform} Catalogue",
+                [("Catalogue Version", version), ("Brands", len(source_brands)), ("Systems", len(source_systems)), ("Emulators", len(source_emulators))],
+            )
+            self.ui.table("Brands", ["Brand"], [[brand.get("Name", brand_id)] for brand_id, brand in sorted(source_brands.items(), key=lambda item: item[1].get("Name", item[0]).casefold())])
+            self.ui.table("Systems", ["System"], [[system["DisplayName"]] for system in sorted(source_systems.values(), key=lambda item: item["DisplayName"].casefold())])
+            self.ui.table("Emulators", ["Emulator"], [[emulator.get("Name", emulator_id)] for emulator_id, emulator in sorted(source_emulators.items(), key=lambda item: item[1].get("Name", item[0]).casefold())])
+            return
+        if kind == "brands":
+            source = brands if isinstance(brands, dict) else {}
+            self.ui.table("Brand Catalogue", ["Brand"], [[brand.get("Name", brand_id)] for brand_id, brand in sorted(source.items(), key=lambda item: item[1].get("Name", item[0]).casefold())], summary=f"{len(source)} brands.")
+            return
+        if kind == "systems":
+            source = systems if isinstance(systems, dict) else {}
+            self.ui.table("System Catalogue", ["System"], [[system.get("DisplayName") or system.get("Name", system_id)] for system_id, system in sorted(source.items(), key=lambda item: (item[1].get("DisplayName") or item[1].get("Name", item[0])).casefold())], summary=f"{len(source)} systems.")
+            return
+        source = emulators if isinstance(emulators, dict) else {}
+        self.ui.table("Emulator Catalogue", ["Emulator"], [[emulator.get("Name", emulator_id)] for emulator_id, emulator in sorted(source.items(), key=lambda item: item[1].get("Name", item[0]).casefold())], summary=f"{len(source)} emulators.")
+
+    def _entity_catalogue_view(self, kind: str, value: dict[str, Any]) -> None:
+        if kind == "Brand":
+            brand = value["Brand"]
+            systems = value.get("Systems", {})
+            self.ui.table(
+                f'{brand["Name"]} Catalogue',
+                ["System"],
+                [[system.get("DisplayName") or system.get("Name", system_id)] for system_id, system in sorted(systems.items(), key=lambda item: (item[1].get("DisplayName") or item[1].get("Name", item[0])).casefold())],
+                summary=f"{len(systems)} systems.",
+            )
+            return
+        if kind == "System":
+            system = value["System"]
+            emulators = value.get("Emulators", {})
+            rows = [[emulator.get("Name", emulator_id), "Recommended" if emulator.get("RecommendedPrimary") else "Alternative"] for emulator_id, emulator in sorted(emulators.items(), key=lambda item: item[1].get("Name", item[0]).casefold())]
+            self.ui.table(f'{system.get("DisplayName") or system["Name"]} Catalogue', ["Emulator", "Role"], rows, summary=f"{len(emulators)} emulators.")
+            return
+        emulator = value["Emulator"]
+        systems = value.get("Systems", {})
+        self.ui.table(
+            f'{emulator["Name"]} Catalogue',
+            ["System"],
+            [[system.get("DisplayName") or system.get("Name", system_id)] for system_id, system in sorted(systems.items(), key=lambda item: (item[1].get("DisplayName") or item[1].get("Name", item[0])).casefold())],
+            summary=f"{len(systems)} systems.",
+        )
 
     def _running(self, values: list[dict[str, Any]]) -> None:
         rows = []
@@ -797,52 +893,56 @@ class EmuKitConsole:
 
     def _help(self) -> None:
         rows = [
-            ["Discovery", "Get Catalogue", "Complete catalogue summary"],
-            ["Discovery", "Get System Catalogue", "Supported systems by brand"],
-            ["Discovery", "Get Emulator Catalogue", "Available emulator modules"],
-            ["Discovery", "Get <name> Info", "Brand, system, or emulator details"],
-            ["Runtime", "Get Running Emulators", "Show detected emulator processes"],
-            ["Runtime", "Get Current Installs", "Show installed emulator modules"],
+            ["Discovery", "Get Catalogue", "Complete catalogue"],
+            ["Discovery", "Get Brand Catalogue", "All supported brands"],
+            ["Discovery", "Get System Catalogue", "All supported systems"],
+            ["Discovery", "Get Emulator Catalogue", "All supported emulators"],
+            ["Discovery", "Get <Brand|System|Emulator> Catalogue", "Relationships for one catalogue entity"],
+            ["Discovery", "Get <Brand|System|Emulator> Info", "Detailed information for one entity"],
+            ["Local State", "Get Current Installs | Get Installed Emulators", "Installed emulator applications"],
+            ["Local State", "Get Current Modules | Get Installed Modules", "Local EmuKit module packages"],
+            ["Runtime", "Get Running Emulators", "Detected emulator processes"],
             ["Launch", "Launch <Emulator>", "Open an emulator"],
             ["Launch", "Launch <GamePath> <System>", "Launch a game with the primary emulator"],
-            ["Launch", "Launch <Emulator> <GamePath> <System>", "Launch with an explicit emulator"],
-            ["Launch", "Close <Emulator|System>", "Close a running emulator"],
-            ["Launch", "Restart <Emulator|System>", "Restart a running emulator"],
-            ["Modules", "Install <Emulator(s)> | Install All", "Install emulator modules"],
-            ["Modules", "Uninstall <Emulator(s)> | Uninstall All", "Uninstall emulator modules"],
-            ["Modules", "Repair <Emulator(s)>", "Repair emulator modules"],
-            ["Modules", "Remove <Emulator(s)>", "Remove module files"],
-            ["Modules", "Update <Emulator(s)>", "Update emulator modules"],
-            ["Settings", "Get Settings", "Show EmuKit settings"],
-            ["Settings", "Set Feature Fullscreen True|False", "Set launch fullscreen behavior"],
-            ["Settings", "Set <Emulator> as <System> Primary", "Override the catalogue primary"],
-            ["Settings", "Restore <System> Primary", "Restore catalogue recommendation"],
-            ["Settings", "Restore Systems Primary", "Restore all recommendations"],
-            ["Updates", "Updates | Check for Updates", "Check Core and module updates"],
+            ["Launch", "Launch <Emulator> <GamePath> <System>", "Launch with a specific emulator"],
+            ["Lifecycle", "Close <Emulator|System>", "Close a running emulator"],
+            ["Lifecycle", "Restart <Emulator|System>", "Restart a running emulator"],
+            ["Lifecycle", "Is <Emulator|System> Running", "Check running state"],
+            ["Modules", "Install <Emulator(s)> | Install All", "Install emulator applications"],
+            ["Modules", "Uninstall <Emulator(s)> | Uninstall All", "Uninstall emulator applications"],
+            ["Modules", "Repair <Emulator(s)>", "Repair emulator applications"],
+            ["Modules", "Remove <Emulator(s)> | Remove All", "Remove local module packages"],
+            ["Modules", "Update <Emulator(s)>", "Update emulator applications"],
+            ["Updates", "Updates | Check Updates | Check for Updates | Get Updates", "Check updates"],
             ["Updates", "Update EmuKit", "Update EmuKit Core"],
-            ["System", "Help", "Show this command reference"],
-            ["System", "Close", "Exit EmuKit"],
+            ["Primary", "Set <Emulator> as <System> Primary", "Set user primary"],
+            ["Primary", "Restore <System> Primary", "Restore recommended primary"],
+            ["Primary", "Restore Systems Primary", "Restore all recommendations"],
+            ["Settings", "Get Settings", "Show global and module settings"],
+            ["Settings", "Set Feature Fullscreen True|False", "Change feature fullscreen"],
+            ["Utility", "Get Status", "Show EmuKit status"],
+            ["Utility", "Get Core Dependencies", "Check shared dependencies"],
+            ["Utility", "Help", "Show this command list"],
+            ["Utility", "Close", "Exit EmuKit"],
         ]
-        self.ui.table(
-            "EmuKit Commands",
-            ["Category", "Command", "Description"],
-            rows,
-            summary="Modifiers: --json for raw structured output • --verbose for additional details",
-        )
+        self.ui.table("EmuKit Commands", ["Group", "Command", "Description"], rows, summary="Append --json for machine-readable output or --verbose for lifecycle details.")
 
     def _get(self, tokens: list[str], raw: bool) -> None:
         assert self.emukit is not None
         lowered = [token.casefold() for token in tokens]
-
-        if lowered in (["catalogue"], ["catalog"]):
+        if lowered == ["catalogue"]:
             value = self.emukit.get_catalogue()
             self._json(value) if raw else self._catalogue_view(value, "all")
             return
-        if lowered in (["system", "catalogue"], ["system", "catalog"]):
+        if lowered == ["brand", "catalogue"]:
+            value = self.emukit.get_brand_catalogue()
+            self._json(value) if raw else self._catalogue_view(value, "brands")
+            return
+        if lowered == ["system", "catalogue"]:
             value = self.emukit.get_system_catalogue()
             self._json(value) if raw else self._catalogue_view(value, "systems")
             return
-        if lowered in (["emulator", "catalogue"], ["emulator", "catalog"]):
+        if lowered == ["emulator", "catalogue"]:
             value = self.emukit.get_emulator_catalogue()
             self._json(value) if raw else self._catalogue_view(value, "emulators")
             return
@@ -854,9 +954,13 @@ class EmuKitConsole:
             value = self.emukit.get_running_emulators()
             self._json(value) if raw else self._running(value)
             return
-        if lowered == ["current", "installs"]:
+        if lowered in (["current", "installs"], ["installed", "emulators"]):
             value = self.emukit.get_current_installs()
             self._json(value) if raw else self._installs(value)
+            return
+        if lowered in (["current", "modules"], ["installed", "modules"]):
+            value = self.emukit.get_current_modules()
+            self._json(value) if raw else self._modules(value)
             return
         if lowered == ["updates"]:
             value = self.emukit.get_updates(refresh=True)
@@ -869,44 +973,33 @@ class EmuKitConsole:
             else:
                 self.ui.key_value_panel(
                     "EmuKit Status",
-                    [
-                        ("Core", value["core_version"]),
-                        ("Channel", value["channel"]),
-                        ("Platform", f'{value["platform"]} {value["architecture"]}'),
-                        ("Modules", f'{value["registered_count"]} local / {value["remote_module_count"]} remote'),
-                        ("Brands", value["supported_brands"]),
-                        ("Systems", value["supported_systems"]),
-                    ],
+                    [("Core", value["core_version"]), ("Channel", value["channel"]), ("Platform", f'{value["platform"]} {value["architecture"]}'), ("Modules", f'{value["registered_count"]} local / {value["remote_module_count"]} remote'), ("Brands", value["supported_brands"]), ("Systems", value["supported_systems"])],
                 )
             return
         if lowered == ["core", "dependencies"]:
             self._result(self.emukit.check_core_dependencies(), raw=raw, verbose=True)
             return
-
-        if len(tokens) >= 2 and lowered[-1] == "info":
+        if len(tokens) >= 2 and lowered[-1] == "catalogue":
             query_tokens = tokens[:-1]
             explicit_kind = None
-            if query_tokens and query_tokens[0].casefold() in {"emulator", "module", "brand", "system"}:
+            if query_tokens and query_tokens[0].casefold() in {"brand", "system", "emulator"}:
                 explicit_kind = query_tokens[0].casefold()
                 query_tokens = query_tokens[1:]
-            query = " ".join(query_tokens)
+            query = " ".join(query_tokens).strip()
             if not query:
-                self.ui.usage("Get <Brand|System|Emulator> Info")
+                self.ui.usage("Get <Brand|System|Emulator> Catalogue")
                 return
-            if explicit_kind in {"emulator", "module"}:
-                value = self.emukit.get_module_info(query)
-                kind = "Emulator"
-            elif explicit_kind == "brand":
-                value = self.emukit.get_brand_info(query)
-                kind = "Brand"
+            if explicit_kind == "brand":
+                value = self.emukit.get_brand_entity_catalogue(query); kind = "Brand"
             elif explicit_kind == "system":
-                value = self.emukit.get_system_info(query)
-                kind = "System"
+                value = self.emukit.get_system_entity_catalogue(query); kind = "System"
+            elif explicit_kind == "emulator":
+                value = self.emukit.get_emulator_entity_catalogue(query); kind = "Emulator"
             else:
-                kind, value, matches = self.emukit.resolve_info(query)
+                kind, value, matches = self.emukit.resolve_entity_catalogue(query)
                 if value is None:
                     if matches:
-                        self.ui.warning(f'"{query}" is ambiguous. Specify one of: {", ".join(matches)}.')
+                        self.ui.warning(f'"{query}" is ambiguous. Specify one of: ' + ", ".join(f"{match} {query}" for match in matches) + ".")
                     else:
                         self.ui.error(f'"{query}" was not found.')
                     return
@@ -915,13 +1008,39 @@ class EmuKitConsole:
             elif raw:
                 self._json(value)
             else:
-                {
-                    "Emulator": self._module_info,
-                    "Brand": self._brand_info,
-                    "System": self._system_info,
-                }[kind](value)
+                self._entity_catalogue_view(kind, value)
             return
-
+        if len(tokens) >= 2 and lowered[-1] == "info":
+            query_tokens = tokens[:-1]
+            explicit_kind = None
+            if query_tokens and query_tokens[0].casefold() in {"emulator", "brand", "system"}:
+                explicit_kind = query_tokens[0].casefold()
+                query_tokens = query_tokens[1:]
+            query = " ".join(query_tokens).strip()
+            if not query:
+                self.ui.usage("Get <Brand|System|Emulator> Info")
+                return
+            if explicit_kind == "emulator":
+                value = self.emukit.get_module_info(query); kind = "Emulator"
+            elif explicit_kind == "brand":
+                value = self.emukit.get_brand_info(query); kind = "Brand"
+            elif explicit_kind == "system":
+                value = self.emukit.get_system_info(query); kind = "System"
+            else:
+                kind, value, matches = self.emukit.resolve_info(query)
+                if value is None:
+                    if matches:
+                        self.ui.warning(f'"{query}" is ambiguous. Specify one of: ' + ", ".join(f"{match} {query}" for match in matches) + ".")
+                    else:
+                        self.ui.error(f'"{query}" was not found.')
+                    return
+            if value is None:
+                self.ui.error(f'{kind} "{query}" was not found.')
+            elif raw:
+                self._json(value)
+            else:
+                {"Emulator": self._module_info, "Brand": self._brand_info, "System": self._system_info}[kind](value)
+            return
         self.ui.warning("Unknown Get command. Type Help for available commands.")
 
     def execute(self, command: str) -> bool:
@@ -1008,6 +1127,9 @@ class EmuKitConsole:
             return True
         if action == "uninstall" and lowered_args == ["all"]:
             self._result(self.emukit.uninstall_all(), raw=raw, verbose=verbose)
+            return True
+        if action == "remove" and lowered_args == ["all"]:
+            self._result(self.emukit.remove_all(), raw=raw, verbose=verbose)
             return True
 
         if action in {"install", "uninstall", "repair", "remove", "update"}:

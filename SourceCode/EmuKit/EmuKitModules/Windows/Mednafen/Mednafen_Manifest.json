@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "mednafen",
+  "Name": "Mednafen",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "1.32.1",
+      "Package": "Mednafen_1.0.0.zip",
+      "SHA256": "2aace7dd7760ac497b93a18bb41034814754fd059044391867b37c635202bcc1"
+    }
+  }
+}

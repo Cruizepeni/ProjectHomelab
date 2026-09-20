@@ -7,9 +7,9 @@
   "Versions": {
     "1.0.0": {
       "Status": "supported",
-      "EmulatorVersion": "a5a18f5_canary_experimental",
+      "EmulatorVersion": "aee0871",
       "Package": "Xenia_1.0.0.zip",
-      "SHA256": "d80a1271742ffe523ac8301999b9c4b56eebeb57534bc82373bce8a56d1b7437"
+      "SHA256": "2bbd49d1ef713a22566b25661dbd33407f9fbb5929e5f9b29d256105d167d9bb"
     }
   }
 }

@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "cemu",
+  "Name": "Cemu",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "2.6",
+      "Package": "Cemu_1.0.0.zip",
+      "SHA256": "139e9f35f2d9772c45e39b279c4034d75c6a96bb39159a82c281b3c31134150b"
+    }
+  }
+}

@@ -93,6 +93,103 @@
       "Systems": [
         "microsoft.xbox360"
       ]
+    },
+    "sameboy": {
+      "Name": "SameBoy",
+      "Aliases": [],
+      "Systems": [
+        "nintendo.gameboy",
+        "nintendo.gameboycolor"
+      ]
+    },
+    "cemu": {
+      "Name": "Cemu",
+      "Aliases": [],
+      "Systems": [
+        "nintendo.wiiu"
+      ]
+    },
+    "mgba": {
+      "Name": "MGBA",
+      "Aliases": [],
+      "Systems": [
+        "nintendo.gameboyadvance"
+      ]
+    },
+    "yabasanshiro2": {
+      "Name": "Yaba Sanshiro 2",
+      "Aliases": [
+        "YabaSanshiro2"
+      ],
+      "Systems": [
+        "sega.saturn"
+      ]
+    },
+    "mesence": {
+      "Name": "MesenCE",
+      "Aliases": [
+        "Mesen CE",
+        "Mesen"
+      ],
+      "Systems": [
+        "bandai.wonderswan",
+        "bandai.wonderswancolor",
+        "coleco.colecovision",
+        "nec.pcengine",
+        "nec.pcenginecd",
+        "nec.supergrafx",
+        "nintendo.fds",
+        "nintendo.gameboy",
+        "nintendo.gameboyadvance",
+        "nintendo.gameboycolor",
+        "nintendo.nes",
+        "nintendo.satellaview",
+        "nintendo.snes",
+        "sega.gamegear",
+        "sega.mastersystem",
+        "sega.sg1000"
+      ]
+    },
+    "mednafen": {
+      "Name": "Mednafen",
+      "Aliases": [],
+      "Systems": [
+        "atari.lynx",
+        "nec.pcengine",
+        "nec.pcenginecd",
+        "nec.supergrafx",
+        "nintendo.virtualboy",
+        "nec.pcfx"
+      ]
+    },
+    "gopher64": {
+      "Name": "Gopher64",
+      "Aliases": [
+        "Gopher 64"
+      ],
+      "Systems": [
+        "nintendo.n64"
+      ]
+    },
+    "flycast": {
+      "Name": "Flycast",
+      "Aliases": [],
+      "Systems": [
+        "sega.dreamcast",
+        "sega.naomi",
+        "sega.naomi2",
+        "sammy.atomiswave"
+      ]
+    },
+    "azahar": {
+      "Name": "Azahar",
+      "Aliases": [
+        "Azahar Emulator",
+        "Nintendo 3DS Emulator"
+      ],
+      "Systems": [
+        "nintendo.3ds"
+      ]
     }
   },
   "Brands": {
@@ -106,7 +203,8 @@
             "WS"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -116,7 +214,8 @@
             "WSC"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         }
@@ -132,7 +231,8 @@
             "CV"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         }
@@ -180,7 +280,9 @@
             "TG16"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence",
+            "mednafen"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -196,7 +298,9 @@
             "TGCD"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence",
+            "mednafen"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -207,9 +311,22 @@
             "PC Engine SuperGrafx"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence",
+            "mednafen"
           ],
           "RecommendedPrimary": "ares"
+        },
+        "nec.pcfx": {
+          "Name": "PC-FX",
+          "Aliases": [
+            "PCFX",
+            "NEC PC-FX"
+          ],
+          "Emulators": [
+            "mednafen"
+          ],
+          "RecommendedPrimary": "mednafen"
         }
       }
     },
@@ -246,7 +363,8 @@
             "Family Computer Disk System"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -256,7 +374,9 @@
             "GB"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "sameboy",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -266,7 +386,9 @@
             "GBA"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mgba",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -276,7 +398,9 @@
             "GBC"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "sameboy",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -286,9 +410,10 @@
             "N64"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "gopher64"
           ],
-          "RecommendedPrimary": "ares"
+          "RecommendedPrimary": "gopher64"
         },
         "nintendo.n64dd": {
           "Name": "Nintendo 64DD",
@@ -310,7 +435,8 @@
             "FC"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -320,7 +446,8 @@
             "BS-X"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -334,7 +461,8 @@
             "SFC"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -349,6 +477,38 @@
             "ares"
           ],
           "RecommendedPrimary": "ares"
+        },
+        "nintendo.wiiu": {
+          "Name": "Wii U",
+          "Aliases": [
+            "WiiU"
+          ],
+          "Emulators": [
+            "cemu"
+          ],
+          "RecommendedPrimary": "cemu"
+        },
+        "nintendo.virtualboy": {
+          "Name": "Virtual Boy",
+          "Aliases": [
+            "VB",
+            "Nintendo Virtual Boy"
+          ],
+          "Emulators": [
+            "mednafen"
+          ],
+          "RecommendedPrimary": "mednafen"
+        },
+        "nintendo.3ds": {
+          "Name": "Nintendo 3DS",
+          "Aliases": [
+            "3DS",
+            "N3DS"
+          ],
+          "Emulators": [
+            "azahar"
+          ],
+          "RecommendedPrimary": "azahar"
         }
       }
     },
@@ -375,7 +535,8 @@
             "GG"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -399,7 +560,8 @@
             "Sega Mark III"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
         },
@@ -422,9 +584,52 @@
             "SG1K"
           ],
           "Emulators": [
-            "ares"
+            "ares",
+            "mesence"
           ],
           "RecommendedPrimary": "ares"
+        },
+        "sega.saturn": {
+          "Name": "Saturn",
+          "Aliases": [
+            "Sega Saturn"
+          ],
+          "Emulators": [
+            "yabasanshiro2"
+          ],
+          "RecommendedPrimary": "yabasanshiro2"
+        },
+        "sega.dreamcast": {
+          "Name": "Dreamcast",
+          "Aliases": [
+            "Sega Dreamcast",
+            "DC"
+          ],
+          "Emulators": [
+            "flycast"
+          ],
+          "RecommendedPrimary": "flycast"
+        },
+        "sega.naomi": {
+          "Name": "NAOMI",
+          "Aliases": [
+            "Sega NAOMI"
+          ],
+          "Emulators": [
+            "flycast"
+          ],
+          "RecommendedPrimary": "flycast"
+        },
+        "sega.naomi2": {
+          "Name": "NAOMI 2",
+          "Aliases": [
+            "Sega NAOMI 2",
+            "NAOMI2"
+          ],
+          "Emulators": [
+            "flycast"
+          ],
+          "RecommendedPrimary": "flycast"
         }
       }
     },
@@ -511,6 +716,38 @@
             "vita3k"
           ],
           "RecommendedPrimary": "vita3k"
+        }
+      }
+    },
+    "atari": {
+      "Name": "Atari",
+      "Aliases": [],
+      "Systems": {
+        "atari.lynx": {
+          "Name": "Atari Lynx",
+          "Aliases": [
+            "Lynx"
+          ],
+          "Emulators": [
+            "mednafen"
+          ],
+          "RecommendedPrimary": "mednafen"
+        }
+      }
+    },
+    "sammy": {
+      "Name": "Sammy",
+      "Aliases": [],
+      "Systems": {
+        "sammy.atomiswave": {
+          "Name": "Atomiswave",
+          "Aliases": [
+            "Sammy Atomiswave"
+          ],
+          "Emulators": [
+            "flycast"
+          ],
+          "RecommendedPrimary": "flycast"
         }
       }
     }

@@ -1,0 +1,15 @@
+{
+  "SchemaVersion": 1,
+  "Id": "gopher64",
+  "Name": "Gopher64",
+  "Platform": "Windows",
+  "Latest": "1.0.0",
+  "Versions": {
+    "1.0.0": {
+      "Status": "supported",
+      "EmulatorVersion": "1.1.36",
+      "Package": "Gopher64_1.0.0.zip",
+      "SHA256": "59c7c301be6b1b19223e765149eccfa3aa9cab645a6f7766ec91e1e8e5857385"
+    }
+  }
+}

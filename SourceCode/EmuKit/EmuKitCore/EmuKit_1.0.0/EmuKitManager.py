@@ -203,6 +203,56 @@ class EmuKitManager:
         except Exception:
             pass
 
+    def _emit_module_progress(
+        self,
+        module_id: str,
+        operation: str,
+        percent: int | float | None = None,
+        stage: str | None = None,
+        message: str | None = None,
+    ) -> None:
+        forwarded_percent = percent
+        if isinstance(percent, (int, float)) and percent >= 100:
+            forwarded_percent = 99
+        self._emit_progress(
+            module_id,
+            operation,
+            forwarded_percent,
+            stage,
+            message,
+        )
+
+    @staticmethod
+    def _failure_stage(operation: str) -> str:
+        return f"{operation.replace('_', ' ').title()} Failed"
+
+    def _emit_failure_progress(
+        self,
+        module_id: str,
+        operation: str,
+        message: str | None,
+    ) -> None:
+        self._emit_progress(
+            module_id,
+            operation,
+            None,
+            self._failure_stage(operation),
+            message,
+        )
+
+    def _reported_failure(
+        self,
+        result: dict[str, Any],
+    ) -> dict[str, Any]:
+        module_id = str(result.get("module") or "EmuKit")
+        operation = str(result.get("operation") or "operation")
+        self._emit_failure_progress(
+            module_id,
+            operation,
+            result.get("message"),
+        )
+        return result
+
     @staticmethod
     def _valid_string(value: Any) -> bool:
         return isinstance(value, str) and bool(value.strip())
@@ -2481,7 +2531,7 @@ class EmuKitManager:
                     if message is not None and not isinstance(message, str):
                         protocol_state["error"] = "Executable manager progress message must be a string or null."
                         continue
-                    self._emit_progress(
+                    self._emit_module_progress(
                         module_id,
                         operation,
                         percent,
@@ -2583,12 +2633,13 @@ class EmuKitManager:
         operation: str,
     ) -> dict[str, Any]:
         if module_id not in self.get_modules():
-            return self._fallback_result(
+            result = self._fallback_result(
                 module_id,
                 operation,
                 message=f'Module "{module_id}" is not registered.',
                 error="module_not_registered",
             )
+            return self._reported_failure(result)
 
         try:
             manager_path = self._manager_entry_path(module_id)
@@ -2611,7 +2662,7 @@ class EmuKitManager:
                 module = self._load_python_module_manager(module_id)
                 handler = getattr(module, operation, None)
                 if not callable(handler):
-                    return self._fallback_result(
+                    result = self._fallback_result(
                         module_id,
                         operation,
                         message=(
@@ -2620,8 +2671,9 @@ class EmuKitManager:
                         ),
                         error="operation_not_implemented",
                     )
+                    return self._reported_failure(result)
 
-                progress = lambda percent=None, stage=None, message=None: self._emit_progress(
+                progress = lambda percent=None, stage=None, message=None: self._emit_module_progress(
                     module_id,
                     operation,
                     percent,
@@ -2652,22 +2704,21 @@ class EmuKitManager:
                     normalized.get("message"),
                 )
             else:
-                self._emit_progress(
+                self._emit_failure_progress(
                     module_id,
                     operation,
-                    None,
-                    "Failed",
                     normalized.get("message"),
                 )
             return normalized
         except Exception as exc:
-            return self._fallback_result(
+            result = self._fallback_result(
                 module_id,
                 operation,
                 message=f'{module_id} failed during {operation}.',
                 details=str(exc),
                 error="module_exception",
             )
+            return self._reported_failure(result)
 
     def _run_serialized_operation(
         self,
@@ -2692,21 +2743,24 @@ class EmuKitManager:
     def check_module(self, module_query: str) -> dict[str, Any]:
         module_id = self.resolve_local_module_id(module_query)
         if module_id is None:
-            return self._fallback_result(
-                module_query,
-                "check",
-                message=f'Module "{module_query}" is not installed locally.',
-                error="module_not_installed",
+            return self._reported_failure(
+                self._fallback_result(
+                    module_query,
+                    "check",
+                    message=f'Module "{module_query}" is not installed locally.',
+                    error="module_not_installed",
+                )
             )
         return self._run_serialized_operation(module_id, "check")
 
     def install(self, module_query: str) -> dict[str, Any]:
         module_id = self.resolve_local_module_id(module_query)
+        package_result: dict[str, Any] | None = None
+
         if module_id is None:
             remote_id = self.resolve_remote_module_id(module_query)
-            refresh_result: dict[str, Any] | None = None
             if remote_id is None:
-                refresh_result = self.refresh_remote_manifest()
+                self.refresh_remote_manifest()
                 remote_id = self.resolve_remote_module_id(module_query)
 
             if remote_id is None:
@@ -2714,7 +2768,7 @@ class EmuKitManager:
                 with self._state_lock:
                     remote_error = copy.deepcopy(self._remote_manifest_error)
                 if isinstance(remote_error, dict):
-                    return {
+                    return self._reported_failure({
                         "success": False,
                         "module": module_query,
                         "operation": "install",
@@ -2725,29 +2779,109 @@ class EmuKitManager:
                             "remote EmuKit module manifest is unavailable."
                         ),
                         "details": remote_error.get("details") or remote_error.get("message"),
-                    }
-                return self._fallback_result(
-                    module_query,
-                    "install",
-                    message=f'Module "{module_query}" was not found locally or remotely.',
-                    error="module_not_found",
+                    })
+                return self._reported_failure(
+                    self._fallback_result(
+                        module_query,
+                        "install",
+                        message=f'Module "{module_query}" was not found locally or remotely.',
+                        error="module_not_found",
+                    )
                 )
-            acquired = self.acquire_module(remote_id)
-            if not acquired.get("success"):
-                return acquired
+
+            package_result = self.acquire_module(remote_id)
+            if not package_result.get("success"):
+                return self._reported_failure({
+                    "success": False,
+                    "module": remote_id,
+                    "operation": "install",
+                    "state": "install_failed",
+                    "error": package_result.get("error") or "module_acquire_failed",
+                    "message": (
+                        f'Emulator "{remote_id}" could not be installed because its '
+                        "module package could not be acquired."
+                    ),
+                    "details": {"module_package": package_result},
+                })
             module_id = remote_id
 
         self.settings.set_module_enabled(module_id, True)
+        check_result = self._run_serialized_operation(module_id, "check")
+
+        if not check_result.get("success"):
+            return self._reported_failure({
+                "success": False,
+                "module": module_id,
+                "operation": "install",
+                "state": "install_failed",
+                "error": check_result.get("error") or "check_failed",
+                "message": f'Emulator "{module_id}" could not be checked before installation.',
+                "details": {
+                    "module_package": package_result,
+                    "check": check_result,
+                },
+            })
+
+        state = check_result.get("state")
+        if state == "installed":
+            return {
+                "success": True,
+                "module": module_id,
+                "operation": "install",
+                "state": "already_installed",
+                "message": f'Emulator "{module_id}" is already installed. Installation was skipped.',
+                "details": {
+                    "module_package": package_result,
+                    "check": check_result,
+                },
+            }
+
+        if state == "broken":
+            return self._reported_failure({
+                "success": False,
+                "module": module_id,
+                "operation": "install",
+                "state": "install_failed",
+                "error": "emulator_broken",
+                "message": (
+                    f'Emulator "{module_id}" already exists but its installation is broken. '
+                    "Use Repair instead of Install."
+                ),
+                "details": {
+                    "module_package": package_result,
+                    "check": check_result,
+                },
+            })
+
+        if state != "missing":
+            return self._reported_failure({
+                "success": False,
+                "module": module_id,
+                "operation": "install",
+                "state": "install_failed",
+                "error": "unexpected_check_state",
+                "message": (
+                    f'Emulator "{module_id}" reported an unexpected pre-install state: '
+                    f'"{state}".'
+                ),
+                "details": {
+                    "module_package": package_result,
+                    "check": check_result,
+                },
+            })
+
         return self._run_serialized_operation(module_id, "install")
 
     def uninstall(self, module_query: str) -> dict[str, Any]:
         module_id = self.resolve_local_module_id(module_query)
         if module_id is None:
-            return self._fallback_result(
-                module_query,
-                "uninstall",
-                message=f'Module "{module_query}" is not installed locally.',
-                error="module_not_installed",
+            return self._reported_failure(
+                self._fallback_result(
+                    module_query,
+                    "uninstall",
+                    message=f'Module "{module_query}" is not installed locally.',
+                    error="module_not_installed",
+                )
             )
         result = self._run_serialized_operation(module_id, "uninstall")
         if result.get("success"):
@@ -2757,20 +2891,21 @@ class EmuKitManager:
     def repair(self, module_query: str) -> dict[str, Any]:
         module_id = self.resolve_local_module_id(module_query)
         if module_id is None:
-            return self._fallback_result(
-                module_query,
-                "repair",
-                message=f'Module "{module_query}" is not installed locally.',
-                error="module_not_installed",
+            return self._reported_failure(
+                self._fallback_result(
+                    module_query,
+                    "repair",
+                    message=f'Module "{module_query}" is not installed locally.',
+                    error="module_not_installed",
+                )
             )
         return self._run_serialized_operation(module_id, "repair")
-
 
     def install_all(self) -> dict[str, Any]:
         remote_modules = self.get_remote_modules()
         if not remote_modules:
             manifest_status = self._remote_manifest_error
-            return {
+            result = {
                 "success": False if manifest_status else True,
                 "operation": "install_all",
                 "state": "manifest_unavailable" if manifest_status else "nothing_to_install",
@@ -2782,24 +2917,141 @@ class EmuKitManager:
                 ),
                 "details": manifest_status,
             }
+            return result
 
         results: list[dict[str, Any]] = []
+        installed_count = 0
+        skipped_count = 0
+
         for module_id in sorted(
             remote_modules,
             key=lambda item: remote_modules[item]["Name"].casefold(),
         ):
-            results.append(self.install(module_id))
+            package_result: dict[str, Any] | None = None
+            local_id = self.resolve_local_module_id(module_id)
+
+            if local_id is None:
+                package_result = self.acquire_module(module_id)
+                if not package_result.get("success"):
+                    failure = self._reported_failure({
+                        "success": False,
+                        "module": module_id,
+                        "operation": "install",
+                        "state": "install_failed",
+                        "error": package_result.get("error") or "module_acquire_failed",
+                        "message": (
+                            f'Emulator "{remote_modules[module_id]["Name"]}" could not be '
+                            "installed because its module package could not be acquired."
+                        ),
+                        "details": {"module_package": package_result},
+                    })
+                    results.append(failure)
+                    continue
+                local_id = module_id
+
+            check_result = self._run_serialized_operation(local_id, "check")
+            if not check_result.get("success"):
+                failure = self._reported_failure({
+                    "success": False,
+                    "module": local_id,
+                    "operation": "install",
+                    "state": "install_failed",
+                    "error": check_result.get("error") or "check_failed",
+                    "message": (
+                        f'Emulator "{remote_modules[module_id]["Name"]}" could not be '
+                        "checked before installation."
+                    ),
+                    "details": {
+                        "module_package": package_result,
+                        "check": check_result,
+                    },
+                })
+                results.append(failure)
+                continue
+
+            state = check_result.get("state")
+            if state == "installed":
+                self.settings.set_module_enabled(local_id, True)
+                skipped_count += 1
+                results.append({
+                    "success": True,
+                    "module": local_id,
+                    "operation": "install",
+                    "state": "already_installed",
+                    "message": (
+                        f'Emulator "{remote_modules[module_id]["Name"]}" is already '
+                        "installed. Installation was skipped."
+                    ),
+                    "details": {
+                        "module_package": package_result,
+                        "check": check_result,
+                    },
+                })
+                continue
+
+            if state == "broken":
+                self.settings.set_module_enabled(local_id, True)
+                failure = self._reported_failure({
+                    "success": False,
+                    "module": local_id,
+                    "operation": "install",
+                    "state": "install_failed",
+                    "error": "emulator_broken",
+                    "message": (
+                        f'Emulator "{remote_modules[module_id]["Name"]}" already exists '
+                        "but its installation is broken. Use Repair instead of Install."
+                    ),
+                    "details": {
+                        "module_package": package_result,
+                        "check": check_result,
+                    },
+                })
+                results.append(failure)
+                continue
+
+            if state != "missing":
+                failure = self._reported_failure({
+                    "success": False,
+                    "module": local_id,
+                    "operation": "install",
+                    "state": "install_failed",
+                    "error": "unexpected_check_state",
+                    "message": (
+                        f'Emulator "{remote_modules[module_id]["Name"]}" reported an '
+                        f'unexpected pre-install state: "{state}".'
+                    ),
+                    "details": {
+                        "module_package": package_result,
+                        "check": check_result,
+                    },
+                })
+                results.append(failure)
+                continue
+
+            self.settings.set_module_enabled(local_id, True)
+            install_result = self._run_serialized_operation(local_id, "install")
+            results.append(install_result)
+            if install_result.get("success"):
+                installed_count += 1
 
         failures = [result for result in results if not result.get("success")]
+        if failures:
+            message = "Install All completed with one or more errors."
+        elif installed_count and skipped_count:
+            message = (
+                f"Install All completed successfully. {installed_count} emulator(s) "
+                f"installed and {skipped_count} already-installed emulator(s) skipped."
+            )
+        elif installed_count:
+            message = f"Install All completed successfully. {installed_count} emulator(s) installed."
+        else:
+            message = "Install All completed successfully. All advertised emulators are already installed."
+
         return {
             "success": not failures,
             "operation": "install_all",
             "state": "complete" if not failures else "complete_with_errors",
-            "message": (
-                "All advertised modules were installed successfully."
-                if not failures
-                else "Install All completed with one or more errors."
-            ),
+            "message": message,
             "details": results,
         }
 
@@ -2832,6 +3084,22 @@ class EmuKitManager:
                     "Version": details.get("version"),
                     "ModuleVersion": modules[module_id].get("ModuleVersion"),
                 })
+        return values
+
+    def get_current_modules(self) -> list[dict[str, Any]]:
+        modules = self.get_modules()
+        values: list[dict[str, Any]] = []
+        for module_id in sorted(
+            modules,
+            key=lambda item: modules[item].get("Name", item).casefold(),
+        ):
+            info = modules[module_id]
+            values.append({
+                "Id": module_id,
+                "Name": info.get("Name", module_id),
+                "ModuleVersion": info.get("ModuleVersion"),
+                "EmulatorVersion": info.get("EmulatorVersion"),
+            })
         return values
 
     def reconcile(self) -> dict[str, Any]:
@@ -2966,6 +3234,17 @@ class EmuKitManager:
     def get_catalogue(self) -> dict[str, Any] | None:
         return self._catalogue_snapshot()
 
+    def get_brand_catalogue(self) -> dict[str, Any] | None:
+        catalogue = self._catalogue_snapshot()
+        if not isinstance(catalogue, dict):
+            return None
+        return {
+            "SchemaVersion": catalogue.get("SchemaVersion"),
+            "Version": catalogue.get("Version"),
+            "Platform": catalogue.get("Platform"),
+            "Brands": copy.deepcopy(catalogue.get("Brands", {})),
+        }
+
     def get_emulator_catalogue(self) -> dict[str, Any] | None:
         catalogue = self._catalogue_snapshot()
         if not isinstance(catalogue, dict):
@@ -2985,8 +3264,77 @@ class EmuKitManager:
             "SchemaVersion": catalogue.get("SchemaVersion"),
             "Version": catalogue.get("Version"),
             "Platform": catalogue.get("Platform"),
-            "Brands": copy.deepcopy(catalogue.get("Brands", {})),
+            "Systems": self._catalogue_system_records(),
         }
+
+    def get_brand_entity_catalogue(self, query: str) -> dict[str, Any] | None:
+        brand_id = self.resolve_brand_id(query)
+        if brand_id is None:
+            return None
+        brand = self._catalogue_brand_records()[brand_id]
+        systems: dict[str, dict[str, Any]] = {}
+        for system_id, system in self._catalogue_system_records().items():
+            if system.get("BrandId") == brand_id:
+                systems[system_id] = system
+        return {
+            "Kind": "Brand",
+            "Brand": {
+                "Id": brand_id,
+                "Name": brand.get("Name", brand_id),
+                "Aliases": list(brand.get("Aliases") or []),
+            },
+            "Systems": systems,
+        }
+
+    def get_system_entity_catalogue(self, query: str) -> dict[str, Any] | None:
+        system_id = self.resolve_system_id(query)
+        if system_id is None:
+            return None
+        system = copy.deepcopy(self._catalogue_system_records()[system_id])
+        emulator_records = self._catalogue_emulator_records()
+        emulators: dict[str, dict[str, Any]] = {}
+        for emulator_id in system.get("Emulators", []):
+            emulator = emulator_records.get(emulator_id)
+            if not isinstance(emulator, dict):
+                continue
+            emulators[emulator_id] = {
+                "Id": emulator_id,
+                "Name": emulator.get("Name", emulator_id),
+                "Aliases": list(emulator.get("Aliases") or []),
+                "RecommendedPrimary": emulator_id == system.get("RecommendedPrimary"),
+            }
+        return {"Kind": "System", "System": system, "Emulators": emulators}
+
+    def get_emulator_entity_catalogue(self, query: str) -> dict[str, Any] | None:
+        emulator_id = self.resolve_catalogue_emulator_id(query)
+        if emulator_id is None:
+            return None
+        emulator = copy.deepcopy(self._catalogue_emulator_records()[emulator_id])
+        systems: dict[str, dict[str, Any]] = {}
+        all_systems = self._catalogue_system_records()
+        for system_id in emulator.get("Systems", []):
+            system = all_systems.get(system_id)
+            if isinstance(system, dict):
+                systems[system_id] = system
+        return {"Kind": "Emulator", "Emulator": emulator, "Systems": systems}
+
+    def resolve_entity_catalogue(
+        self,
+        query: str,
+    ) -> tuple[str | None, dict[str, Any] | None, list[str]]:
+        matches: list[tuple[str, dict[str, Any]]] = []
+        brand = self.get_brand_entity_catalogue(query)
+        if brand is not None:
+            matches.append(("Brand", brand))
+        system = self.get_system_entity_catalogue(query)
+        if system is not None:
+            matches.append(("System", system))
+        emulator = self.get_emulator_entity_catalogue(query)
+        if emulator is not None:
+            matches.append(("Emulator", emulator))
+        if len(matches) == 1:
+            return matches[0][0], matches[0][1], []
+        return None, None, [kind for kind, _ in matches]
 
     def _catalogue_emulator_records(self) -> dict[str, dict[str, Any]]:
         catalogue = self._catalogue_snapshot()
@@ -3051,7 +3399,7 @@ class EmuKitManager:
         return self.resolve_remote_module_id(query)
 
     def resolve_catalogue_emulator_id(self, query: str) -> str | None:
-        return self.resolve_module_id(query)
+        return self._resolve_from_records(query, self._catalogue_emulator_records())
 
     def resolve_system_matches(self, query: str) -> list[str]:
         target = self._lookup_key(query)
@@ -3730,6 +4078,38 @@ class EmuKitManager:
     def remove_many(self, module_queries: list[str]) -> dict[str, Any]:
         return self._batch_module_operation("remove", module_queries)
 
+    def remove_all(self) -> dict[str, Any]:
+        modules = self.get_modules()
+        if not modules:
+            return {
+                "success": True,
+                "operation": "remove_all",
+                "state": "nothing_to_remove",
+                "message": "No local emulator modules are available to remove.",
+                "details": [],
+            }
+
+        results: list[dict[str, Any]] = []
+        for module_id in sorted(
+            modules,
+            key=lambda item: modules[item]["Name"].casefold(),
+        ):
+            results.append(self.remove_module(module_id))
+
+        failures = [result for result in results if not result.get("success")]
+        return {
+            "success": not failures,
+            "operation": "remove_all",
+            "state": "complete" if not failures else "complete_with_errors",
+            "message": (
+                "All local emulator modules were removed successfully. "
+                "Emulator installations were left untouched."
+                if not failures
+                else "Remove All completed with one or more errors."
+            ),
+            "details": results,
+        }
+
     def uninstall_all(self) -> dict[str, Any]:
         modules = self.get_modules()
         if not modules:
@@ -3745,16 +4125,18 @@ class EmuKitManager:
     def update(self, module_query: str) -> dict[str, Any]:
         local_id = self.resolve_local_module_id(module_query)
         if local_id is None:
-            return self._fallback_result(
-                module_query,
-                "update",
-                message=f'Emulator "{module_query}" is not installed locally.',
-                error="module_not_installed",
+            return self._reported_failure(
+                self._fallback_result(
+                    module_query,
+                    "update",
+                    message=f'Emulator "{module_query}" is not installed locally.',
+                    error="module_not_installed",
+                )
             )
 
         package_result = self.update_module_package(local_id)
         if not package_result.get("success"):
-            return {
+            return self._reported_failure({
                 "success": False,
                 "module": local_id,
                 "operation": "update",
@@ -3762,7 +4144,7 @@ class EmuKitManager:
                 "error": package_result.get("error") or "module_update_failed",
                 "message": f'Could not update EmuKit module "{local_id}".',
                 "details": {"module_package": package_result},
-            }
+            })
 
         emulator_result = self._run_serialized_operation(local_id, "update")
         success = bool(emulator_result.get("success"))
