@@ -1,11 +1,8 @@
 from __future__ import annotations
 
-import ctypes
 import hashlib
 import json
-import os
 import platform
-import subprocess
 import sys
 from pathlib import Path
 from typing import Any, Callable
@@ -30,6 +27,7 @@ ROOT = resolve_root()
 EMULATOR_DIR = ROOT / "Emulators" / "ReplaceModule"
 EXECUTABLE_PATH = EMULATOR_DIR / "replace-executable.exe"
 RECEIPT_PATH = EMULATOR_DIR / ".emukit_install.json"
+RECOVERY_PARENT = ROOT / "Appdata" / "Cache" / "EmuKit" / "ReplaceModule"
 
 
 def load_info() -> dict[str, Any]:
@@ -46,16 +44,29 @@ def emulator_version(info: dict[str, Any] | None = None) -> str:
     return str(source["EmulatorVersion"])
 
 
-def emit_progress(progress: ProgressCallback | None, percent: int | None, stage: str | None, message: str | None = None) -> None:
+def emit_progress(
+    progress: ProgressCallback | None,
+    percent: int | None,
+    stage: str | None,
+    message: str,
+) -> None:
     if progress is not None:
         progress(percent, stage, message)
 
 
-def scaled_progress(progress: ProgressCallback | None, start: int, end: int) -> ProgressCallback | None:
+def scaled_progress(
+    progress: ProgressCallback | None,
+    start: int,
+    end: int,
+) -> ProgressCallback | None:
     if progress is None:
         return None
 
-    def callback(percent: int | None = None, stage: str | None = None, message: str | None = None) -> None:
+    def callback(
+        percent: int | None = None,
+        stage: str | None = None,
+        message: str | None = None,
+    ) -> None:
         if percent is None:
             mapped = None
         else:
@@ -72,32 +83,6 @@ def is_supported_host() -> tuple[bool, str | None]:
     if platform.machine().casefold() not in {"amd64", "x86_64"}:
         return False, f'ReplaceModule 1.0.0 requires Windows x86_64. Current architecture: "{platform.machine()}".'
     return True, None
-
-
-def run_external_process(args: list[str], isolate_console: bool = False, **kwargs: Any) -> subprocess.CompletedProcess[Any]:
-    frozen_windows = os.name == "nt" and getattr(sys, "frozen", False)
-    restore_directory: str | None = None
-    kernel32 = ctypes.windll.kernel32 if frozen_windows else None
-    command = args
-
-    if os.name == "nt" and isolate_console:
-        comspec = os.environ.get("ComSpec") or str(Path(os.environ.get("SystemRoot", r"C:\Windows")) / "System32" / "cmd.exe")
-        command = [comspec, "/d", "/c", "start", "", "/wait", "/b", *args]
-        kwargs["creationflags"] = int(kwargs.get("creationflags", 0)) | getattr(subprocess, "CREATE_NO_WINDOW", 0)
-        startupinfo = kwargs.get("startupinfo") or subprocess.STARTUPINFO()
-        startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
-        startupinfo.wShowWindow = 0
-        kwargs["startupinfo"] = startupinfo
-
-    if kernel32 is not None:
-        restore_directory = str(getattr(sys, "_MEIPASS", "")) or None
-        kernel32.SetDllDirectoryW(None)
-
-    try:
-        return subprocess.run(command, **kwargs)
-    finally:
-        if kernel32 is not None:
-            kernel32.SetDllDirectoryW(restore_directory)
 
 
 def hash_file(path: Path, algorithm: str = "sha256") -> str:

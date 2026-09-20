@@ -1,11 +1,19 @@
 {
   "Version": 1,
   "Id": "replace-with-module-id",
-  "Name": "Replace With Emulator Name",
+  "Name": "ReplaceModule",
   "Aliases": [],
   "ModuleVersion": "1.0.0",
   "EmulatorVersion": "replace-with-tested-emulator-version",
-  "Manager": "ReplaceManager.exe",
+  "Description": "Replace with a concise user-facing description of the emulator project.",
+  "Links": {
+    "Website": "https://replace-with-official-website.example/",
+    "Repository": "https://github.com/replace/replace",
+    "Wiki": null,
+    "Documentation": null,
+    "EmuKitModuleDocumentation": "https://github.com/Cruizepeni/ProjectHomelab/blob/main/Documentation/EmuKit/Modules/ReplaceModule_Module.md"
+  },
+  "Manager": "ReplaceModuleManager.exe",
   "DependencyPath": "Emulators/ReplaceModule",
   "LaunchPath": "Emulators/ReplaceModule/replace-executable.exe",
   "WorkingDirectory": "Emulators/ReplaceModule",
@@ -16,23 +24,23 @@
   "EmulatorLaunchArguments": [],
   "DefaultInstalled": true,
   "Channel": "Stable",
-  "Description": "Replace With Emulator Name managed by EmuKit.",
   "Source": {
     "Type": "PinnedRelease",
     "Provider": "GitHub",
-    "Repository": "replace-owner/replace-repository",
-    "OfficialWebsite": "https://replace-with-official-website",
-    "OfficialRepository": "https://github.com/replace-owner/replace-repository",
+    "Repository": "replace/replace",
+    "OfficialWebsite": "https://replace-with-official-website.example/",
+    "OfficialRepository": "https://github.com/replace/replace",
     "ReleaseTag": "replace-with-release-tag",
-    "Asset": "replace-with-upstream-asset",
-    "DownloadURL": "https://replace-with-upstream-download-url",
+    "ReleaseCommit": "replace-with-release-commit",
+    "Asset": "replace-with-asset-name",
+    "DownloadURL": "https://replace-with-download-url.example/file.zip",
     "Size": 0,
-    "SHA256": "replace-with-64-character-lowercase-sha256"
+    "SHA256": "replace-with-upstream-sha256"
   },
   "License": {
-    "Name": "replace-with-license",
-    "Url": "https://replace-with-license-url",
-    "Distribution": "Describe how EmuKit obtains the upstream emulator."
+    "Name": "replace-with-license-name",
+    "Url": "https://replace-with-license-url.example/",
+    "Distribution": "Replace with distribution/source statement."
   },
   "HostSupport": {
     "Windows": {
@@ -42,18 +50,14 @@
       ]
     },
     "Linux": {
-      "Supported": false,
-      "Notes": "Not enabled by this module version."
+      "Supported": false
     },
     "Mac": {
-      "Supported": false,
-      "Notes": "Not enabled by this module version."
+      "Supported": false
     }
   },
   "Requirements": {
-    "CoreDependencies": [
-      "vcredist"
-    ],
+    "CoreDependencies": [],
     "BIOSRequired": false
   },
   "ResourceCatalog": {
@@ -62,12 +66,12 @@
   },
   "Resources": {},
   "Systems": {
-    "replace-brand-id.replace-system-id": {
-      "Name": "Replace System Name",
+    "replace-brand.replace-system": {
+      "Name": "Replace System",
       "Aliases": [],
       "Brand": {
-        "Id": "replace-brand-id",
-        "Name": "Replace Brand Name",
+        "Id": "replace-brand",
+        "Name": "Replace Brand",
         "Aliases": []
       },
       "Platform": {
@@ -76,14 +80,18 @@
         "Aliases": []
       },
       "LaunchArguments": [
+        "{fullscreen}",
         "{game}"
       ],
-      "FullscreenArgument": null
+      "FullscreenArgument": null,
+      "SupportedExtensions": []
     }
   },
   "DataPolicy": {
     "ManagedEmulatorPath": "Emulators/ReplaceModule",
-    "ResourcesInstalledInsideEmulator": true,
-    "UninstallRemovesManagedEmulatorTree": true
+    "ResourcesInstalledInsideEmulator": false,
+    "UninstallRemovesManagedEmulatorTree": true,
+    "PortableMode": true,
+    "RepairPreserves": []
   }
 }

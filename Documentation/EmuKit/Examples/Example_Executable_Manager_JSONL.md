@@ -1,40 +1,74 @@
-# Example Executable Manager JSONL Session
+# Example Executable Manager JSONL
 
-Core invokes a compiled module manager as:
+Core invokes a module manager with one lifecycle operation and `--json`.
 
 ```text
 ExampleEmuManager.exe install --json
 ```
 
-The manager reserves stdout for strict JSONL protocol records.
+or during source development:
 
-Example stream:
-
-```json
-{"type":"progress","percent":5,"stage":"Checking host","message":null}
-{"type":"progress","percent":20,"stage":"Downloading","message":"Downloading ExampleEmu."}
-{"type":"progress","percent":55,"stage":"Verifying","message":"Verifying SHA-256."}
-{"type":"progress","percent":75,"stage":"Extracting","message":null}
-{"type":"progress","percent":95,"stage":"Finalizing","message":null}
-{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu version \"4.2.0\" installed successfully.","details":{"version":"4.2.0"}}}
+```text
+python ExampleEmuManager.py install --json
 ```
 
-Every record is one complete JSON object followed by a newline.
+The manager writes one JSON object per stdout line.
 
-Progress records are flushed immediately.
+## Progress
 
-Exactly one final result is emitted.
+Every progress record includes a meaningful message.
 
-No progress is emitted after the final result.
+```json
+{"type":"progress","percent":5,"stage":"Checking Host","message":"Windows x86_64"}
+{"type":"progress","percent":10,"stage":"Preparing Install","message":"Emulators/ExampleEmu"}
+{"type":"progress","percent":35,"stage":"Downloading Emulator","message":"exampleemu-4.2.0.zip"}
+{"type":"progress","percent":60,"stage":"Validating Emulator","message":"exampleemu-4.2.0.zip"}
+{"type":"progress","percent":72,"stage":"Extracting Emulator","message":"exampleemu-4.2.0.zip"}
+{"type":"progress","percent":82,"stage":"Installing Emulator","message":"exampleemu.exe"}
+{"type":"progress","percent":90,"stage":"Configuring Emulator","message":"portable.ini"}
+{"type":"progress","percent":96,"stage":"Verifying Installation","message":"exampleemu.exe"}
+{"type":"progress","percent":98,"stage":"Writing Receipt","message":".emukit_install.json"}
+{"type":"progress","percent":100,"stage":"Install Complete","message":"Version 4.2.0"}
+```
 
-Plain text, blank stdout lines, malformed JSON, unknown record types, duplicate results, or a missing result are protocol errors.
+Core may render module `100% Install Complete` provisionally as `99%` and reserve the displayed terminal `100%` for the final lifecycle result.
 
-Diagnostic text that is not part of the machine protocol belongs on stderr.
+## Final Result
 
-External programs started by a lifecycle handler must not inherit the manager's stdout. Capture or redirect their stdout/stderr and return useful diagnostics through failure `details`. Routine child-process output should remain hidden on success.
+```json
+{"type":"result","result":{"success":true,"module":"exampleemu","operation":"install","state":"installed","message":"ExampleEmu Version 4.2.0 installed successfully.","details":{"version":"4.2.0"}}}
+```
 
-When the manager is frozen on Windows, lifecycle child processes should be started through the Common external-process helper so PyInstaller DLL-search state is not inherited. If a child program attaches to its parent console, use the helper's console-isolation mode rather than changing the JSONL protocol.
+The result record, not the preceding completion progress event, determines success.
 
-Successful final results exit `0`.
+## Failure Result
 
-Unsuccessful final results exit non-zero.
+```json
+{"type":"result","result":{"success":false,"module":"exampleemu","operation":"install","state":"install_failed","message":"ExampleEmu installation failed while validating exampleemu-4.2.0.zip.","error":"checksum_mismatch","details":null}}
+```
+
+Core presents the terminal lifecycle state as:
+
+```text
+Install Failed
+```
+
+Unhandled manager exceptions are also converted into an operation failure result and Core presents the corresponding operation-specific failure stage.
+
+## Check States
+
+Typical `check` result states are:
+
+```text
+missing
+installed
+broken
+```
+
+Both single `Install <Emulator>` and `Install All` use Core preflight checks.
+
+Core installs only `missing`, skips `installed`, and reports `broken` for Repair.
+
+## Output Rule
+
+In JSON mode stdout is protocol output. Do not mix regular text, terminal formatting, debug prints, comments, stack traces, or unmanaged child-process output into the stream.

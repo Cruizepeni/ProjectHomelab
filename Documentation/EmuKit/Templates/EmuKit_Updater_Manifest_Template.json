@@ -9,7 +9,7 @@
     "1.0.0": {
       "Status": "supported",
       "Package": "EmuKitUpdater_1.0.0.zip",
-      "SHA256": "replace-with-64-character-lowercase-source-package-sha256",
+      "SHA256": "replace-with-updater-source-package-sha256",
       "RootDirectory": "EmuKitUpdater_1.0.0",
       "EntryPoint": "EmuKitUpdater.py",
       "SupportedPlatforms": [

@@ -1,6 +1,17 @@
-# Example EmuKit Emulator Module Package Layout
+# Example Module Package Layout
 
-## Development Package
+## Repository Development Layout
+
+```text
+SourceCode/EmuKit/EmuKitModules/Windows/
+├── EmuKit_Windows_Manifest.json
+├── EmuKit_Windows_Catalogue.json
+└── ExampleEmu/
+    ├── ExampleEmu_Manifest.json
+    └── ExampleEmu_1.0.0.zip
+```
+
+## Development ZIP
 
 ```text
 ExampleEmu_1.0.0.zip
@@ -13,97 +24,26 @@ ExampleEmu_1.0.0.zip
     └── _ExampleEmuCommon.py
 ```
 
-The source Info JSON contains:
-
-```json
-"Manager": "ExampleEmuManager.py",
-"Lifecycle": {
-  "ProcessName": "ExampleEmu.exe"
-}
-```
-
-Development repository layout:
+Do not package:
 
 ```text
-SourceCode/
-└── EmuKit/
-    └── EmuKitModules/
-        └── Windows/
-            ├── EmuKit_Windows_Manifest.json
-            ├── EmuKit_Windows_Catalogue.json
-            └── ExampleEmu/
-                ├── ExampleEmu_Manifest.json
-                └── ExampleEmu_1.0.0.zip
+__pycache__/
+*.pyc
+*.pyo
+build/
+dist/
 ```
 
-## Windows x86_64 Release Package
+## Runtime Module Package
 
-```text
-ExampleEmu_1.0.0_Windows_x86_64.zip
-└── ExampleEmu_1.0.0/
-    ├── EmuKitExampleEmuInfo.json
-    └── ExampleEmuManager.exe
-```
+Core extracts the versioned root into its local module area and discovers the single `EmuKit*Info.json` registration.
 
-The release Info JSON contains:
+## Managed Emulator Data
 
-```json
-"Manager": "ExampleEmuManager.exe"
-```
-
-Release repository layout:
-
-```text
-Resources/
-└── EmuKit/
-    └── EmuKitModules/
-        └── Windows/
-            ├── EmuKit_Windows_Release_Manifest.json
-            ├── EmuKit_Windows_Catalogue.json
-            └── ExampleEmu/
-                ├── ExampleEmu_Release_Manifest.json
-                └── ExampleEmu_1.0.0_Windows_x86_64.zip
-```
-
-There is no extra version directory around either repository ZIP.
-
-After acquisition Core installs the ZIP's versioned root below the active Core runtime:
-
-```text
-<Core runtime>/EmuKitModules/ExampleEmu_1.0.0/
-```
-
-The actual emulator is managed separately below:
+The module installs emulator application data into the path declared by `DependencyPath`, normally:
 
 ```text
 ROOT/Emulators/ExampleEmu/
 ```
 
-## Metadata Synchronization
-
-The module Info system metadata mirrors the platform catalogue.
-
-If a system alias changes:
-
-```text
-update platform catalogue
-→ update matching module Info JSON(s)
-→ rebuild development/release module ZIPs
-→ update module package SHA values
-→ update platform manifest package SHA values
-→ update platform manifest catalogue SHA
-```
-
-Do not add per-system `Default`. The catalogue owns `RecommendedPrimary`.
-
-## Manager Protocol
-
-A compiled manager implements:
-
-```text
-ExampleEmuManager.exe <check|install|uninstall|repair|update> --json
-```
-
-and emits strict JSONL progress/result records on stdout.
-
-Lifecycle child programs must not leak routine output into manager stdout.
+Module source and emulator application data are separate.

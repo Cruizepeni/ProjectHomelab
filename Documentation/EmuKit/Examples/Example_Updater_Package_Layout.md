@@ -1,6 +1,6 @@
-# Example EmuKit Updater Package Layout
+# Example Updater Package Layout
 
-## Generic Source Package
+## Source
 
 ```text
 SourceCode/EmuKit/EmuKitModules/Updater/
@@ -14,17 +14,7 @@ EmuKitUpdater_1.0.0.zip
     └── EmuKitUpdater.py
 ```
 
-The source ZIP must not contain:
-
-```text
-__pycache__/
-*.pyc
-*.pyo
-build/
-dist/
-```
-
-## Windows x86_64 Release Package
+## Windows Release
 
 ```text
 Resources/EmuKit/EmuKitModules/Windows/Updater/
@@ -38,26 +28,4 @@ EmuKitUpdater_1.0.0_Windows_x86_64.zip
     └── EmuKitUpdater.exe
 ```
 
-The platform release manifest advertises it as:
-
-```json
-"InternalModules": {
-  "updater": {
-    "Name": "EmuKit Updater",
-    "Kind": "core-updater",
-    "Version": "1.0.0",
-    "Package": "Updater/EmuKitUpdater_1.0.0_Windows_x86_64.zip",
-    "SHA256": "replace-with-exact-release-zip-sha256",
-    "RootDirectory": "EmuKitUpdater_1.0.0",
-    "Executable": "EmuKitUpdater.exe"
-  }
-}
-```
-
-The Updater is not included in `Modules` and is not included in `EmuKit_Windows_Catalogue.json`.
-
-## Runtime Staging
-
-Core stages a Core update below its cache, downloads the verified Core package and verified Updater package, extracts the Updater, launches it, and exits.
-
-The Updater is disposable. It does not become a permanently installed emulator module.
+Updater is an internal Core-update module and is not an emulator module.

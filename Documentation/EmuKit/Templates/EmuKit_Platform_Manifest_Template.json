@@ -9,7 +9,7 @@
   },
   "Modules": {
     "replace-with-module-id": {
-      "Name": "Replace With Emulator Name",
+      "Name": "ReplaceModule",
       "Aliases": [],
       "Version": "1.0.0",
       "Package": "ReplaceModule/ReplaceModule_1.0.0.zip",

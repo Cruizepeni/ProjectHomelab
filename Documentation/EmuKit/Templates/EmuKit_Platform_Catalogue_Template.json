@@ -4,20 +4,20 @@
   "Platform": "Windows",
   "Emulators": {
     "replace-with-module-id": {
-      "Name": "Replace With Emulator Name",
+      "Name": "ReplaceModule",
       "Aliases": [],
       "Systems": [
-        "replace-brand-id.replace-system-id"
+        "replace-brand.replace-system"
       ]
     }
   },
   "Brands": {
-    "replace-brand-id": {
-      "Name": "Replace Brand Name",
+    "replace-brand": {
+      "Name": "Replace Brand",
       "Aliases": [],
       "Systems": {
-        "replace-brand-id.replace-system-id": {
-          "Name": "Replace System Name",
+        "replace-brand.replace-system": {
+          "Name": "Replace System",
           "Aliases": [],
           "Emulators": [
             "replace-with-module-id"

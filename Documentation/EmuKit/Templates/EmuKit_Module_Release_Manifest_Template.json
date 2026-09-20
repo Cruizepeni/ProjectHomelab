@@ -1,7 +1,7 @@
 {
   "SchemaVersion": 1,
   "Id": "replace-with-module-id",
-  "Name": "Replace With Emulator Name",
+  "Name": "ReplaceModule",
   "Platform": "Windows",
   "Latest": "1.0.0",
   "Versions": {
