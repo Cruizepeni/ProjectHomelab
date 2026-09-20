@@ -131,6 +131,7 @@ class EmuKitManager:
         self._last_sync_errors: list[dict[str, Any]] = []
         self._core_dependency_status: dict[str, dict[str, Any]] = {}
         self._progress_callback = progress_callback
+        self._operation_progress_floors: dict[tuple[str, str], int] = {}
 
         self._remote_manifest: dict[str, Any] | None = None
         self._remote_manifest_error: dict[str, Any] | None = None
@@ -212,12 +213,48 @@ class EmuKitManager:
         message: str | None = None,
     ) -> None:
         forwarded_percent = percent
-        if isinstance(percent, (int, float)) and percent >= 100:
-            forwarded_percent = 99
+        if isinstance(percent, (int, float)):
+            bounded = max(0, min(99, int(percent)))
+            floor = self._operation_progress_floors.get((module_id, operation), 0)
+            if floor:
+                forwarded_percent = floor + int(
+                    (bounded / 99) * (99 - floor)
+                )
+            else:
+                forwarded_percent = bounded
         self._emit_progress(
             module_id,
             operation,
             forwarded_percent,
+            stage,
+            message,
+        )
+
+    def _emit_acquire_progress(
+        self,
+        module_id: str,
+        percent: int | float | None,
+        stage: str,
+        message: str | None,
+        *,
+        install_flow: bool,
+    ) -> None:
+        if install_flow:
+            scaled = None
+            if isinstance(percent, (int, float)):
+                scaled = int((max(0, min(100, int(percent))) / 100) * 20)
+            self._emit_progress(
+                module_id,
+                "install",
+                scaled,
+                stage,
+                message,
+            )
+            return
+        self._emit_progress(
+            module_id,
+            "acquire_module",
+            percent,
             stage,
             message,
         )
@@ -1986,6 +2023,8 @@ class EmuKitManager:
         module_id: str,
         entry: dict[str, Any],
         destination: Path,
+        *,
+        install_flow: bool,
     ) -> None:
         package_url = self._module_package_url(entry["Package"])
         request = urllib.request.Request(
@@ -1993,12 +2032,12 @@ class EmuKitManager:
             headers={"User-Agent": f"ProjectHomelab-EmuKit/{self.CORE_VERSION}"},
         )
         package_name = Path(entry["Package"]).name
-        self._emit_progress(
+        self._emit_acquire_progress(
             module_id,
-            "acquire_module",
             0,
             "Downloading Module",
             package_name,
+            install_flow=install_flow,
         )
         with urllib.request.urlopen(request, timeout=60) as response:
             total_raw = response.headers.get("Content-Length")
@@ -2012,19 +2051,19 @@ class EmuKitManager:
                     handle.write(chunk)
                     read += len(chunk)
                     percent = int((read / total) * 55) if total else None
-                    self._emit_progress(
+                    self._emit_acquire_progress(
                         module_id,
-                        "acquire_module",
                         min(55, percent) if percent is not None else None,
                         "Downloading Module",
                         package_name,
+                        install_flow=install_flow,
                     )
-        self._emit_progress(
+        self._emit_acquire_progress(
             module_id,
-            "acquire_module",
             55,
             "Downloading Module",
             package_name,
+            install_flow=install_flow,
         )
 
     def acquire_module(
@@ -2032,6 +2071,7 @@ class EmuKitManager:
         module_query: str,
         *,
         force_replace: bool = False,
+        install_flow: bool = False,
     ) -> dict[str, Any]:
         remote_id = self.resolve_remote_module_id(module_query)
         if remote_id is None:
@@ -2082,6 +2122,7 @@ class EmuKitManager:
                             remote_id,
                             entry,
                             package_path,
+                            install_flow=install_flow,
                         )
                     except Exception as exc:
                         return {
@@ -2094,12 +2135,12 @@ class EmuKitManager:
                             "details": str(exc),
                         }
 
-                    self._emit_progress(
+                    self._emit_acquire_progress(
                         remote_id,
-                        "acquire_module",
                         60,
                         "Validating Module",
                         Path(entry["Package"]).name,
+                        install_flow=install_flow,
                     )
                     actual_sha = self._sha256_file(package_path)
                     if actual_sha != entry["SHA256"]:
@@ -2119,12 +2160,12 @@ class EmuKitManager:
                         }
 
                     try:
-                        self._emit_progress(
+                        self._emit_acquire_progress(
                             remote_id,
-                            "acquire_module",
                             70,
                             "Extracting Module",
                             Path(entry["Package"]).name,
+                            install_flow=install_flow,
                         )
                         self._safe_extract_zip(package_path, extract_root)
                         module_dir, info, _ = self._locate_extracted_module(
@@ -2182,12 +2223,12 @@ class EmuKitManager:
 
                     backup: Path | None = None
                     try:
-                        self._emit_progress(
+                        self._emit_acquire_progress(
                             remote_id,
-                            "acquire_module",
                             85,
                             "Installing Module",
                             entry["Name"],
+                            install_flow=install_flow,
                         )
 
                         if destination.exists():
@@ -2210,12 +2251,12 @@ class EmuKitManager:
                         if backup is not None and backup.exists():
                             shutil.rmtree(backup, ignore_errors=True)
 
-                        self._emit_progress(
+                        self._emit_acquire_progress(
                             remote_id,
-                            "acquire_module",
                             100,
                             "Module Installed",
                             f'Module "{remote_id}" installed successfully.',
+                            install_flow=install_flow,
                         )
                         return {
                             "success": True,
@@ -2653,9 +2694,9 @@ class EmuKitManager:
             self._emit_progress(
                 module_id,
                 operation,
-                0,
+                self._operation_progress_floors.get((module_id, operation), 0),
                 start_stage,
-                None,
+                self.get_modules()[module_id].get("Name", module_id),
             )
 
             if manager_path.suffix.casefold() == ".py":
@@ -2724,7 +2765,12 @@ class EmuKitManager:
         self,
         module_id: str,
         operation: str,
+        *,
+        progress_floor: int = 0,
     ) -> dict[str, Any]:
+        key = (module_id, operation)
+        if progress_floor:
+            self._operation_progress_floors[key] = max(0, min(98, int(progress_floor)))
         with self._operation_lock:
             with self._state_lock:
                 self._current_operation = {
@@ -2737,6 +2783,7 @@ class EmuKitManager:
                     operation,
                 )
             finally:
+                self._operation_progress_floors.pop(key, None)
                 with self._state_lock:
                     self._current_operation = None
 
@@ -2789,7 +2836,7 @@ class EmuKitManager:
                     )
                 )
 
-            package_result = self.acquire_module(remote_id)
+            package_result = self.acquire_module(remote_id, install_flow=True)
             if not package_result.get("success"):
                 return self._reported_failure({
                     "success": False,
@@ -2824,7 +2871,7 @@ class EmuKitManager:
 
         state = check_result.get("state")
         if state == "installed":
-            return {
+            result = {
                 "success": True,
                 "module": module_id,
                 "operation": "install",
@@ -2835,6 +2882,15 @@ class EmuKitManager:
                     "check": check_result,
                 },
             }
+            if package_result is not None:
+                self._emit_progress(
+                    module_id,
+                    "install",
+                    100,
+                    "Installed",
+                    result["message"],
+                )
+            return result
 
         if state == "broken":
             return self._reported_failure({
@@ -2870,7 +2926,11 @@ class EmuKitManager:
                 },
             })
 
-        return self._run_serialized_operation(module_id, "install")
+        return self._run_serialized_operation(
+            module_id,
+            "install",
+            progress_floor=20 if package_result is not None else 0,
+        )
 
     def uninstall(self, module_query: str) -> dict[str, Any]:
         module_id = self.resolve_local_module_id(module_query)
@@ -2931,7 +2991,7 @@ class EmuKitManager:
             local_id = self.resolve_local_module_id(module_id)
 
             if local_id is None:
-                package_result = self.acquire_module(module_id)
+                package_result = self.acquire_module(module_id, install_flow=True)
                 if not package_result.get("success"):
                     failure = self._reported_failure({
                         "success": False,
@@ -2973,7 +3033,7 @@ class EmuKitManager:
             if state == "installed":
                 self.settings.set_module_enabled(local_id, True)
                 skipped_count += 1
-                results.append({
+                skipped_result = {
                     "success": True,
                     "module": local_id,
                     "operation": "install",
@@ -2986,7 +3046,16 @@ class EmuKitManager:
                         "module_package": package_result,
                         "check": check_result,
                     },
-                })
+                }
+                if package_result is not None:
+                    self._emit_progress(
+                        local_id,
+                        "install",
+                        100,
+                        "Installed",
+                        skipped_result["message"],
+                    )
+                results.append(skipped_result)
                 continue
 
             if state == "broken":
@@ -3029,7 +3098,11 @@ class EmuKitManager:
                 continue
 
             self.settings.set_module_enabled(local_id, True)
-            install_result = self._run_serialized_operation(local_id, "install")
+            install_result = self._run_serialized_operation(
+                local_id,
+                "install",
+                progress_floor=20 if package_result is not None else 0,
+            )
             results.append(install_result)
             if install_result.get("success"):
                 installed_count += 1
