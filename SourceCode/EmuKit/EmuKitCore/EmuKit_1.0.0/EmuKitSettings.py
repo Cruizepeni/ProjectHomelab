@@ -10,9 +10,6 @@ from typing import Any
 
 
 class EmuKitSettings:
-    # EmuKit 1.0.0 is still pre-release. Keep the existing settings schema
-    # version while normalizing the old SystemAssignments key into the final
-    # SystemPrimaryOverrides representation.
     SETTINGS_VERSION = 2
 
     def __init__(self, project_root: str | Path) -> None:
@@ -55,9 +52,6 @@ class EmuKitSettings:
 
         overrides = source.get("SystemPrimaryOverrides")
         if not isinstance(overrides, dict):
-            # Pre-release compatibility with the old assignment model. The
-            # manager later removes entries equal to catalogue recommendations,
-            # leaving only genuine user overrides.
             overrides = source.get("SystemAssignments", {})
         if not isinstance(overrides, dict):
             overrides = {}
@@ -179,9 +173,6 @@ class EmuKitSettings:
             return True
 
     def remove_module(self, module_id: str) -> bool:
-        # Primary preferences intentionally survive module removal/uninstall.
-        # They remain user preferences until explicitly restored, unless the
-        # catalogue itself no longer considers them valid.
         with self._lock:
             if module_id not in self._data["Modules"]:
                 return False
@@ -239,8 +230,6 @@ class EmuKitSettings:
                 self.save()
             return count
 
-    # Compatibility aliases for integrations written against the pre-release
-    # assignment API. These do not reintroduce the old assignment semantics.
     def get_system_assignment(self, system_id: str) -> str | None:
         return self.get_system_primary_override(system_id)
 

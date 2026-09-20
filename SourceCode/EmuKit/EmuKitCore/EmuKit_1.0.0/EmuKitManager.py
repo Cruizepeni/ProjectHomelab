@@ -2706,9 +2706,6 @@ class EmuKitManager:
             remote_id = self.resolve_remote_module_id(module_query)
             refresh_result: dict[str, Any] | None = None
             if remote_id is None:
-                # A startup manifest fetch can fail transiently (for example
-                # immediately after a repository push). Retry before deciding
-                # that a known emulator does not exist.
                 refresh_result = self.refresh_remote_manifest()
                 remote_id = self.resolve_remote_module_id(module_query)
 
@@ -2949,10 +2946,6 @@ class EmuKitManager:
 
 
 
-    # ------------------------------------------------------------------
-    # Final 1.0.0 catalogue / primary / lifecycle public model.
-    # The remote/cached platform catalogue is authoritative for supported
-    # emulators, brands, systems, aliases, and primary recommendations.
 
     def _catalogue_snapshot(self) -> dict[str, Any] | None:
         with self._state_lock:
@@ -2965,8 +2958,6 @@ class EmuKitManager:
                 self._remote_catalogue = copy.deepcopy(cached)
             return cached
 
-        # If startup could not obtain the catalogue, catalogue commands should
-        # make one fresh attempt rather than remaining empty for the whole run.
         self.refresh_remote_manifest()
         with self._state_lock:
             catalogue = copy.deepcopy(self._remote_catalogue)
@@ -3708,9 +3699,6 @@ class EmuKitManager:
         }
         handler = handlers[operation]
         if len(module_queries) == 1:
-            # Preserve the emulator module's own result/message for single-target
-            # operations. Batch summaries are only useful when there is actually
-            # more than one target.
             return handler(module_queries[0])
 
         results = [handler(query) for query in module_queries]
@@ -3776,9 +3764,6 @@ class EmuKitManager:
                 "details": {"module_package": package_result},
             }
 
-        # The potentially new module package owns the emulator-specific update.
-        # Preserve its user-facing result for a single emulator instead of
-        # replacing it with a generic Core summary.
         emulator_result = self._run_serialized_operation(local_id, "update")
         success = bool(emulator_result.get("success"))
         message = emulator_result.get("message")

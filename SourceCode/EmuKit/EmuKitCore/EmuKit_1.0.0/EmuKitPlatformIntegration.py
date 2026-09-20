@@ -7,7 +7,6 @@ from typing import Any
 
 
 class EmuKitPlatformIntegration:
-    """Small host-integration helpers that keep the main Core platform-neutral."""
 
     @staticmethod
     def apply_core_folder_identity(
@@ -46,7 +45,6 @@ class EmuKitPlatformIntegration:
         content = "[.ShellClassInfo]\r\n" f"IconResource={icon_resource},0\r\n"
 
         try:
-            # Explorer handles desktop.ini most reliably as Unicode text.
             desktop_ini.write_text(content, encoding="utf-16")
             subprocess.run(
                 ["attrib", "+h", "+s", str(desktop_ini)],
@@ -55,8 +53,6 @@ class EmuKitPlatformIntegration:
                 check=False,
                 creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
             )
-            # Read-only on a Windows folder is the shell customization flag; it
-            # does not prevent normal writes to files inside the directory.
             subprocess.run(
                 ["attrib", "+r", str(core_directory)],
                 capture_output=True,

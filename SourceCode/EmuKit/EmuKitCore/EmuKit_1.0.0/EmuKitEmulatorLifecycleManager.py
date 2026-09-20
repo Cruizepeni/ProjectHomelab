@@ -12,12 +12,6 @@ from typing import Any
 
 
 class EmuKitEmulatorLifecycleManager:
-    """Core-owned runtime lifecycle control for emulator processes.
-
-    Process discovery does not depend on EmuKit having launched the emulator.
-    Known PIDs are retained as an optimization only; external/manual launches are
-    found from the module's Lifecycle.ProcessName and resolved LaunchPath.
-    """
 
     def __init__(self, project_root: str | Path) -> None:
         self.project_root = Path(project_root).resolve()
@@ -65,8 +59,6 @@ class EmuKitEmulatorLifecycleManager:
             return False
 
     def _windows_processes(self) -> list[dict[str, Any]]:
-        # CIM gives us executable paths when permissions allow them. CSV output
-        # avoids localized table parsing.
         powershell = shutil_which("powershell.exe") or shutil_which("powershell")
         if powershell:
             script = (
@@ -98,7 +90,6 @@ class EmuKitEmulatorLifecycleManager:
             except Exception:
                 pass
 
-        # Fallback still supports process-name matching.
         try:
             completed = subprocess.run(
                 ["tasklist", "/FO", "CSV", "/NH"],
@@ -189,7 +180,6 @@ class EmuKitEmulatorLifecycleManager:
                 if process_name and str(item.get("name") or "").casefold() == process_name
             ]
 
-        # Prefer known PIDs when present, but never require them.
         known = self._known_pids.get(module_id, set())
         return sorted(matches, key=lambda item: (item.get("pid") not in known, item.get("pid", 0)))
 
@@ -237,7 +227,6 @@ class EmuKitEmulatorLifecycleManager:
                     if completed.returncode == 0:
                         closed.append(pid)
                     else:
-                        # /F is a fallback, not the first choice.
                         forced = subprocess.run(
                             ["taskkill", "/PID", str(pid), "/T", "/F"],
                             capture_output=True,
@@ -296,8 +285,6 @@ class EmuKitEmulatorLifecycleManager:
 
 
 def shutil_which(command: str) -> str | None:
-    # Tiny local wrapper avoids importing all of shutil in frozen builds solely
-    # for which().
     path = os.environ.get("PATH", "")
     pathext = os.environ.get("PATHEXT", ".EXE;.BAT;.CMD;.COM").split(os.pathsep)
     candidates = [command]

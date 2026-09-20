@@ -5,13 +5,6 @@ from typing import Any, Callable
 
 
 class EmuKitMigrationManager:
-    """Cumulative data migration framework for future EmuKit releases.
-
-    Physical Core replacement belongs to the disposable updater. This class is
-    deliberately limited to persistent EmuKit data compatibility. EmuKit 1.0.0
-    currently requires no numbered migration step; its Settings loader already
-    normalizes pre-release SystemAssignments into SystemPrimaryOverrides.
-    """
 
     def __init__(self, settings) -> None:
         self.settings = settings
@@ -39,9 +32,6 @@ class EmuKitMigrationManager:
         return tuple(parts)
 
     def migrate(self, from_version: str, to_version: str) -> dict[str, Any]:
-        # Reloading first applies safe normalization performed by the current
-        # Settings class. Future schema/version migrations can be registered as
-        # ordered callbacks without involving the updater executable.
         before = self.settings.snapshot()
         normalized = self.settings.reload()
         applied: list[dict[str, Any]] = []

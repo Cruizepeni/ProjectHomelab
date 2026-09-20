@@ -15,11 +15,13 @@ try:
     from .EmuKitSettings import EmuKitSettings
     from .EmuKitMigration import EmuKitMigrationManager
     from .EmuKitPlatformIntegration import EmuKitPlatformIntegration
+    from .EmuKitTerminalUI import EmuKitTerminalUI
 except ImportError:
     from EmuKitManager import EmuKitManager
     from EmuKitSettings import EmuKitSettings
     from EmuKitMigration import EmuKitMigrationManager
     from EmuKitPlatformIntegration import EmuKitPlatformIntegration
+    from EmuKitTerminalUI import EmuKitTerminalUI
 
 
 class EmuKit:
@@ -45,9 +47,6 @@ class EmuKit:
             else self._resolve_project_root(self.emukit_root)
         )
 
-        # Frozen Windows builds brand their versioned Core folder with the icon
-        # embedded in EmuKit.exe. Source runs simply skip this because no frozen
-        # executable is present.
         if getattr(sys, "frozen", False):
             try:
                 executable = Path(sys.executable).resolve()
@@ -135,9 +134,6 @@ class EmuKit:
         updater_path_raw = handoff.get("updater_path")
         if isinstance(updater_path_raw, str) and updater_path_raw.strip():
             updater_path = Path(updater_path_raw).resolve()
-            # The updater is intentionally placed beside, not inside, the
-            # versioned Core directory. Only delete that exact handed-in path
-            # when it is in the expected parent directory.
             cache_root = (self.project_root / "Appdata" / "Cache" / "EmuKit").resolve()
             allowed = updater_path.parent == self.emukit_root.parent
             if not allowed:
@@ -380,6 +376,8 @@ class EmuKitConsole:
         self.fresh_update_handoff = fresh_update_handoff
         self._progress_active = False
         self._progress_rendered: str | None = None
+        self._progress_completed_line = False
+        self.ui = EmuKitTerminalUI()
 
     def progress(self, event: dict[str, Any]) -> None:
         operation = str(event.get("operation", ""))
@@ -401,28 +399,17 @@ class EmuKitConsole:
 
         stage = str(event.get("stage") or operation.replace("_", " ").title())
         percent = event.get("percent")
-        suffix = f" {percent:3d}%" if isinstance(percent, int) else ""
         message = " ".join(str(event.get("message") or "").split())
-        terminal_width = shutil.get_terminal_size(fallback=(100, 24)).columns
-        line_width = max(1, terminal_width - 1)
-        base = f"{module_name:<24} {stage}{suffix}"
-        text = base
+        if self._progress_completed_line:
+            print()
+            self._progress_completed_line = False
 
-        if message and percent != 100:
-            remaining = line_width - len(base) - 2
-            if remaining > 3:
-                detail = message
-                if len(detail) > remaining:
-                    detail = detail[: remaining - 3] + "..."
-                text = f"{base}  {detail}"
-
-        if len(text) > line_width:
-            if line_width > 3:
-                text = text[: line_width - 3] + "..."
-            else:
-                text = text[:line_width]
-
-        rendered = text.ljust(line_width)
+        rendered = self.ui.progress_line(
+            module_name,
+            stage,
+            percent if isinstance(percent, int) else None,
+            message,
+        )
         if rendered != self._progress_rendered:
             print("\r" + rendered, end="", flush=True)
             self._progress_rendered = rendered
@@ -432,12 +419,14 @@ class EmuKitConsole:
             print()
             self._progress_active = False
             self._progress_rendered = None
+            self._progress_completed_line = True
 
     def _clear_progress(self) -> None:
         if self._progress_active:
             print()
             self._progress_active = False
             self._progress_rendered = None
+        self._progress_completed_line = False
 
     @staticmethod
     def _json(value: Any) -> None:
@@ -468,139 +457,166 @@ class EmuKitConsole:
         if raw:
             self._json(result)
             return
-        message = result.get("message")
+
+        message = str(result.get("message") or "").strip()
+        if result.get("success", False):
+            if message:
+                self.ui.success(message)
+            if verbose and result.get("details") is not None:
+                self._json(result["details"])
+            return
+
         if message:
-            print(message)
-        if not result.get("success", False):
-            error = result.get("error")
-            if error:
-                print(f"Error: {error}")
-            details = result.get("details")
-            if details is not None and details != "":
-                if isinstance(details, (dict, list)):
-                    self._json(details)
-                else:
-                    print(f"Details: {details}")
-        elif verbose and result.get("details") is not None:
-            self._json(result["details"])
+            self.ui.error(message)
+        error = result.get("error")
+        if error:
+            self.ui.warning(f"Error code: {error}")
+        details = result.get("details")
+        if details is not None and details != "":
+            if isinstance(details, (dict, list)):
+                self._json(details)
+            else:
+                self.ui.warning(f"Details: {details}")
 
     def _settings(self, settings: dict[str, Any]) -> None:
-        print("EmuKit Settings")
-        print(f'  Fullscreen: {"On" if settings.get("Fullscreen") else "Off"}')
-        print("  Modules:")
+        self.ui.key_value_panel(
+            "EmuKit Settings",
+            [("Fullscreen", "On" if settings.get("Fullscreen") else "Off")],
+        )
         modules = settings.get("Modules", {})
-        if not modules:
-            print("    None")
-        for module_id, value in sorted(modules.items()):
-            state = "Enabled" if value.get("Enabled") else "Disabled"
-            print(f"    {module_id:<24} {state}")
-
-        print("  System Primary Overrides:")
+        self.ui.table(
+            "Modules",
+            ["Module", "State"],
+            [
+                [module_id, "Enabled" if value.get("Enabled") else "Disabled"]
+                for module_id, value in sorted(modules.items())
+            ],
+        )
         overrides = settings.get("SystemPrimaryOverrides", {})
-        if not overrides:
-            print("    None (catalogue recommendations are in control)")
-        for system_id, module_id in sorted(overrides.items()):
-            print(f"    {system_id:<24} {module_id}")
+        self.ui.table(
+            "System Primary Overrides",
+            ["System", "Primary Emulator"],
+            [[system_id, module_id] for system_id, module_id in sorted(overrides.items())],
+            summary=(
+                None
+                if overrides
+                else "Catalogue recommendations are currently in control."
+            ),
+        )
 
     def _module_settings(self, value: dict[str, Any]) -> None:
-        print(value["Name"])
-        print(f'  Enabled: {"Yes" if value.get("Enabled") else "No"}')
+        self.ui.key_value_panel(
+            value["Name"],
+            [("Enabled", "Yes" if value.get("Enabled") else "No")],
+        )
 
     def _module_info(self, value: dict[str, Any]) -> None:
-        print(value["Name"])
-        print(f'  Module ID: {value["Id"]}')
+        rows: list[tuple[str, Any]] = [
+            ("Module ID", value["Id"]),
+            ("Installed", "Yes" if value.get("LocalInstalled") else "No"),
+            ("Remote", "Available" if value.get("RemoteAvailable") else "Unavailable"),
+        ]
         aliases = value.get("Aliases", [])
         if aliases:
-            print(f'  Aliases: {", ".join(aliases)}')
-        print(f'  Module Installed: {"Yes" if value.get("LocalInstalled") else "No"}')
-        print(f'  Remote Available: {"Yes" if value.get("RemoteAvailable") else "No"}')
+            rows.append(("Aliases", ", ".join(aliases)))
         if value.get("ModuleVersion"):
-            print(f'  Module Version: {value.get("ModuleVersion")}')
+            rows.append(("Module Version", value.get("ModuleVersion")))
         if value.get("EmulatorVersion"):
-            print(f'  Emulator Version: {value.get("EmulatorVersion")}')
+            rows.append(("Emulator Version", value.get("EmulatorVersion")))
         if value.get("RemoteModuleVersion"):
-            print(f'  Remote Module Version: {value.get("RemoteModuleVersion")}')
-        if value.get("ModuleUpdateAvailable"):
-            print("  Module Update: Available")
+            rows.append(("Remote Module", value.get("RemoteModuleVersion")))
+        rows.append(("Update", "Available" if value.get("ModuleUpdateAvailable") else "Current"))
         if value.get("DependencyPath"):
-            print(f'  Dependency: {value["DependencyPath"]}')
+            rows.append(("Dependency", value["DependencyPath"]))
         if value.get("LaunchPath"):
-            print(f'  Launch: {value["LaunchPath"]}')
+            rows.append(("Launch", value["LaunchPath"]))
+        self.ui.key_value_panel(value["Name"], rows)
+
         systems = value.get("Systems", {})
         if systems:
-            print("  Systems:")
-            for system_id, system in sorted(
-                systems.items(),
-                key=lambda item: item[1]["Name"].casefold(),
-            ):
-                print(f'    {system["Brand"]["Name"]} {system["Name"]} ({system_id})')
+            self.ui.table(
+                "Supported Systems",
+                ["Brand", "System", "System ID"],
+                [
+                    [system["Brand"]["Name"], system["Name"], system_id]
+                    for system_id, system in sorted(
+                        systems.items(), key=lambda item: item[1]["Name"].casefold()
+                    )
+                ],
+            )
 
     def _brand_info(self, value: dict[str, Any]) -> None:
-        print(value["Name"])
-        print(f'  Brand ID: {value["Id"]}')
+        rows: list[tuple[str, Any]] = [("Brand ID", value["Id"])]
         aliases = value.get("Aliases", [])
         if aliases:
-            print(f'  Aliases: {", ".join(aliases)}')
-        print("  Systems:")
-        for system in sorted(
-            value.get("SystemDetails", []),
-            key=lambda item: item["Name"].casefold(),
-        ):
-            print(f'    {system["Name"]}')
+            rows.append(("Aliases", ", ".join(aliases)))
+        self.ui.key_value_panel(value["Name"], rows)
+        self.ui.table(
+            "Systems",
+            ["System"],
+            [[system["Name"]] for system in sorted(
+                value.get("SystemDetails", []), key=lambda item: item["Name"].casefold()
+            )],
+        )
 
     def _platform_info(self, value: dict[str, Any]) -> None:
-        print(value["Name"])
-        print(f'  Platform ID: {value["Id"]}')
+        rows: list[tuple[str, Any]] = [("Platform ID", value["Id"])]
         aliases = value.get("Aliases", [])
         if aliases:
-            print(f'  Aliases: {", ".join(aliases)}')
-        print("  Systems:")
-        for system in sorted(
-            value.get("SystemDetails", []),
-            key=lambda item: item["Name"].casefold(),
-        ):
-            print(f'    {system["Name"]}')
+            rows.append(("Aliases", ", ".join(aliases)))
+        self.ui.key_value_panel(value["Name"], rows)
+        self.ui.table(
+            "Systems",
+            ["System"],
+            [[system["Name"]] for system in sorted(
+                value.get("SystemDetails", []), key=lambda item: item["Name"].casefold()
+            )],
+        )
 
     def _system_info(self, value: dict[str, Any]) -> None:
-        print(value.get("DisplayName") or value["Name"])
-        print(f'  System ID: {value["Id"]}')
+        rows: list[tuple[str, Any]] = [("System ID", value["Id"])]
         aliases = value.get("Aliases", [])
         if aliases:
-            print(f'  Aliases: {", ".join(aliases)}')
+            rows.append(("Aliases", ", ".join(aliases)))
         brand = value.get("Brand", {})
         if brand:
-            print(f'  Brand: {brand.get("Name", value.get("BrandId", "Unknown"))}')
+            rows.append(("Brand", brand.get("Name", value.get("BrandId", "Unknown"))))
         platform = value.get("Platform")
         if isinstance(platform, dict) and platform.get("Name"):
-            print(f'  Platform: {platform["Name"]}')
+            rows.append(("Platform", platform["Name"]))
         primary = value.get("PrimaryEmulator")
         if isinstance(primary, dict):
-            print(f'  Primary Emulator: {primary.get("Name", primary.get("Id", "None"))}')
-            print(f'  Primary Source: {primary.get("Source", "Recommended")}')
-            print(f'  Installed: {"Yes" if primary.get("Installed") else "No"}')
+            rows.extend([
+                ("Primary Emulator", primary.get("Name", primary.get("Id", "None"))),
+                ("Primary Source", primary.get("Source", "Recommended")),
+                ("Installed", "Yes" if primary.get("Installed") else "No"),
+            ])
         else:
-            print("  Primary Emulator: None")
-            print("  Installed: No")
+            rows.extend([("Primary Emulator", "None"), ("Installed", "No")])
+        self.ui.key_value_panel(value.get("DisplayName") or value["Name"], rows)
 
         emulator_details = value.get("EmulatorDetails")
         if isinstance(emulator_details, list) and emulator_details:
-            names = [str(item.get("Name") or item.get("Id")) for item in emulator_details if isinstance(item, dict)]
+            names = [
+                str(item.get("Name") or item.get("Id"))
+                for item in emulator_details if isinstance(item, dict)
+            ]
         else:
             names = [str(item) for item in (value.get("Emulators") or value.get("Modules") or [])]
-        print(f'  Supported Emulators: {", ".join(names) or "None"}')
+        self.ui.table("Supported Emulators", ["Emulator"], [[name] for name in names])
 
     def _installs(self, values: list[dict[str, Any]]) -> None:
-        print("Emulators Installed")
-        if not values:
-            print("  None")
-            return
+        rows = []
         for value in values:
             version = value.get("Version") or "Unknown version"
-            state = str(value.get("State", "")).replace("_", " ").title()
-            print(f'{value["Name"]:<24} {version:<24} {state}')
-        print(
-            f"\n{len(values)} emulator module"
-            f'{"s" if len(values) != 1 else ""} installed.'
+            state = str(value.get("State", "")).replace("_", " ").title() or "Ready"
+            rows.append([value["Name"], version, state])
+        count = len(values)
+        self.ui.table(
+            "Installed Emulators",
+            ["Emulator", "Version", "Status"],
+            rows,
+            summary=f"{count} emulator module{'s' if count != 1 else ''} installed.",
         )
 
     @staticmethod
@@ -618,57 +634,88 @@ class EmuKitConsole:
 
     def _catalogue_view(self, value: dict[str, Any] | None, kind: str) -> None:
         if not isinstance(value, dict):
-            print("Platform catalogue is unavailable.")
+            self.ui.error("Platform catalogue is unavailable.")
             return
         label = {
             "all": "Catalogue",
             "systems": "System Catalogue",
             "emulators": "Emulator Catalogue",
         }.get(kind, "Catalogue")
-        print(f'EmuKit {value.get("Platform", "Platform")} {label} v{value.get("Version", "?")}')
-        if kind in {"all", "emulators"}:
-            emulators = value.get("Emulators", {})
-            print(f"  Emulators: {len(emulators) if isinstance(emulators, dict) else 0}")
-            if isinstance(emulators, dict):
-                for emulator_id, emulator in sorted(emulators.items(), key=lambda item: item[1].get("Name", item[0]).casefold()):
-                    systems = emulator.get("Systems", [])
-                    print(f'    {emulator.get("Name", emulator_id):<24} {len(systems)} system(s)')
-        if kind in {"all", "systems"}:
-            brands = value.get("Brands", {})
-            total = 0
-            if isinstance(brands, dict):
-                total = sum(len(brand.get("Systems", {})) for brand in brands.values() if isinstance(brand, dict))
-            print(f"  Brands: {len(brands) if isinstance(brands, dict) else 0}")
-            print(f"  Systems: {total}")
-            if isinstance(brands, dict):
-                for brand_id, brand in sorted(brands.items(), key=lambda item: item[1].get("Name", item[0]).casefold()):
-                    systems = brand.get("Systems", {})
-                    brand_name = brand.get("Name", brand_id)
-                    if kind == "all":
-                        print(f'    {brand_name:<24} {len(systems) if isinstance(systems, dict) else 0} system(s)')
-                        continue
-                    print(f"  {brand_name}")
-                    if not isinstance(systems, dict) or not systems:
-                        print("    None")
-                        continue
-                    for system_id, system in sorted(
-                        systems.items(),
-                        key=lambda item: item[1].get("Name", item[0]).casefold(),
-                    ):
-                        print(f'    {system.get("Name", system_id)}')
+        platform = value.get("Platform", "Platform")
+        version = value.get("Version", "?")
+        emulators = value.get("Emulators", {})
+        brands = value.get("Brands", {})
+        total_systems = 0
+        if isinstance(brands, dict):
+            total_systems = sum(
+                len(brand.get("Systems", {}))
+                for brand in brands.values() if isinstance(brand, dict)
+            )
+        self.ui.key_value_panel(
+            f"EmuKit {platform} {label}",
+            [
+                ("Catalogue Version", version),
+                ("Emulators", len(emulators) if isinstance(emulators, dict) else 0),
+                ("Brands", len(brands) if isinstance(brands, dict) else 0),
+                ("Systems", total_systems),
+            ],
+        )
 
-    @staticmethod
-    def _running(values: list[dict[str, Any]]) -> None:
-        print("Running Emulators")
-        if not values:
-            print("  None")
-            return
+        if kind in {"all", "emulators"} and isinstance(emulators, dict):
+            self.ui.table(
+                "Emulators",
+                ["Emulator", "Systems"],
+                [
+                    [emulator.get("Name", emulator_id), len(emulator.get("Systems", []))]
+                    for emulator_id, emulator in sorted(
+                        emulators.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
+                    )
+                ],
+            )
+
+        if kind == "all" and isinstance(brands, dict):
+            self.ui.table(
+                "Brands",
+                ["Brand", "Systems"],
+                [
+                    [brand.get("Name", brand_id), len(brand.get("Systems", {})) if isinstance(brand.get("Systems", {}), dict) else 0]
+                    for brand_id, brand in sorted(
+                        brands.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
+                    )
+                ],
+            )
+        elif kind == "systems" and isinstance(brands, dict):
+            system_rows = []
+            for brand_id, brand in sorted(
+                brands.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
+            ):
+                brand_name = brand.get("Name", brand_id)
+                systems = brand.get("Systems", {})
+                if not isinstance(systems, dict):
+                    continue
+                for system_id, system in sorted(
+                    systems.items(), key=lambda item: item[1].get("Name", item[0]).casefold()
+                ):
+                    system_rows.append([brand_name, system.get("Name", system_id)])
+            self.ui.table("Systems", ["Brand", "System"], system_rows)
+
+    def _running(self, values: list[dict[str, Any]]) -> None:
+        rows = []
         for value in values:
             processes = value.get("Processes", [])
             pids = ", ".join(str(item.get("pid")) for item in processes if item.get("pid"))
-            suffix = f"  PID {pids}" if pids else ""
-            print(f'  {value.get("Name", value.get("Id", "Unknown"))}{suffix}')
-        print(f"\n{len(values)} emulator{'s' if len(values) != 1 else ''} running.")
+            rows.append([
+                value.get("Name", value.get("Id", "Unknown")),
+                pids or "-",
+                "Running",
+            ])
+        count = len(values)
+        self.ui.table(
+            "Running Emulators",
+            ["Emulator", "PID", "State"],
+            rows,
+            summary=f"{count} emulator{'s' if count != 1 else ''} running.",
+        )
 
     def _updates_view(self, result: dict[str, Any]) -> None:
         if not result.get("success"):
@@ -677,18 +724,32 @@ class EmuKitConsole:
         details = result.get("details", {})
         core = details.get("core", {}) if isinstance(details, dict) else {}
         core_details = core.get("details", {}) if isinstance(core, dict) else {}
-        print("EmuKit Updates")
-        if core.get("state") == "update_available":
-            print(f'  Core: {core_details.get("installed")} -> {core_details.get("latest")}')
-        else:
-            print(f'  Core: {core_details.get("installed", "Unknown")} (up to date)')
+        rows = []
+        installed_core = core_details.get("installed", "Unknown")
+        latest_core = core_details.get("latest", installed_core)
+        rows.append([
+            "EmuKit Core",
+            installed_core,
+            latest_core,
+            "Update Available" if core.get("state") == "update_available" else "Current",
+        ])
         modules = details.get("modules", []) if isinstance(details, dict) else []
-        if modules:
-            print("  Emulator Modules:")
-            for item in modules:
-                print(f'    {item.get("Name", item.get("Id"))}: {item.get("Installed")} -> {item.get("Available")}')
-        else:
-            print("  Emulator Modules: up to date")
+        for item in modules:
+            rows.append([
+                item.get("Name", item.get("Id")),
+                item.get("Installed", "Unknown"),
+                item.get("Available", "Unknown"),
+                "Update Available",
+            ])
+        self.ui.table(
+            "EmuKit Updates",
+            ["Component", "Installed", "Available", "Status"],
+            rows,
+            summary=(
+                f"{len(modules)} emulator module update{'s' if len(modules) != 1 else ''} available."
+                if modules else "Emulator modules are up to date."
+            ),
+        )
 
     def _resolve_module_sequence(self, tokens: list[str]) -> list[str] | None:
         assert self.emukit is not None
@@ -734,39 +795,39 @@ class EmuKitConsole:
                 return module_id, tokens[end:]
         return None
 
-    @staticmethod
-    def _help() -> None:
-        print(
-            "Commands:\n"
-            "  Get Catalogue\n"
-            "  Get System Catalogue\n"
-            "  Get Emulator Catalogue\n"
-            "  Get Settings\n"
-            "  Get Running Emulators\n"
-            "  Get Current Installs\n"
-            "  Get <Brand|System|Emulator> Info\n"
-            "  Set Feature Fullscreen True|False\n"
-            "  Set <Emulator> as <System> Primary\n"
-            "  Restore <System> Primary\n"
-            "  Restore Systems Primary\n"
-            "  Launch <Emulator>\n"
-            "  Launch <GamePath> <System>\n"
-            "  Launch <Emulator> <GamePath> <System>\n"
-            "  Close <Emulator|System>\n"
-            "  Restart <Emulator|System>\n"
-            "  Is <Emulator|System> Running\n"
-            "  Install <Emulator(s)>\n"
-            "  Install All\n"
-            "  Uninstall <Emulator(s)>\n"
-            "  Uninstall All\n"
-            "  Repair <Emulator(s)>\n"
-            "  Remove <Emulator(s)>\n"
-            "  Update <Emulator(s)>\n"
-            "  Updates | Check Updates | Check for Updates | Get Updates\n"
-            "  Update EmuKit\n"
-            "  Help\n"
-            "  Close                           (exit EmuKit)\n"
-            "\nAdd --json for raw output or --verbose for additional operation details."
+    def _help(self) -> None:
+        rows = [
+            ["Discovery", "Get Catalogue", "Complete catalogue summary"],
+            ["Discovery", "Get System Catalogue", "Supported systems by brand"],
+            ["Discovery", "Get Emulator Catalogue", "Available emulator modules"],
+            ["Discovery", "Get <name> Info", "Brand, system, or emulator details"],
+            ["Runtime", "Get Running Emulators", "Show detected emulator processes"],
+            ["Runtime", "Get Current Installs", "Show installed emulator modules"],
+            ["Launch", "Launch <Emulator>", "Open an emulator"],
+            ["Launch", "Launch <GamePath> <System>", "Launch a game with the primary emulator"],
+            ["Launch", "Launch <Emulator> <GamePath> <System>", "Launch with an explicit emulator"],
+            ["Launch", "Close <Emulator|System>", "Close a running emulator"],
+            ["Launch", "Restart <Emulator|System>", "Restart a running emulator"],
+            ["Modules", "Install <Emulator(s)> | Install All", "Install emulator modules"],
+            ["Modules", "Uninstall <Emulator(s)> | Uninstall All", "Uninstall emulator modules"],
+            ["Modules", "Repair <Emulator(s)>", "Repair emulator modules"],
+            ["Modules", "Remove <Emulator(s)>", "Remove module files"],
+            ["Modules", "Update <Emulator(s)>", "Update emulator modules"],
+            ["Settings", "Get Settings", "Show EmuKit settings"],
+            ["Settings", "Set Feature Fullscreen True|False", "Set launch fullscreen behavior"],
+            ["Settings", "Set <Emulator> as <System> Primary", "Override the catalogue primary"],
+            ["Settings", "Restore <System> Primary", "Restore catalogue recommendation"],
+            ["Settings", "Restore Systems Primary", "Restore all recommendations"],
+            ["Updates", "Updates | Check for Updates", "Check Core and module updates"],
+            ["Updates", "Update EmuKit", "Update EmuKit Core"],
+            ["System", "Help", "Show this command reference"],
+            ["System", "Close", "Exit EmuKit"],
+        ]
+        self.ui.table(
+            "EmuKit Commands",
+            ["Category", "Command", "Description"],
+            rows,
+            summary="Modifiers: --json for raw structured output • --verbose for additional details",
         )
 
     def _get(self, tokens: list[str], raw: bool) -> None:
@@ -806,13 +867,16 @@ class EmuKitConsole:
             if raw:
                 self._json(value)
             else:
-                print(
-                    f'Core {value["core_version"]} | Channel: {value["channel"]} | '
-                    f'Platform: {value["platform"]}/{value["architecture"]}'
-                )
-                print(
-                    f'Modules: {value["registered_count"]} local / {value["remote_module_count"]} remote | '
-                    f'Brands: {value["supported_brands"]} | Systems: {value["supported_systems"]}'
+                self.ui.key_value_panel(
+                    "EmuKit Status",
+                    [
+                        ("Core", value["core_version"]),
+                        ("Channel", value["channel"]),
+                        ("Platform", f'{value["platform"]} {value["architecture"]}'),
+                        ("Modules", f'{value["registered_count"]} local / {value["remote_module_count"]} remote'),
+                        ("Brands", value["supported_brands"]),
+                        ("Systems", value["supported_systems"]),
+                    ],
                 )
             return
         if lowered == ["core", "dependencies"]:
@@ -827,7 +891,7 @@ class EmuKitConsole:
                 query_tokens = query_tokens[1:]
             query = " ".join(query_tokens)
             if not query:
-                print("Usage: Get <Brand|System|Emulator> Info")
+                self.ui.usage("Get <Brand|System|Emulator> Info")
                 return
             if explicit_kind in {"emulator", "module"}:
                 value = self.emukit.get_module_info(query)
@@ -842,12 +906,12 @@ class EmuKitConsole:
                 kind, value, matches = self.emukit.resolve_info(query)
                 if value is None:
                     if matches:
-                        print(f'"{query}" is ambiguous. Specify one of: {", ".join(matches)}.')
+                        self.ui.warning(f'"{query}" is ambiguous. Specify one of: {", ".join(matches)}.')
                     else:
-                        print(f'"{query}" was not found.')
+                        self.ui.error(f'"{query}" was not found.')
                     return
             if value is None:
-                print(f'{kind} "{query}" was not found.')
+                self.ui.error(f'{kind} "{query}" was not found.')
             elif raw:
                 self._json(value)
             else:
@@ -858,7 +922,7 @@ class EmuKitConsole:
                 }[kind](value)
             return
 
-        print("Unknown Get command. Type Help for available commands.")
+        self.ui.warning("Unknown Get command. Type Help for available commands.")
 
     def execute(self, command: str) -> bool:
         assert self.emukit is not None
@@ -871,7 +935,7 @@ class EmuKitConsole:
                 for token in tokens
             ]
         except ValueError as exc:
-            print(f"Invalid command: {exc}")
+            self.ui.error(f"Invalid command: {exc}")
             return True
 
         tokens, raw, verbose = self._modifiers(tokens)
@@ -882,7 +946,7 @@ class EmuKitConsole:
         lowered_args = [arg.casefold() for arg in args]
 
         if action in {"exit", "quit"} or (action == "close" and not args):
-            print("Closing EmuKit.")
+            self.ui.info("Closing EmuKit")
             return False
         if action == "help":
             self._help()
@@ -915,7 +979,7 @@ class EmuKitConsole:
             emulator = " ".join(args[:as_index]).strip()
             system = " ".join(args[as_index + 1:-1]).strip()
             if not emulator or not system:
-                print("Usage: Set <Emulator> as <System> Primary")
+                self.ui.usage("Set <Emulator> as <System> Primary")
                 return True
             self._result(self.emukit.set_system_primary(system, emulator), raw=raw, verbose=verbose)
             return True
@@ -948,11 +1012,10 @@ class EmuKitConsole:
 
         if action in {"install", "uninstall", "repair", "remove", "update"}:
             if not args:
-                print(f"Usage: {action.title()} <Emulator(s)>")
+                self.ui.usage(f"{action.title()} <Emulator(s)>")
                 return True
             modules = self._resolve_module_sequence(args)
             if modules is None:
-                # A single quoted/freeform module name is still useful for clear errors.
                 modules = [" ".join(args)]
             handler = {
                 "install": self.emukit.install_many,
@@ -965,17 +1028,15 @@ class EmuKitConsole:
             return True
 
         if action == "launch" and args:
-            # Form 1: Launch <Emulator>
             whole = " ".join(args)
             local_module = self.emukit.manager.resolve_local_module_id(whole)
             if local_module is not None:
                 self._result(self.emukit.launch_emulator(local_module), raw=raw, verbose=verbose)
                 return True
 
-            # Forms 2/3: longest valid system expression on the right.
             split = self._split_system_suffix(args)
             if split is None:
-                print("Usage: Launch <Emulator> OR Launch <GamePath> <System> OR Launch <Emulator> <GamePath> <System>")
+                self.ui.usage("Launch <Emulator> OR Launch <GamePath> <System> OR Launch <Emulator> <GamePath> <System>")
                 return True
             prefix, system = split
             explicit = self._split_explicit_module_prefix(prefix)
@@ -988,7 +1049,7 @@ class EmuKitConsole:
                 self._result(self.emukit.launch(system, game_path), raw=raw, verbose=verbose)
             return True
 
-        print(f'Unknown command "{command}". Type Help for available commands.')
+        self.ui.warning(f'Unknown command "{command}". Type Help for available commands.')
         return True
 
     def _dependency_preflight(self) -> bool:
@@ -996,126 +1057,137 @@ class EmuKitConsole:
         check = self.emukit.check_core_dependencies()
         missing = list(check.get("missing") or [])
         if not missing:
+            self.ui.success("Core dependencies verified")
             return True
 
-        details = check.get("details") if isinstance(check.get("details"), dict) else {}
-
-        print()
-        print("EmuKit cannot start because required dependencies are missing:")
+        dependency_lines = []
         for dependency_id in missing:
             info = self.emukit.manager.CORE_DEPENDENCIES.get(dependency_id, {})
             name = info.get("Name", dependency_id)
             version = info.get("Version")
             if isinstance(version, str) and version.casefold() == "latest supported":
-                suffix = " (latest supported)"
+                version_text = "Latest supported"
             else:
-                suffix = f" {version}" if version else ""
-            print(f"  - {name}{suffix}")
+                version_text = str(version or "Required")
+            dependency_lines.append(f"✗ {name} — {version_text}")
 
-        print()
-        print("EmuKit requires these dependencies to run.")
-        print("You can install the required versions manually, or EmuKit can install them automatically.")
-        print("If you choose No, EmuKit will close.")
+        self.ui.panel(
+            "Required Dependencies",
+            [
+                "EmuKit requires the following components before it can start.",
+                "",
+                *dependency_lines,
+                "",
+                "EmuKit can install the required versions automatically.",
+            ],
+        )
 
         while True:
             try:
-                answer = input(
-                    "Would you like EmuKit to install the missing dependencies now? Yes/No: "
-                ).strip().casefold()
+                answer = input(self.ui.yes_no_prompt("Install missing dependencies?", default_yes=True)).strip().casefold()
             except (EOFError, KeyboardInterrupt):
-                print("\nClosing EmuKit.")
+                print()
+                self.ui.warning("Closing EmuKit")
                 return False
 
-            if answer in {"yes", "y"}:
-                print()
-                print("Installing required dependencies...")
+            if answer in {"", "yes", "y"}:
+                self.ui.info("Installing required dependencies...")
                 result = self.emukit.install_missing_core_dependencies()
-                result_details = (
-                    result.get("details")
-                    if isinstance(result.get("details"), dict)
-                    else {}
-                )
+                result_details = result.get("details") if isinstance(result.get("details"), dict) else {}
                 for item in result_details.get("results", []):
                     if isinstance(item, dict) and item.get("message"):
-                        print(f'  {item["message"]}')
+                        self.ui.info(str(item["message"]))
 
                 if result.get("success"):
                     if result.get("state") == "installed_reboot_required":
-                        print("Required dependencies are installed. A Windows restart may be required.")
+                        self.ui.warning("Required dependencies installed; a Windows restart may be required")
                     else:
-                        print("Required dependencies are installed.")
-                    print()
+                        self.ui.success("Required dependencies installed")
                     return True
 
                 remaining_check = result_details.get("check")
-                remaining = (
-                    list(remaining_check.get("missing") or [])
-                    if isinstance(remaining_check, dict)
-                    else []
-                )
+                remaining = list(remaining_check.get("missing") or []) if isinstance(remaining_check, dict) else []
                 if remaining:
-                    print()
-                    print("EmuKit could not install all required dependencies:")
+                    names = []
                     for dependency_id in remaining:
                         info = self.emukit.manager.CORE_DEPENDENCIES.get(dependency_id, {})
-                        print(f'  - {info.get("Name", dependency_id)}')
-                print("EmuKit cannot continue and will close.")
+                        names.append(str(info.get("Name", dependency_id)))
+                    self.ui.error("Could not install all required dependencies")
+                    self.ui.panel("Still Missing", names)
+                self.ui.error("EmuKit cannot continue")
                 return False
 
             if answer in {"no", "n"}:
-                print("Required dependencies were not installed. EmuKit will close.")
+                self.ui.warning("Required dependencies were not installed; EmuKit will close")
                 return False
 
-            print("Please enter Yes or No.")
+            self.ui.warning("Please enter Yes or No")
 
     def run(self) -> None:
-        print("EmuKit starting...")
+        self.ui.set_title("ProjectHomelab - EmuKit")
         self.emukit = EmuKit(
             auto_initialize=False,
             progress_callback=self.progress,
         )
 
+        mode = "HomeLab" if self.emukit.project_root != self.emukit.emukit_root else "Standalone"
+        self.ui.banner("EMUKIT")
+        print()
+        self.ui.runtime_panel([
+            ("Mode", mode),
+            ("Version", self.emukit.manager.CORE_VERSION),
+            ("Platform", f"{self.emukit.manager.host_platform} {self.emukit.manager.host_architecture}"),
+            ("Channel", self.emukit.manager.channel.title()),
+            ("Status", "Starting..."),
+        ])
+        print()
+
         if not self._dependency_preflight():
             return
 
+        self.ui.info("Initialising EmuKit...")
         result = self.emukit.initialize()
         self._clear_progress()
 
         if result.get("success") and isinstance(self.fresh_update_handoff, dict):
             cleanup = self.emukit.complete_fresh_update(self.fresh_update_handoff)
             if not cleanup.get("success"):
-                print(cleanup.get("message") or "EmuKit update cleanup completed with errors.")
+                self.ui.warning(cleanup.get("message") or "EmuKit update cleanup completed with errors")
 
         state = result.get("state")
         if state == "ready_with_errors" or not result.get("success"):
-            print("EmuKit started with errors.")
+            self.ui.error("EmuKit started with errors")
         elif state == "ready_offline":
-            print("EmuKit started with a remote-data warning.")
+            self.ui.warning("EmuKit started with a remote-data warning")
             details = result.get("details") if isinstance(result.get("details"), dict) else {}
             remote = details.get("remote_manifest") if isinstance(details, dict) else None
             if isinstance(remote, dict):
                 message = remote.get("message")
                 if message:
-                    print(f"  {message}")
+                    self.ui.warning(str(message))
                 remote_details = remote.get("details")
                 if isinstance(remote_details, str) and remote_details.strip():
-                    print(f"  {remote_details.strip()}")
+                    self.ui.warning(remote_details.strip())
         else:
-            print("EmuKit started.")
+            self.ui.success("EmuKit ready")
 
         installs = self.emukit.get_current_installs()
         print()
         self._installs(installs)
-        print("\nType Help for commands.\n")
+        print()
+        self.ui.info("Type Help for commands")
+        print()
 
         while True:
             try:
-                command = input("EmuKit> ").strip()
+                command = input(self.ui.prompt()).strip()
             except EOFError:
-                print("\nClosing EmuKit.")
+                print()
+                self.ui.warning("Closing EmuKit")
                 break
             except KeyboardInterrupt:
-                print("\nClosing EmuKit.")
+                print()
+                self.ui.warning("Closing EmuKit")
                 break
             if command and not self.execute(command):
                 break
