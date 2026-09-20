@@ -188,7 +188,25 @@ Uninstall Complete        Emulators/ExampleEmu
 
 Core owns the authoritative terminal presentation.
 
-When forwarding module progress, Core reserves terminal `100%` for the final lifecycle result. A module-reported `100%` completion event is forwarded to the terminal as `99%`, then replaced by Core's final authoritative terminal state after the manager result is known.
+When forwarding module progress, Core reserves terminal `100%` for the final lifecycle result. A module-reported `100%` completion event is forwarded to the terminal as provisional progress, then replaced by Core's final authoritative terminal state after the manager result is known.
+
+### Integrated Install Progress
+
+When `Install <Emulator>` or `Install All` must acquire a missing module package first, Core keeps module acquisition and emulator installation on one terminal line.
+
+The display range is:
+
+```text
+0-20%    Module acquisition
+20-99%   Emulator lifecycle
+100%     Core-authoritative Installed result
+```
+
+Module-package progress is scaled into `0-20%`. After acquisition completes, the emulator module's lifecycle progress is scaled into `20-99%` on the same line. The module's own completion event remains provisional until Core receives the final lifecycle result.
+
+If module acquisition or emulator installation fails, that same line terminates as `Install Failed`.
+
+Standalone module-package acquisition performed outside an emulator install remains a normal independent `0-100%` operation.
 
 A successful install therefore finishes visually as:
 

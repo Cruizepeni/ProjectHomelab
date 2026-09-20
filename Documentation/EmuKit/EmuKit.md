@@ -110,7 +110,7 @@ ROOT/
 │   ├── Registry/
 │   │   └── EmuKitRegistry.json
 │   └── Settings/
-│       └── EmuKitSettings.json
+│       └── EmuKitSettingsConfig.json
 ├── Dependencies/
 ├── Emulators/
 └── ...
@@ -243,6 +243,22 @@ For each requested emulator Core:
 6. reports unexpected check states and acquisition/check failures as install failures
 
 This does not move emulator-specific install knowledge into Core. Core only decides whether a generic lifecycle operation should be requested; the module still owns how that operation works.
+
+For an install that must first acquire its module package, Core presents module acquisition and emulator installation as one continuous terminal operation rather than two completed lines.
+
+The integrated install progress range is:
+
+```text
+0-20%    Module acquisition
+20-99%   Emulator lifecycle
+100%     Core-authoritative Installed result
+```
+
+Module acquisition progress is scaled into the first portion of the line. Once the module package is available, the module's emulator lifecycle reuses that same line and is scaled into the remaining provisional range. Core finalizes the line only after a successful lifecycle result.
+
+A module-acquisition failure terminates the same line as `Install Failed`.
+
+Standalone module-package acquisition, when performed independently of emulator installation, remains its own normal `0-100%` operation.
 
 ## Remove vs Uninstall
 
