@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "database": "PythoFetchArt",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "file": "PythoFetchArt_1.0.0.db",
+      "sha256": "427c04c6c499167180219c594567226d37d13ce80538d93652d01acd0c1e1e23",
+      "size_bytes": 339968,
+      "created_utc": "2026-09-26T13:27:08.897486+00:00",
+      "schema_version": 1,
+      "compiler_version": "1.0.0",
+      "artwork_count": 269,
+      "added_pythofetch_artworks": 0,
+      "override_count": 0,
+      "source_counts": {
+        "NeoFetch": 269
+      },
+      "family_counts": {
+        "Other": 28,
+        "Linux": 235,
+        "macOS": 3,
+        "Windows": 3
+      }
+    }
+  }
+}
