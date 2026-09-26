@@ -1,0 +1,5910 @@
+{
+  "format": "PythoFetchArtCatalogue",
+  "format_version": 2,
+  "source_project": "NeoFetch",
+  "source_repository": "dylanaraps/neofetch",
+  "source_mirror": "Cruizepeni/ProjectHomelab/Resources/ThirdParty/Neofetch",
+  "source_function": "get_distro_ascii",
+  "curated": true,
+  "entry_count": 269,
+  "family_counts": {
+    "Windows": 3,
+    "Linux": 235,
+    "macOS": 3,
+    "Other": 28
+  },
+  "notes": [
+    "Direct curated extraction of NeoFetch artwork for PythoFetch.",
+    "No artwork entries are removed during extraction.",
+    "TXT files are editable source assets.",
+    "${c1}..${c6} markers are preserved for runtime ANSI color substitution.",
+    "Duplicate canonical names are retained using _Alt suffixed filenames."
+  ],
+  "entries": [
+    {
+      "id": "AIX",
+      "name": "AIX",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/AIX.txt",
+      "aliases": [
+        "AIX"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"AIX\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 1,
+      "original_id": "001_AIX",
+      "original_file": "Logos/001_AIX.txt"
+    },
+    {
+      "id": "Aperio_GNU_Linux",
+      "name": "Aperio GNU/Linux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Aperio_GNU_Linux.txt",
+      "aliases": [
+        "Aperio GNU/Linux"
+      ],
+      "colors": [
+        "255"
+      ],
+      "color_rule": "255",
+      "matcher": "\"Aperio GNU/Linux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 2,
+      "original_id": "002_Aperio_GNU_Linux",
+      "original_file": "Logos/002_Aperio_GNU_Linux.txt"
+    },
+    {
+      "id": "Hash",
+      "name": "Hash",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Hash.txt",
+      "aliases": [
+        "Hash"
+      ],
+      "colors": [
+        "123"
+      ],
+      "color_rule": "123",
+      "matcher": "\"Hash\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 3,
+      "original_id": "003_Hash",
+      "original_file": "Logos/003_Hash.txt"
+    },
+    {
+      "id": "AlmaLinux",
+      "name": "AlmaLinux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/AlmaLinux.txt",
+      "aliases": [
+        "AlmaLinux"
+      ],
+      "colors": [
+        "1",
+        "3",
+        "4",
+        "2",
+        "6"
+      ],
+      "color_rule": "1 3 4 2 6",
+      "matcher": "\"AlmaLinux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 4,
+      "original_id": "004_AlmaLinux",
+      "original_file": "Logos/004_AlmaLinux.txt"
+    },
+    {
+      "id": "alpine_Small",
+      "name": "alpine_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/alpine_Small.txt",
+      "aliases": [
+        "alpine_small"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"alpine_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 5,
+      "original_id": "005_alpine_small",
+      "original_file": "Logos/005_alpine_small.txt"
+    },
+    {
+      "id": "Alpine",
+      "name": "Alpine",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Alpine.txt",
+      "aliases": [
+        "Alpine"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"Alpine\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 6,
+      "original_id": "006_Alpine",
+      "original_file": "Logos/006_Alpine.txt"
+    },
+    {
+      "id": "Alter",
+      "name": "Alter",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Alter.txt",
+      "aliases": [
+        "Alter"
+      ],
+      "colors": [
+        "6",
+        "6"
+      ],
+      "color_rule": "6 6",
+      "matcher": "\"Alter\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 7,
+      "original_id": "007_Alter",
+      "original_file": "Logos/007_Alter.txt"
+    },
+    {
+      "id": "Amazon",
+      "name": "Amazon",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Amazon.txt",
+      "aliases": [
+        "Amazon"
+      ],
+      "colors": [
+        "3",
+        "7"
+      ],
+      "color_rule": "3 7",
+      "matcher": "\"Amazon\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 8,
+      "original_id": "008_Amazon",
+      "original_file": "Logos/008_Amazon.txt"
+    },
+    {
+      "id": "Anarchy",
+      "name": "Anarchy",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Anarchy.txt",
+      "aliases": [
+        "Anarchy"
+      ],
+      "colors": [
+        "7",
+        "4"
+      ],
+      "color_rule": "7 4",
+      "matcher": "\"Anarchy\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 9,
+      "original_id": "009_Anarchy",
+      "original_file": "Logos/009_Anarchy.txt"
+    },
+    {
+      "id": "android_Small",
+      "name": "android_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/android_Small.txt",
+      "aliases": [
+        "android_small"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"android_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 10,
+      "original_id": "010_android_small",
+      "original_file": "Logos/010_android_small.txt"
+    },
+    {
+      "id": "Android",
+      "name": "Android",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Android.txt",
+      "aliases": [
+        "Android"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Android\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 11,
+      "original_id": "011_Android",
+      "original_file": "Logos/011_Android.txt"
+    },
+    {
+      "id": "instantOS",
+      "name": "instantOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/instantOS.txt",
+      "aliases": [
+        "instantOS"
+      ],
+      "colors": [
+        "4",
+        "6"
+      ],
+      "color_rule": "4 6",
+      "matcher": "\"instantOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 12,
+      "original_id": "012_instantOS",
+      "original_file": "Logos/012_instantOS.txt"
+    },
+    {
+      "id": "Antergos",
+      "name": "Antergos",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Antergos.txt",
+      "aliases": [
+        "Antergos"
+      ],
+      "colors": [
+        "4",
+        "6"
+      ],
+      "color_rule": "4 6",
+      "matcher": "\"Antergos\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 13,
+      "original_id": "013_Antergos",
+      "original_file": "Logos/013_Antergos.txt"
+    },
+    {
+      "id": "antiX",
+      "name": "antiX",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/antiX.txt",
+      "aliases": [
+        "antiX"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"antiX\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 14,
+      "original_id": "014_antiX",
+      "original_file": "Logos/014_antiX.txt"
+    },
+    {
+      "id": "AOSC_OS_Retro",
+      "name": "AOSC OS/Retro",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/AOSC_OS_Retro.txt",
+      "aliases": [
+        "AOSC OS/Retro"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1",
+        "3"
+      ],
+      "color_rule": "4 7 1 3",
+      "matcher": "\"AOSC OS/Retro\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 15,
+      "original_id": "015_AOSC_OS_Retro",
+      "original_file": "Logos/015_AOSC_OS_Retro.txt"
+    },
+    {
+      "id": "AOSC_OS",
+      "name": "AOSC OS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/AOSC_OS.txt",
+      "aliases": [
+        "AOSC OS"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"AOSC OS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 16,
+      "original_id": "016_AOSC_OS",
+      "original_file": "Logos/016_AOSC_OS.txt"
+    },
+    {
+      "id": "Apricity",
+      "name": "Apricity",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Apricity.txt",
+      "aliases": [
+        "Apricity"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Apricity\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 17,
+      "original_id": "017_Apricity",
+      "original_file": "Logos/017_Apricity.txt"
+    },
+    {
+      "id": "Archcraft",
+      "name": "Archcraft",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Archcraft.txt",
+      "aliases": [
+        "Archcraft"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "\"Archcraft\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 18,
+      "original_id": "018_Archcraft",
+      "original_file": "Logos/018_Archcraft.txt"
+    },
+    {
+      "id": "arcolinux_Small",
+      "name": "arcolinux_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/arcolinux_Small.txt",
+      "aliases": [
+        "arcolinux_small"
+      ],
+      "colors": [
+        "7",
+        "4"
+      ],
+      "color_rule": "7 4",
+      "matcher": "\"arcolinux_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 19,
+      "original_id": "019_arcolinux_small",
+      "original_file": "Logos/019_arcolinux_small.txt"
+    },
+    {
+      "id": "ArcoLinux",
+      "name": "ArcoLinux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/ArcoLinux.txt",
+      "aliases": [
+        "ArcoLinux"
+      ],
+      "colors": [
+        "7",
+        "4"
+      ],
+      "color_rule": "7 4",
+      "matcher": "\"ArcoLinux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 20,
+      "original_id": "020_ArcoLinux",
+      "original_file": "Logos/020_ArcoLinux.txt"
+    },
+    {
+      "id": "arch_Small",
+      "name": "arch_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/arch_Small.txt",
+      "aliases": [
+        "arch_small"
+      ],
+      "colors": [
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 7 1",
+      "matcher": "\"arch_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 21,
+      "original_id": "021_arch_small",
+      "original_file": "Logos/021_arch_small.txt"
+    },
+    {
+      "id": "arch_Old",
+      "name": "arch_old",
+      "family": "Linux",
+      "variant": "old",
+      "file": "Linux/arch_Old.txt",
+      "aliases": [
+        "arch_old"
+      ],
+      "colors": [
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 7 1",
+      "matcher": "\"arch_old\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 22,
+      "original_id": "022_arch_old",
+      "original_file": "Logos/022_arch_old.txt"
+    },
+    {
+      "id": "ArchBox",
+      "name": "ArchBox",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/ArchBox.txt",
+      "aliases": [
+        "ArchBox"
+      ],
+      "colors": [
+        "2",
+        "7",
+        "1"
+      ],
+      "color_rule": "2 7 1",
+      "matcher": "\"ArchBox\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 23,
+      "original_id": "023_ArchBox",
+      "original_file": "Logos/023_ArchBox.txt"
+    },
+    {
+      "id": "ARCHlabs",
+      "name": "ARCHlabs",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/ARCHlabs.txt",
+      "aliases": [
+        "ARCHlabs"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "\"ARCHlabs\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 24,
+      "original_id": "024_ARCHlabs",
+      "original_file": "Logos/024_ARCHlabs.txt"
+    },
+    {
+      "id": "ArchStrike",
+      "name": "ArchStrike",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/ArchStrike.txt",
+      "aliases": [
+        "ArchStrike"
+      ],
+      "colors": [
+        "8",
+        "6"
+      ],
+      "color_rule": "8 6",
+      "matcher": "\"ArchStrike\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 25,
+      "original_id": "025_ArchStrike",
+      "original_file": "Logos/025_ArchStrike.txt"
+    },
+    {
+      "id": "XFerience",
+      "name": "XFerience",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/XFerience.txt",
+      "aliases": [
+        "XFerience"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "*\"XFerience\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 26,
+      "original_id": "026_XFerience",
+      "original_file": "Logos/026_XFerience.txt"
+    },
+    {
+      "id": "ArchMerge",
+      "name": "ArchMerge",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/ArchMerge.txt",
+      "aliases": [
+        "ArchMerge"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "\"ArchMerge\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 27,
+      "original_id": "027_ArchMerge",
+      "original_file": "Logos/027_ArchMerge.txt"
+    },
+    {
+      "id": "Arch",
+      "name": "Arch",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Arch.txt",
+      "aliases": [
+        "Arch"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "\"Arch\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 28,
+      "original_id": "028_Arch",
+      "original_file": "Logos/028_Arch.txt"
+    },
+    {
+      "id": "artix_Small",
+      "name": "artix_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/artix_Small.txt",
+      "aliases": [
+        "artix_small"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "\"artix_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 29,
+      "original_id": "029_artix_small",
+      "original_file": "Logos/029_artix_small.txt"
+    },
+    {
+      "id": "Artix",
+      "name": "Artix",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Artix.txt",
+      "aliases": [
+        "Artix"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "\"Artix\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 30,
+      "original_id": "030_Artix",
+      "original_file": "Logos/030_Artix.txt"
+    },
+    {
+      "id": "Arya",
+      "name": "Arya",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Arya.txt",
+      "aliases": [
+        "Arya"
+      ],
+      "colors": [
+        "2",
+        "1"
+      ],
+      "color_rule": "2 1",
+      "matcher": "\"Arya\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 31,
+      "original_id": "031_Arya",
+      "original_file": "Logos/031_Arya.txt"
+    },
+    {
+      "id": "AsteroidOS",
+      "name": "AsteroidOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/AsteroidOS.txt",
+      "aliases": [
+        "AsteroidOS"
+      ],
+      "colors": [
+        "160",
+        "208",
+        "202",
+        "214"
+      ],
+      "color_rule": "160 208 202 214",
+      "matcher": "\"AsteroidOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 32,
+      "original_id": "032_AsteroidOS",
+      "original_file": "Logos/032_AsteroidOS.txt"
+    },
+    {
+      "id": "Bedrock",
+      "name": "Bedrock",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Bedrock.txt",
+      "aliases": [
+        "Bedrock"
+      ],
+      "colors": [
+        "8",
+        "7"
+      ],
+      "color_rule": "8 7",
+      "matcher": "\"Bedrock\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 33,
+      "original_id": "033_Bedrock",
+      "original_file": "Logos/033_Bedrock.txt"
+    },
+    {
+      "id": "Bitrig",
+      "name": "Bitrig",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/Bitrig.txt",
+      "aliases": [
+        "Bitrig"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Bitrig\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 34,
+      "original_id": "034_Bitrig",
+      "original_file": "Logos/034_Bitrig.txt"
+    },
+    {
+      "id": "BlackArch",
+      "name": "BlackArch",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/BlackArch.txt",
+      "aliases": [
+        "BlackArch"
+      ],
+      "colors": [
+        "1",
+        "1",
+        "0",
+        "1"
+      ],
+      "color_rule": "1 1 0 1",
+      "matcher": "\"BlackArch\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 35,
+      "original_id": "035_BlackArch",
+      "original_file": "Logos/035_BlackArch.txt"
+    },
+    {
+      "id": "BLAG",
+      "name": "BLAG",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/BLAG.txt",
+      "aliases": [
+        "BLAG"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"BLAG\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 36,
+      "original_id": "036_BLAG",
+      "original_file": "Logos/036_BLAG.txt"
+    },
+    {
+      "id": "BlankOn",
+      "name": "BlankOn",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/BlankOn.txt",
+      "aliases": [
+        "BlankOn"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"BlankOn\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 37,
+      "original_id": "037_BlankOn",
+      "original_file": "Logos/037_BlankOn.txt"
+    },
+    {
+      "id": "BlueLight",
+      "name": "BlueLight",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/BlueLight.txt",
+      "aliases": [
+        "BlueLight"
+      ],
+      "colors": [
+        "7",
+        "4"
+      ],
+      "color_rule": "7 4",
+      "matcher": "\"BlueLight\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 38,
+      "original_id": "038_BlueLight",
+      "original_file": "Logos/038_BlueLight.txt"
+    },
+    {
+      "id": "Bodhi",
+      "name": "Bodhi",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Bodhi.txt",
+      "aliases": [
+        "Bodhi"
+      ],
+      "colors": [
+        "7",
+        "11",
+        "2"
+      ],
+      "color_rule": "7 11 2",
+      "matcher": "\"Bodhi\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 39,
+      "original_id": "039_Bodhi",
+      "original_file": "Logos/039_Bodhi.txt"
+    },
+    {
+      "id": "bonsai",
+      "name": "bonsai",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/bonsai.txt",
+      "aliases": [
+        "bonsai"
+      ],
+      "colors": [
+        "6",
+        "2",
+        "3"
+      ],
+      "color_rule": "6 2 3",
+      "matcher": "\"bonsai\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 40,
+      "original_id": "040_bonsai",
+      "original_file": "Logos/040_bonsai.txt"
+    },
+    {
+      "id": "BSD",
+      "name": "BSD",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/BSD.txt",
+      "aliases": [
+        "BSD"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "4",
+        "3",
+        "6"
+      ],
+      "color_rule": "1 7 4 3 6",
+      "matcher": "\"BSD\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 41,
+      "original_id": "041_BSD",
+      "original_file": "Logos/041_BSD.txt"
+    },
+    {
+      "id": "BunsenLabs",
+      "name": "BunsenLabs",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/BunsenLabs.txt",
+      "aliases": [
+        "BunsenLabs"
+      ],
+      "colors": [
+        "fg",
+        "7"
+      ],
+      "color_rule": "fg 7",
+      "matcher": "\"BunsenLabs\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 42,
+      "original_id": "042_BunsenLabs",
+      "original_file": "Logos/042_BunsenLabs.txt"
+    },
+    {
+      "id": "Calculate",
+      "name": "Calculate",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Calculate.txt",
+      "aliases": [
+        "Calculate"
+      ],
+      "colors": [
+        "7",
+        "3"
+      ],
+      "color_rule": "7 3",
+      "matcher": "\"Calculate\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 43,
+      "original_id": "043_Calculate",
+      "original_file": "Logos/043_Calculate.txt"
+    },
+    {
+      "id": "Carbs",
+      "name": "Carbs",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Carbs.txt",
+      "aliases": [
+        "Carbs"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "4",
+        "4",
+        "4",
+        "4"
+      ],
+      "color_rule": "4 5 4 4 4 4",
+      "matcher": "\"Carbs\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 44,
+      "original_id": "044_Carbs",
+      "original_file": "Logos/044_Carbs.txt"
+    },
+    {
+      "id": "CBL_Mariner",
+      "name": "CBL-Mariner",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/CBL_Mariner.txt",
+      "aliases": [
+        "CBL-Mariner"
+      ],
+      "colors": [
+        "6"
+      ],
+      "color_rule": "6",
+      "matcher": "\"CBL-Mariner\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 45,
+      "original_id": "045_CBL-Mariner",
+      "original_file": "Logos/045_CBL-Mariner.txt"
+    },
+    {
+      "id": "CelOS",
+      "name": "CelOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/CelOS.txt",
+      "aliases": [
+        "CelOS"
+      ],
+      "colors": [
+        "4",
+        "6",
+        "0",
+        "5"
+      ],
+      "color_rule": "4 6 0 5",
+      "matcher": "\"CelOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 46,
+      "original_id": "046_CelOS",
+      "original_file": "Logos/046_CelOS.txt"
+    },
+    {
+      "id": "centos_Small",
+      "name": "centos_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/centos_Small.txt",
+      "aliases": [
+        "centos_small"
+      ],
+      "colors": [
+        "3",
+        "2",
+        "4",
+        "5",
+        "7"
+      ],
+      "color_rule": "3 2 4 5 7",
+      "matcher": "\"centos_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 47,
+      "original_id": "047_centos_small",
+      "original_file": "Logos/047_centos_small.txt"
+    },
+    {
+      "id": "CentOS",
+      "name": "CentOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/CentOS.txt",
+      "aliases": [
+        "CentOS"
+      ],
+      "colors": [
+        "3",
+        "2",
+        "4",
+        "5",
+        "7"
+      ],
+      "color_rule": "3 2 4 5 7",
+      "matcher": "\"CentOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 48,
+      "original_id": "048_CentOS",
+      "original_file": "Logos/048_CentOS.txt"
+    },
+    {
+      "id": "Chakra",
+      "name": "Chakra",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Chakra.txt",
+      "aliases": [
+        "Chakra"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"Chakra\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 49,
+      "original_id": "049_Chakra",
+      "original_file": "Logos/049_Chakra.txt"
+    },
+    {
+      "id": "ChaletOS",
+      "name": "ChaletOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/ChaletOS.txt",
+      "aliases": [
+        "ChaletOS"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"ChaletOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 50,
+      "original_id": "050_ChaletOS",
+      "original_file": "Logos/050_ChaletOS.txt"
+    },
+    {
+      "id": "Chapeau",
+      "name": "Chapeau",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Chapeau.txt",
+      "aliases": [
+        "Chapeau"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Chapeau\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 51,
+      "original_id": "051_Chapeau",
+      "original_file": "Logos/051_Chapeau.txt"
+    },
+    {
+      "id": "Chrom",
+      "name": "Chrom",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Chrom.txt",
+      "aliases": [
+        "Chrom"
+      ],
+      "colors": [
+        "2",
+        "1",
+        "3",
+        "4",
+        "7"
+      ],
+      "color_rule": "2 1 3 4 7",
+      "matcher": "\"Chrom\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 52,
+      "original_id": "052_Chrom",
+      "original_file": "Logos/052_Chrom.txt"
+    },
+    {
+      "id": "cleanjaro_Small",
+      "name": "cleanjaro_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/cleanjaro_Small.txt",
+      "aliases": [
+        "cleanjaro_small"
+      ],
+      "colors": [
+        "7",
+        "7"
+      ],
+      "color_rule": "7 7",
+      "matcher": "\"cleanjaro_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 53,
+      "original_id": "053_cleanjaro_small",
+      "original_file": "Logos/053_cleanjaro_small.txt"
+    },
+    {
+      "id": "Cleanjaro",
+      "name": "Cleanjaro",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Cleanjaro.txt",
+      "aliases": [
+        "Cleanjaro"
+      ],
+      "colors": [
+        "7",
+        "7"
+      ],
+      "color_rule": "7 7",
+      "matcher": "\"Cleanjaro\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 54,
+      "original_id": "054_Cleanjaro",
+      "original_file": "Logos/054_Cleanjaro.txt"
+    },
+    {
+      "id": "ClearOS",
+      "name": "ClearOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/ClearOS.txt",
+      "aliases": [
+        "ClearOS"
+      ],
+      "colors": [
+        "2"
+      ],
+      "color_rule": "2",
+      "matcher": "\"ClearOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 55,
+      "original_id": "055_ClearOS",
+      "original_file": "Logos/055_ClearOS.txt"
+    },
+    {
+      "id": "Clear_Linux_OS",
+      "name": "Clear Linux OS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Clear_Linux_OS.txt",
+      "aliases": [
+        "Clear Linux OS",
+        "Clear_Linux"
+      ],
+      "colors": [
+        "4",
+        "3",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 3 7 6",
+      "matcher": "\"Clear Linux OS\"* | \"Clear_Linux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 56,
+      "original_id": "056_Clear_Linux_OS",
+      "original_file": "Logos/056_Clear_Linux_OS.txt"
+    },
+    {
+      "id": "Clover",
+      "name": "Clover",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Clover.txt",
+      "aliases": [
+        "Clover"
+      ],
+      "colors": [
+        "2",
+        "6"
+      ],
+      "color_rule": "2 6",
+      "matcher": "\"Clover\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 57,
+      "original_id": "057_Clover",
+      "original_file": "Logos/057_Clover.txt"
+    },
+    {
+      "id": "Condres",
+      "name": "Condres",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Condres.txt",
+      "aliases": [
+        "Condres"
+      ],
+      "colors": [
+        "2",
+        "3",
+        "6"
+      ],
+      "color_rule": "2 3 6",
+      "matcher": "\"Condres\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 58,
+      "original_id": "058_Condres",
+      "original_file": "Logos/058_Condres.txt"
+    },
+    {
+      "id": "Container_Linux_by_CoreOS",
+      "name": "Container Linux by CoreOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Container_Linux_by_CoreOS.txt",
+      "aliases": [
+        "Container Linux by CoreOS",
+        "Container_Linux"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Container Linux by CoreOS\"* | \"Container_Linux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 59,
+      "original_id": "059_Container_Linux_by_CoreOS",
+      "original_file": "Logos/059_Container_Linux_by_CoreOS.txt"
+    },
+    {
+      "id": "crux_Small",
+      "name": "crux_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/crux_Small.txt",
+      "aliases": [
+        "crux_small",
+        "KISS"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"crux_small\"|KISS*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 60,
+      "original_id": "060_crux_small",
+      "original_file": "Logos/060_crux_small.txt"
+    },
+    {
+      "id": "CRUX",
+      "name": "CRUX",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/CRUX.txt",
+      "aliases": [
+        "CRUX"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"CRUX\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 61,
+      "original_id": "061_CRUX",
+      "original_file": "Logos/061_CRUX.txt"
+    },
+    {
+      "id": "Crystal_Linux",
+      "name": "Crystal Linux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Crystal_Linux.txt",
+      "aliases": [
+        "Crystal Linux"
+      ],
+      "colors": [
+        "13",
+        "5"
+      ],
+      "color_rule": "13 5",
+      "matcher": "*\"Crystal Linux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 62,
+      "original_id": "062_Crystal_Linux",
+      "original_file": "Logos/062_Crystal_Linux.txt"
+    },
+    {
+      "id": "Cucumber",
+      "name": "Cucumber",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Cucumber.txt",
+      "aliases": [
+        "Cucumber"
+      ],
+      "colors": [
+        "2",
+        "3"
+      ],
+      "color_rule": "2 3",
+      "matcher": "*\"Cucumber\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 63,
+      "original_id": "063_Cucumber",
+      "original_file": "Logos/063_Cucumber.txt"
+    },
+    {
+      "id": "CyberOS",
+      "name": "CyberOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/CyberOS.txt",
+      "aliases": [
+        "CyberOS"
+      ],
+      "colors": [
+        "50",
+        "32",
+        "57"
+      ],
+      "color_rule": "50 32 57",
+      "matcher": "\"CyberOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 64,
+      "original_id": "064_CyberOS",
+      "original_file": "Logos/064_CyberOS.txt"
+    },
+    {
+      "id": "dahlia",
+      "name": "dahlia",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/dahlia.txt",
+      "aliases": [
+        "dahlia"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"dahlia\"*)",
+      "parent_matcher": "\"CyberOS\"*)",
+      "source": "NeoFetch",
+      "original_index": 65,
+      "original_id": "065_dahlia",
+      "original_file": "Logos/065_dahlia.txt"
+    },
+    {
+      "id": "debian_Small",
+      "name": "debian_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/debian_Small.txt",
+      "aliases": [
+        "debian_small"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"debian_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 66,
+      "original_id": "066_debian_small",
+      "original_file": "Logos/066_debian_small.txt"
+    },
+    {
+      "id": "Debian",
+      "name": "Debian",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Debian.txt",
+      "aliases": [
+        "Debian"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"Debian\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 67,
+      "original_id": "067_Debian",
+      "original_file": "Logos/067_Debian.txt"
+    },
+    {
+      "id": "Deepin",
+      "name": "Deepin",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Deepin.txt",
+      "aliases": [
+        "Deepin"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Deepin\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 68,
+      "original_id": "068_Deepin",
+      "original_file": "Logos/068_Deepin.txt"
+    },
+    {
+      "id": "DesaOS",
+      "name": "DesaOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/DesaOS.txt",
+      "aliases": [
+        "DesaOS"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"DesaOS\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 69,
+      "original_id": "069_DesaOS",
+      "original_file": "Logos/069_DesaOS.txt"
+    },
+    {
+      "id": "Devuan",
+      "name": "Devuan",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Devuan.txt",
+      "aliases": [
+        "Devuan"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"Devuan\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 70,
+      "original_id": "070_Devuan",
+      "original_file": "Logos/070_Devuan.txt"
+    },
+    {
+      "id": "DracOS",
+      "name": "DracOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/DracOS.txt",
+      "aliases": [
+        "DracOS"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"DracOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 71,
+      "original_id": "071_DracOS",
+      "original_file": "Logos/071_DracOS.txt"
+    },
+    {
+      "id": "DarkOs",
+      "name": "DarkOs",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/DarkOs.txt",
+      "aliases": [
+        "DarkOs"
+      ],
+      "colors": [
+        "1",
+        "6",
+        "5",
+        "3",
+        "2"
+      ],
+      "color_rule": "1 6 5 3 2",
+      "matcher": "\"DarkOs\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 72,
+      "original_id": "072_DarkOs",
+      "original_file": "Logos/072_DarkOs.txt"
+    },
+    {
+      "id": "Itc",
+      "name": "Itc",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Itc.txt",
+      "aliases": [
+        "Itc"
+      ],
+      "colors": [
+        "1"
+      ],
+      "color_rule": "1",
+      "matcher": "\"Itc\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 73,
+      "original_id": "073_Itc",
+      "original_file": "Logos/073_Itc.txt"
+    },
+    {
+      "id": "dragonfly_Old",
+      "name": "dragonfly_old",
+      "family": "Other",
+      "variant": "old",
+      "file": "Other/dragonfly_Old.txt",
+      "aliases": [
+        "dragonfly_old"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"dragonfly_old\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 74,
+      "original_id": "074_dragonfly_old",
+      "original_file": "Logos/074_dragonfly_old.txt"
+    },
+    {
+      "id": "dragonfly_Small",
+      "name": "dragonfly_small",
+      "family": "Other",
+      "variant": "small",
+      "file": "Other/dragonfly_Small.txt",
+      "aliases": [
+        "dragonfly_small"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"dragonfly_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 75,
+      "original_id": "075_dragonfly_small",
+      "original_file": "Logos/075_dragonfly_small.txt"
+    },
+    {
+      "id": "DragonFly",
+      "name": "DragonFly",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/DragonFly.txt",
+      "aliases": [
+        "DragonFly"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"DragonFly\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 76,
+      "original_id": "076_DragonFly",
+      "original_file": "Logos/076_DragonFly.txt"
+    },
+    {
+      "id": "Drauger",
+      "name": "Drauger",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Drauger.txt",
+      "aliases": [
+        "Drauger"
+      ],
+      "colors": [
+        "1",
+        "7"
+      ],
+      "color_rule": "1 7",
+      "matcher": "\"Drauger\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 77,
+      "original_id": "077_Drauger",
+      "original_file": "Logos/077_Drauger.txt"
+    },
+    {
+      "id": "elementary_Small",
+      "name": "elementary_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/elementary_Small.txt",
+      "aliases": [
+        "elementary_small"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"elementary_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 78,
+      "original_id": "078_elementary_small",
+      "original_file": "Logos/078_elementary_small.txt"
+    },
+    {
+      "id": "Elementary",
+      "name": "Elementary",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Elementary.txt",
+      "aliases": [
+        "Elementary"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Elementary\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 79,
+      "original_id": "079_Elementary",
+      "original_file": "Logos/079_Elementary.txt"
+    },
+    {
+      "id": "EndeavourOS",
+      "name": "EndeavourOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/EndeavourOS.txt",
+      "aliases": [
+        "EndeavourOS"
+      ],
+      "colors": [
+        "1",
+        "5",
+        "4"
+      ],
+      "color_rule": "1 5 4",
+      "matcher": "\"EndeavourOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 80,
+      "original_id": "080_EndeavourOS",
+      "original_file": "Logos/080_EndeavourOS.txt"
+    },
+    {
+      "id": "Endless",
+      "name": "Endless",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Endless.txt",
+      "aliases": [
+        "Endless"
+      ],
+      "colors": [
+        "1",
+        "7"
+      ],
+      "color_rule": "1 7",
+      "matcher": "\"Endless\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 81,
+      "original_id": "081_Endless",
+      "original_file": "Logos/081_Endless.txt"
+    },
+    {
+      "id": "EuroLinux",
+      "name": "EuroLinux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/EuroLinux.txt",
+      "aliases": [
+        "EuroLinux"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"EuroLinux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 82,
+      "original_id": "082_EuroLinux",
+      "original_file": "Logos/082_EuroLinux.txt"
+    },
+    {
+      "id": "Exherbo",
+      "name": "Exherbo",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Exherbo.txt",
+      "aliases": [
+        "Exherbo"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Exherbo\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 83,
+      "original_id": "083_Exherbo",
+      "original_file": "Logos/083_Exherbo.txt"
+    },
+    {
+      "id": "fedora_Small",
+      "name": "fedora_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/fedora_Small.txt",
+      "aliases": [
+        "fedora_small"
+      ],
+      "colors": [
+        "12"
+      ],
+      "color_rule": "12",
+      "matcher": "\"fedora_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 84,
+      "original_id": "084_fedora_small",
+      "original_file": "Logos/084_fedora_small.txt"
+    },
+    {
+      "id": "Fedora_Old",
+      "name": "Fedora_old",
+      "family": "Linux",
+      "variant": "old",
+      "file": "Linux/Fedora_Old.txt",
+      "aliases": [
+        "Fedora_old",
+        "RFRemix"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Fedora_old\"* | \"RFRemix\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 85,
+      "original_id": "085_Fedora_old",
+      "original_file": "Logos/085_Fedora_old.txt"
+    },
+    {
+      "id": "Fedora",
+      "name": "Fedora",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Fedora.txt",
+      "aliases": [
+        "Fedora"
+      ],
+      "colors": [
+        "12",
+        "7"
+      ],
+      "color_rule": "12 7",
+      "matcher": "\"Fedora\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 86,
+      "original_id": "086_Fedora",
+      "original_file": "Logos/086_Fedora.txt"
+    },
+    {
+      "id": "Feren",
+      "name": "Feren",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Feren.txt",
+      "aliases": [
+        "Feren"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Feren\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 87,
+      "original_id": "087_Feren",
+      "original_file": "Logos/087_Feren.txt"
+    },
+    {
+      "id": "freebsd_Small",
+      "name": "freebsd_small",
+      "family": "Other",
+      "variant": "small",
+      "file": "Other/freebsd_Small.txt",
+      "aliases": [
+        "freebsd_small"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"freebsd_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 88,
+      "original_id": "088_freebsd_small",
+      "original_file": "Logos/088_freebsd_small.txt"
+    },
+    {
+      "id": "FreeBSD",
+      "name": "FreeBSD",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/FreeBSD.txt",
+      "aliases": [
+        "FreeBSD",
+        "HardenedBSD"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "FreeBSD*|HardenedBSD*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 89,
+      "original_id": "089_FreeBSD",
+      "original_file": "Logos/089_FreeBSD.txt"
+    },
+    {
+      "id": "FreeMiNT",
+      "name": "FreeMiNT",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/FreeMiNT.txt",
+      "aliases": [
+        "FreeMiNT"
+      ],
+      "colors": [
+        "7"
+      ],
+      "color_rule": "7",
+      "matcher": "\"FreeMiNT\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 90,
+      "original_id": "090_FreeMiNT",
+      "original_file": "Logos/090_FreeMiNT.txt"
+    },
+    {
+      "id": "Frugalware",
+      "name": "Frugalware",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Frugalware.txt",
+      "aliases": [
+        "Frugalware"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Frugalware\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 91,
+      "original_id": "091_Frugalware",
+      "original_file": "Logos/091_Frugalware.txt"
+    },
+    {
+      "id": "Funtoo",
+      "name": "Funtoo",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Funtoo.txt",
+      "aliases": [
+        "Funtoo"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"Funtoo\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 92,
+      "original_id": "092_Funtoo",
+      "original_file": "Logos/092_Funtoo.txt"
+    },
+    {
+      "id": "GalliumOS",
+      "name": "GalliumOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/GalliumOS.txt",
+      "aliases": [
+        "GalliumOS"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"GalliumOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 93,
+      "original_id": "093_GalliumOS",
+      "original_file": "Logos/093_GalliumOS.txt"
+    },
+    {
+      "id": "Garuda",
+      "name": "Garuda",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Garuda.txt",
+      "aliases": [
+        "Garuda"
+      ],
+      "colors": [
+        "7",
+        "7",
+        "3",
+        "7",
+        "2",
+        "4"
+      ],
+      "color_rule": "7 7 3 7 2 4",
+      "matcher": "\"Garuda\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 94,
+      "original_id": "094_Garuda",
+      "original_file": "Logos/094_Garuda.txt"
+    },
+    {
+      "id": "gentoo_Small",
+      "name": "gentoo_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/gentoo_Small.txt",
+      "aliases": [
+        "gentoo_small"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"gentoo_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 95,
+      "original_id": "095_gentoo_small",
+      "original_file": "Logos/095_gentoo_small.txt"
+    },
+    {
+      "id": "Gentoo",
+      "name": "Gentoo",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Gentoo.txt",
+      "aliases": [
+        "Gentoo"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"Gentoo\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 96,
+      "original_id": "096_Gentoo",
+      "original_file": "Logos/096_Gentoo.txt"
+    },
+    {
+      "id": "Pentoo",
+      "name": "Pentoo",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Pentoo.txt",
+      "aliases": [
+        "Pentoo"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"Pentoo\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 97,
+      "original_id": "097_Pentoo",
+      "original_file": "Logos/097_Pentoo.txt"
+    },
+    {
+      "id": "glaucus",
+      "name": "glaucus",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/glaucus.txt",
+      "aliases": [
+        "glaucus"
+      ],
+      "colors": [
+        "5"
+      ],
+      "color_rule": "5",
+      "matcher": "\"glaucus\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 98,
+      "original_id": "098_glaucus",
+      "original_file": "Logos/098_glaucus.txt"
+    },
+    {
+      "id": "gNewSense",
+      "name": "gNewSense",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/gNewSense.txt",
+      "aliases": [
+        "gNewSense"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"gNewSense\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 99,
+      "original_id": "099_gNewSense",
+      "original_file": "Logos/099_gNewSense.txt"
+    },
+    {
+      "id": "GNOME",
+      "name": "GNOME",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/GNOME.txt",
+      "aliases": [
+        "GNOME"
+      ],
+      "colors": [
+        "4"
+      ],
+      "color_rule": "4",
+      "matcher": "\"GNOME\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 100,
+      "original_id": "100_GNOME",
+      "original_file": "Logos/100_GNOME.txt"
+    },
+    {
+      "id": "GNU",
+      "name": "GNU",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/GNU.txt",
+      "aliases": [
+        "GNU"
+      ],
+      "colors": [
+        "fg",
+        "7"
+      ],
+      "color_rule": "fg 7",
+      "matcher": "\"GNU\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 101,
+      "original_id": "101_GNU",
+      "original_file": "Logos/101_GNU.txt"
+    },
+    {
+      "id": "GoboLinux",
+      "name": "GoboLinux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/GoboLinux.txt",
+      "aliases": [
+        "GoboLinux"
+      ],
+      "colors": [
+        "5",
+        "4",
+        "6",
+        "2"
+      ],
+      "color_rule": "5 4 6 2",
+      "matcher": "\"GoboLinux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 102,
+      "original_id": "102_GoboLinux",
+      "original_file": "Logos/102_GoboLinux.txt"
+    },
+    {
+      "id": "Grombyang",
+      "name": "Grombyang",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Grombyang.txt",
+      "aliases": [
+        "Grombyang"
+      ],
+      "colors": [
+        "4",
+        "2",
+        "1"
+      ],
+      "color_rule": "4 2 1",
+      "matcher": "\"Grombyang\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 103,
+      "original_id": "103_Grombyang",
+      "original_file": "Logos/103_Grombyang.txt"
+    },
+    {
+      "id": "guix_Small",
+      "name": "guix_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/guix_Small.txt",
+      "aliases": [
+        "guix_small"
+      ],
+      "colors": [
+        "3",
+        "7",
+        "6",
+        "1",
+        "8"
+      ],
+      "color_rule": "3 7 6 1 8",
+      "matcher": "\"guix_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 104,
+      "original_id": "104_guix_small",
+      "original_file": "Logos/104_guix_small.txt"
+    },
+    {
+      "id": "Guix",
+      "name": "Guix",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Guix.txt",
+      "aliases": [
+        "Guix"
+      ],
+      "colors": [
+        "3",
+        "7",
+        "6",
+        "1",
+        "8"
+      ],
+      "color_rule": "3 7 6 1 8",
+      "matcher": "\"Guix\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 105,
+      "original_id": "105_Guix",
+      "original_file": "Logos/105_Guix.txt"
+    },
+    {
+      "id": "haiku_Small",
+      "name": "haiku_small",
+      "family": "Other",
+      "variant": "small",
+      "file": "Other/haiku_Small.txt",
+      "aliases": [
+        "haiku_small"
+      ],
+      "colors": [
+        "2",
+        "8"
+      ],
+      "color_rule": "2 8",
+      "matcher": "\"haiku_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 106,
+      "original_id": "106_haiku_small",
+      "original_file": "Logos/106_haiku_small.txt"
+    },
+    {
+      "id": "Haiku",
+      "name": "Haiku",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/Haiku.txt",
+      "aliases": [
+        "Haiku"
+      ],
+      "colors": [
+        "1",
+        "3",
+        "7",
+        "2"
+      ],
+      "color_rule": "1 3 7 2",
+      "matcher": "\"Haiku\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 107,
+      "original_id": "107_Haiku",
+      "original_file": "Logos/107_Haiku.txt"
+    },
+    {
+      "id": "Huayra",
+      "name": "Huayra",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Huayra.txt",
+      "aliases": [
+        "Huayra"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"Huayra\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 108,
+      "original_id": "108_Huayra",
+      "original_file": "Logos/108_Huayra.txt"
+    },
+    {
+      "id": "HydroOS",
+      "name": "HydroOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/HydroOS.txt",
+      "aliases": [
+        "HydroOS"
+      ],
+      "colors": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "color_rule": "1 2 3 4 5",
+      "matcher": "\"HydroOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 109,
+      "original_id": "109_HydroOS",
+      "original_file": "Logos/109_HydroOS.txt"
+    },
+    {
+      "id": "hyperbola_Small",
+      "name": "hyperbola_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/hyperbola_Small.txt",
+      "aliases": [
+        "hyperbola_small"
+      ],
+      "colors": [
+        "8"
+      ],
+      "color_rule": "8",
+      "matcher": "\"hyperbola_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 110,
+      "original_id": "110_hyperbola_small",
+      "original_file": "Logos/110_hyperbola_small.txt"
+    },
+    {
+      "id": "Hyperbola",
+      "name": "Hyperbola",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Hyperbola.txt",
+      "aliases": [
+        "Hyperbola"
+      ],
+      "colors": [
+        "8"
+      ],
+      "color_rule": "8",
+      "matcher": "\"Hyperbola\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 111,
+      "original_id": "111_Hyperbola",
+      "original_file": "Logos/111_Hyperbola.txt"
+    },
+    {
+      "id": "iglunix",
+      "name": "iglunix",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/iglunix.txt",
+      "aliases": [
+        "iglunix",
+        "iglu"
+      ],
+      "colors": [
+        "8"
+      ],
+      "color_rule": "8",
+      "matcher": "\"iglunix\"*|\"iglu\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 112,
+      "original_id": "112_iglunix",
+      "original_file": "Logos/112_iglunix.txt"
+    },
+    {
+      "id": "januslinux",
+      "name": "januslinux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/januslinux.txt",
+      "aliases": [
+        "januslinux",
+        "janus",
+        "Ataraxia Linux",
+        "Ataraxia"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "6",
+        "2"
+      ],
+      "color_rule": "4 5 6 2",
+      "matcher": "\"januslinux\"*|\"janus\"*|\"Ataraxia Linux\"*|\"Ataraxia\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 113,
+      "original_id": "113_januslinux",
+      "original_file": "Logos/113_januslinux.txt"
+    },
+    {
+      "id": "Kaisen",
+      "name": "Kaisen",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Kaisen.txt",
+      "aliases": [
+        "Kaisen"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"Kaisen\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 114,
+      "original_id": "114_Kaisen",
+      "original_file": "Logos/114_Kaisen.txt"
+    },
+    {
+      "id": "Kali",
+      "name": "Kali",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Kali.txt",
+      "aliases": [
+        "Kali"
+      ],
+      "colors": [
+        "4",
+        "8"
+      ],
+      "color_rule": "4 8",
+      "matcher": "\"Kali\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 115,
+      "original_id": "115_Kali",
+      "original_file": "Logos/115_Kali.txt"
+    },
+    {
+      "id": "KaOS",
+      "name": "KaOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/KaOS.txt",
+      "aliases": [
+        "KaOS"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"KaOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 116,
+      "original_id": "116_KaOS",
+      "original_file": "Logos/116_KaOS.txt"
+    },
+    {
+      "id": "KDE",
+      "name": "KDE",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/KDE.txt",
+      "aliases": [
+        "KDE"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"KDE\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 117,
+      "original_id": "117_KDE",
+      "original_file": "Logos/117_KDE.txt"
+    },
+    {
+      "id": "Kibojoe",
+      "name": "Kibojoe",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Kibojoe.txt",
+      "aliases": [
+        "Kibojoe"
+      ],
+      "colors": [
+        "2",
+        "7",
+        "4"
+      ],
+      "color_rule": "2 7 4",
+      "matcher": "\"Kibojoe\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 118,
+      "original_id": "118_Kibojoe",
+      "original_file": "Logos/118_Kibojoe.txt"
+    },
+    {
+      "id": "Kogaion",
+      "name": "Kogaion",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Kogaion.txt",
+      "aliases": [
+        "Kogaion"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Kogaion\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 119,
+      "original_id": "119_Kogaion",
+      "original_file": "Logos/119_Kogaion.txt"
+    },
+    {
+      "id": "Korora",
+      "name": "Korora",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Korora.txt",
+      "aliases": [
+        "Korora"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Korora\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 120,
+      "original_id": "120_Korora",
+      "original_file": "Logos/120_Korora.txt"
+    },
+    {
+      "id": "KSLinux",
+      "name": "KSLinux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/KSLinux.txt",
+      "aliases": [
+        "KSLinux"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"KSLinux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 121,
+      "original_id": "121_KSLinux",
+      "original_file": "Logos/121_KSLinux.txt"
+    },
+    {
+      "id": "Kubuntu",
+      "name": "Kubuntu",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Kubuntu.txt",
+      "aliases": [
+        "Kubuntu"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Kubuntu\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 122,
+      "original_id": "122_Kubuntu",
+      "original_file": "Logos/122_Kubuntu.txt"
+    },
+    {
+      "id": "LEDE",
+      "name": "LEDE",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/LEDE.txt",
+      "aliases": [
+        "LEDE"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"LEDE\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 123,
+      "original_id": "123_LEDE",
+      "original_file": "Logos/123_LEDE.txt"
+    },
+    {
+      "id": "LaxerOS",
+      "name": "LaxerOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/LaxerOS.txt",
+      "aliases": [
+        "LaxerOS"
+      ],
+      "colors": [
+        "7",
+        "4"
+      ],
+      "color_rule": "7 4",
+      "matcher": "\"LaxerOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 124,
+      "original_id": "124_LaxerOS",
+      "original_file": "Logos/124_LaxerOS.txt"
+    },
+    {
+      "id": "LibreELEC",
+      "name": "LibreELEC",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/LibreELEC.txt",
+      "aliases": [
+        "LibreELEC"
+      ],
+      "colors": [
+        "2",
+        "3",
+        "7",
+        "14",
+        "13"
+      ],
+      "color_rule": "2 3 7 14 13",
+      "matcher": "\"LibreELEC\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 125,
+      "original_id": "125_LibreELEC",
+      "original_file": "Logos/125_LibreELEC.txt"
+    },
+    {
+      "id": "Linux",
+      "name": "Linux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Linux.txt",
+      "aliases": [
+        "Linux"
+      ],
+      "colors": [
+        "fg",
+        "8",
+        "3"
+      ],
+      "color_rule": "fg 8 3",
+      "matcher": "\"Linux\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 126,
+      "original_id": "126_Linux",
+      "original_file": "Logos/126_Linux.txt"
+    },
+    {
+      "id": "linuxlite_Small",
+      "name": "linuxlite_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/linuxlite_Small.txt",
+      "aliases": [
+        "linuxlite_small"
+      ],
+      "colors": [
+        "3",
+        "7"
+      ],
+      "color_rule": "3 7",
+      "matcher": "\"linuxlite_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 127,
+      "original_id": "127_linuxlite_small",
+      "original_file": "Logos/127_linuxlite_small.txt"
+    },
+    {
+      "id": "Linux_Lite",
+      "name": "Linux Lite",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Linux_Lite.txt",
+      "aliases": [
+        "Linux Lite",
+        "Linux_Lite"
+      ],
+      "colors": [
+        "3",
+        "7"
+      ],
+      "color_rule": "3 7",
+      "matcher": "\"Linux Lite\"* | \"Linux_Lite\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 128,
+      "original_id": "128_Linux_Lite",
+      "original_file": "Logos/128_Linux_Lite.txt"
+    },
+    {
+      "id": "LMDE",
+      "name": "LMDE",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/LMDE.txt",
+      "aliases": [
+        "LMDE"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"LMDE\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 129,
+      "original_id": "129_LMDE",
+      "original_file": "Logos/129_LMDE.txt"
+    },
+    {
+      "id": "Lubuntu",
+      "name": "Lubuntu",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Lubuntu.txt",
+      "aliases": [
+        "Lubuntu"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Lubuntu\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 130,
+      "original_id": "130_Lubuntu",
+      "original_file": "Logos/130_Lubuntu.txt"
+    },
+    {
+      "id": "Lunar",
+      "name": "Lunar",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Lunar.txt",
+      "aliases": [
+        "Lunar"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "3"
+      ],
+      "color_rule": "4 7 3",
+      "matcher": "\"Lunar\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 131,
+      "original_id": "131_Lunar",
+      "original_file": "Logos/131_Lunar.txt"
+    },
+    {
+      "id": "macOS_Small",
+      "name": "mac",
+      "family": "macOS",
+      "variant": "small",
+      "file": "MacOS/macOS_Small.txt",
+      "aliases": [
+        "mac",
+        "_small"
+      ],
+      "colors": [
+        "2",
+        "3",
+        "1",
+        "5",
+        "4"
+      ],
+      "color_rule": "2 3 1 5 4",
+      "matcher": "\"mac\"*\"_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 132,
+      "original_id": "132_mac",
+      "original_file": "Logos/132_mac.txt"
+    },
+    {
+      "id": "macOS_Alt",
+      "name": "mac",
+      "family": "macOS",
+      "variant": "default",
+      "file": "MacOS/macOS_Alt.txt",
+      "aliases": [
+        "mac",
+        "Darwin"
+      ],
+      "colors": [
+        "2",
+        "3",
+        "1",
+        "1",
+        "5",
+        "4"
+      ],
+      "color_rule": "2 3 1 1 5 4",
+      "matcher": "\"mac\"* | \"Darwin\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 133,
+      "original_id": "133_mac",
+      "original_file": "Logos/133_mac.txt"
+    },
+    {
+      "id": "mageia_Small",
+      "name": "mageia_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/mageia_Small.txt",
+      "aliases": [
+        "mageia_small"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"mageia_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 134,
+      "original_id": "134_mageia_small",
+      "original_file": "Logos/134_mageia_small.txt"
+    },
+    {
+      "id": "Mageia",
+      "name": "Mageia",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Mageia.txt",
+      "aliases": [
+        "Mageia"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Mageia\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 135,
+      "original_id": "135_Mageia",
+      "original_file": "Logos/135_Mageia.txt"
+    },
+    {
+      "id": "MagpieOS",
+      "name": "MagpieOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/MagpieOS.txt",
+      "aliases": [
+        "MagpieOS"
+      ],
+      "colors": [
+        "2",
+        "1",
+        "3",
+        "5"
+      ],
+      "color_rule": "2 1 3 5",
+      "matcher": "\"MagpieOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 136,
+      "original_id": "136_MagpieOS",
+      "original_file": "Logos/136_MagpieOS.txt"
+    },
+    {
+      "id": "Mandriva",
+      "name": "Mandriva",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Mandriva.txt",
+      "aliases": [
+        "Mandriva",
+        "Mandrake"
+      ],
+      "colors": [
+        "4",
+        "3"
+      ],
+      "color_rule": "4 3",
+      "matcher": "\"Mandriva\"* | \"Mandrake\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 137,
+      "original_id": "137_Mandriva",
+      "original_file": "Logos/137_Mandriva.txt"
+    },
+    {
+      "id": "manjaro_Small",
+      "name": "manjaro_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/manjaro_Small.txt",
+      "aliases": [
+        "manjaro_small"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"manjaro_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 138,
+      "original_id": "138_manjaro_small",
+      "original_file": "Logos/138_manjaro_small.txt"
+    },
+    {
+      "id": "Manjaro",
+      "name": "Manjaro",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Manjaro.txt",
+      "aliases": [
+        "Manjaro"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Manjaro\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 139,
+      "original_id": "139_Manjaro",
+      "original_file": "Logos/139_Manjaro.txt"
+    },
+    {
+      "id": "TeArch",
+      "name": "TeArch",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/TeArch.txt",
+      "aliases": [
+        "TeArch"
+      ],
+      "colors": [
+        "39",
+        "7",
+        "1"
+      ],
+      "color_rule": "39 7 1",
+      "matcher": "\"TeArch\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 140,
+      "original_id": "140_TeArch",
+      "original_file": "Logos/140_TeArch.txt"
+    },
+    {
+      "id": "Maui",
+      "name": "Maui",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Maui.txt",
+      "aliases": [
+        "Maui"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Maui\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 141,
+      "original_id": "141_Maui",
+      "original_file": "Logos/141_Maui.txt"
+    },
+    {
+      "id": "Mer",
+      "name": "Mer",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Mer.txt",
+      "aliases": [
+        "Mer"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Mer\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 142,
+      "original_id": "142_Mer",
+      "original_file": "Logos/142_Mer.txt"
+    },
+    {
+      "id": "Minix",
+      "name": "Minix",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/Minix.txt",
+      "aliases": [
+        "Minix"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"Minix\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 143,
+      "original_id": "143_Minix",
+      "original_file": "Logos/143_Minix.txt"
+    },
+    {
+      "id": "linuxmint_Small",
+      "name": "linuxmint_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/linuxmint_Small.txt",
+      "aliases": [
+        "linuxmint_small"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"linuxmint_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 144,
+      "original_id": "144_linuxmint_small",
+      "original_file": "Logos/144_linuxmint_small.txt"
+    },
+    {
+      "id": "Linux_Mint_Old",
+      "name": "Linux Mint Old",
+      "family": "Linux",
+      "variant": "old",
+      "file": "Linux/Linux_Mint_Old.txt",
+      "aliases": [
+        "Linux Mint Old",
+        "LinuxMintOld",
+        "mint_old"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Linux Mint Old\"* | \"LinuxMintOld\"* | \"mint_old\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 145,
+      "original_id": "145_Linux_Mint_Old",
+      "original_file": "Logos/145_Linux_Mint_Old.txt"
+    },
+    {
+      "id": "Linux_Mint",
+      "name": "Linux Mint",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Linux_Mint.txt",
+      "aliases": [
+        "Linux Mint",
+        "LinuxMint",
+        "mint"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Linux Mint\"* | \"LinuxMint\"* | \"mint\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 146,
+      "original_id": "146_Linux_Mint",
+      "original_file": "Logos/146_Linux_Mint.txt"
+    },
+    {
+      "id": "Live_Raizo",
+      "name": "Live Raizo",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Live_Raizo.txt",
+      "aliases": [
+        "Live Raizo",
+        "Live_Raizo"
+      ],
+      "colors": [
+        "3"
+      ],
+      "color_rule": "3",
+      "matcher": "\"Live Raizo\"* | \"Live_Raizo\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 147,
+      "original_id": "147_Live_Raizo",
+      "original_file": "Logos/147_Live_Raizo.txt"
+    },
+    {
+      "id": "mx_Small",
+      "name": "mx_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/mx_Small.txt",
+      "aliases": [
+        "mx_small"
+      ],
+      "colors": [
+        "4",
+        "6",
+        "7"
+      ],
+      "color_rule": "4 6 7",
+      "matcher": "\"mx_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 148,
+      "original_id": "148_mx_small",
+      "original_file": "Logos/148_mx_small.txt"
+    },
+    {
+      "id": "MX",
+      "name": "MX",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/MX.txt",
+      "aliases": [
+        "MX"
+      ],
+      "colors": [
+        "4",
+        "6",
+        "7"
+      ],
+      "color_rule": "4 6 7",
+      "matcher": "\"MX\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 149,
+      "original_id": "149_MX",
+      "original_file": "Logos/149_MX.txt"
+    },
+    {
+      "id": "Namib",
+      "name": "Namib",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Namib.txt",
+      "aliases": [
+        "Namib"
+      ],
+      "colors": [
+        "1"
+      ],
+      "color_rule": "1",
+      "matcher": "\"Namib\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 150,
+      "original_id": "150_Namib",
+      "original_file": "Logos/150_Namib.txt"
+    },
+    {
+      "id": "Neptune",
+      "name": "Neptune",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Neptune.txt",
+      "aliases": [
+        "Neptune"
+      ],
+      "colors": [
+        "7"
+      ],
+      "color_rule": "7",
+      "matcher": "\"Neptune\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 151,
+      "original_id": "151_Neptune",
+      "original_file": "Logos/151_Neptune.txt"
+    },
+    {
+      "id": "netbsd_Small",
+      "name": "netbsd_small",
+      "family": "Other",
+      "variant": "small",
+      "file": "Other/netbsd_Small.txt",
+      "aliases": [
+        "netbsd_small"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"netbsd_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 152,
+      "original_id": "152_netbsd_small",
+      "original_file": "Logos/152_netbsd_small.txt"
+    },
+    {
+      "id": "NetBSD",
+      "name": "NetBSD",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/NetBSD.txt",
+      "aliases": [
+        "NetBSD"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"NetBSD\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 153,
+      "original_id": "153_NetBSD",
+      "original_file": "Logos/153_NetBSD.txt"
+    },
+    {
+      "id": "Netrunner",
+      "name": "Netrunner",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Netrunner.txt",
+      "aliases": [
+        "Netrunner"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Netrunner\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 154,
+      "original_id": "154_Netrunner",
+      "original_file": "Logos/154_Netrunner.txt"
+    },
+    {
+      "id": "Nitrux",
+      "name": "Nitrux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Nitrux.txt",
+      "aliases": [
+        "Nitrux"
+      ],
+      "colors": [
+        "4"
+      ],
+      "color_rule": "4",
+      "matcher": "\"Nitrux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 155,
+      "original_id": "155_Nitrux",
+      "original_file": "Logos/155_Nitrux.txt"
+    },
+    {
+      "id": "nixos_Small",
+      "name": "nixos_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/nixos_Small.txt",
+      "aliases": [
+        "nixos_small"
+      ],
+      "colors": [
+        "4",
+        "6"
+      ],
+      "color_rule": "4 6",
+      "matcher": "\"nixos_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 156,
+      "original_id": "156_nixos_small",
+      "original_file": "Logos/156_nixos_small.txt"
+    },
+    {
+      "id": "nixos_Old",
+      "name": "nixos_old",
+      "family": "Linux",
+      "variant": "old",
+      "file": "Linux/nixos_Old.txt",
+      "aliases": [
+        "nixos_old"
+      ],
+      "colors": [
+        "4",
+        "6"
+      ],
+      "color_rule": "4 6",
+      "matcher": "\"nixos_old\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 157,
+      "original_id": "157_nixos_old",
+      "original_file": "Logos/157_nixos_old.txt"
+    },
+    {
+      "id": "NixOS",
+      "name": "NixOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/NixOS.txt",
+      "aliases": [
+        "NixOS"
+      ],
+      "colors": [
+        "4",
+        "6"
+      ],
+      "color_rule": "4 6",
+      "matcher": "\"NixOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 158,
+      "original_id": "158_NixOS",
+      "original_file": "Logos/158_NixOS.txt"
+    },
+    {
+      "id": "Nurunner",
+      "name": "Nurunner",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Nurunner.txt",
+      "aliases": [
+        "Nurunner"
+      ],
+      "colors": [
+        "4"
+      ],
+      "color_rule": "4",
+      "matcher": "\"Nurunner\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 159,
+      "original_id": "159_Nurunner",
+      "original_file": "Logos/159_Nurunner.txt"
+    },
+    {
+      "id": "NuTyX",
+      "name": "NuTyX",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/NuTyX.txt",
+      "aliases": [
+        "NuTyX"
+      ],
+      "colors": [
+        "4",
+        "1"
+      ],
+      "color_rule": "4 1",
+      "matcher": "\"NuTyX\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 160,
+      "original_id": "160_NuTyX",
+      "original_file": "Logos/160_NuTyX.txt"
+    },
+    {
+      "id": "OBRevenge",
+      "name": "OBRevenge",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/OBRevenge.txt",
+      "aliases": [
+        "OBRevenge"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"OBRevenge\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 161,
+      "original_id": "161_OBRevenge",
+      "original_file": "Logos/161_OBRevenge.txt"
+    },
+    {
+      "id": "openbsd_Small",
+      "name": "openbsd_small",
+      "family": "Other",
+      "variant": "small",
+      "file": "Other/openbsd_Small.txt",
+      "aliases": [
+        "openbsd_small"
+      ],
+      "colors": [
+        "3",
+        "7",
+        "6",
+        "1",
+        "8"
+      ],
+      "color_rule": "3 7 6 1 8",
+      "matcher": "\"openbsd_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 162,
+      "original_id": "162_openbsd_small",
+      "original_file": "Logos/162_openbsd_small.txt"
+    },
+    {
+      "id": "OpenBSD",
+      "name": "OpenBSD",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/OpenBSD.txt",
+      "aliases": [
+        "OpenBSD"
+      ],
+      "colors": [
+        "3",
+        "7",
+        "6",
+        "1",
+        "8"
+      ],
+      "color_rule": "3 7 6 1 8",
+      "matcher": "\"OpenBSD\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 163,
+      "original_id": "163_OpenBSD",
+      "original_file": "Logos/163_OpenBSD.txt"
+    },
+    {
+      "id": "openEuler",
+      "name": "openEuler",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/openEuler.txt",
+      "aliases": [
+        "openEuler"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"openEuler\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 164,
+      "original_id": "164_openEuler",
+      "original_file": "Logos/164_openEuler.txt"
+    },
+    {
+      "id": "OpenIndiana",
+      "name": "OpenIndiana",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/OpenIndiana.txt",
+      "aliases": [
+        "OpenIndiana"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"OpenIndiana\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 165,
+      "original_id": "165_OpenIndiana",
+      "original_file": "Logos/165_OpenIndiana.txt"
+    },
+    {
+      "id": "openmamba",
+      "name": "openmamba",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/openmamba.txt",
+      "aliases": [
+        "openmamba"
+      ],
+      "colors": [
+        "7",
+        "2"
+      ],
+      "color_rule": "7 2",
+      "matcher": "\"openmamba\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 166,
+      "original_id": "166_openmamba",
+      "original_file": "Logos/166_openmamba.txt"
+    },
+    {
+      "id": "OpenMandriva",
+      "name": "OpenMandriva",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/OpenMandriva.txt",
+      "aliases": [
+        "OpenMandriva"
+      ],
+      "colors": [
+        "4"
+      ],
+      "color_rule": "4",
+      "matcher": "\"OpenMandriva\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 167,
+      "original_id": "167_OpenMandriva",
+      "original_file": "Logos/167_OpenMandriva.txt"
+    },
+    {
+      "id": "OpenStage",
+      "name": "OpenStage",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/OpenStage.txt",
+      "aliases": [
+        "OpenStage"
+      ],
+      "colors": [
+        "2"
+      ],
+      "color_rule": "2",
+      "matcher": "\"OpenStage\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 168,
+      "original_id": "168_OpenStage",
+      "original_file": "Logos/168_OpenStage.txt"
+    },
+    {
+      "id": "OpenWrt",
+      "name": "OpenWrt",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/OpenWrt.txt",
+      "aliases": [
+        "OpenWrt"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"OpenWrt\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 169,
+      "original_id": "169_OpenWrt",
+      "original_file": "Logos/169_OpenWrt.txt"
+    },
+    {
+      "id": "Open_Source_Media_Center",
+      "name": "Open Source Media Center",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Open_Source_Media_Center.txt",
+      "aliases": [
+        "Open Source Media Center",
+        "osmc"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Open Source Media Center\"* | \"osmc\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 170,
+      "original_id": "170_Open_Source_Media_Center",
+      "original_file": "Logos/170_Open_Source_Media_Center.txt"
+    },
+    {
+      "id": "Oracle",
+      "name": "Oracle",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Oracle.txt",
+      "aliases": [
+        "Oracle"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"Oracle\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 171,
+      "original_id": "171_Oracle",
+      "original_file": "Logos/171_Oracle.txt"
+    },
+    {
+      "id": "OS_Elbrus",
+      "name": "OS Elbrus",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/OS_Elbrus.txt",
+      "aliases": [
+        "OS Elbrus"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "3"
+      ],
+      "color_rule": "4 7 3",
+      "matcher": "\"OS Elbrus\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 172,
+      "original_id": "172_OS_Elbrus",
+      "original_file": "Logos/172_OS_Elbrus.txt"
+    },
+    {
+      "id": "PacBSD",
+      "name": "PacBSD",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/PacBSD.txt",
+      "aliases": [
+        "PacBSD"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"PacBSD\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 173,
+      "original_id": "173_PacBSD",
+      "original_file": "Logos/173_PacBSD.txt"
+    },
+    {
+      "id": "parabola_Small",
+      "name": "parabola_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/parabola_Small.txt",
+      "aliases": [
+        "parabola_small"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"parabola_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 174,
+      "original_id": "174_parabola_small",
+      "original_file": "Logos/174_parabola_small.txt"
+    },
+    {
+      "id": "Parabola",
+      "name": "Parabola",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Parabola.txt",
+      "aliases": [
+        "Parabola"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"Parabola\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 175,
+      "original_id": "175_Parabola",
+      "original_file": "Logos/175_Parabola.txt"
+    },
+    {
+      "id": "Pardus",
+      "name": "Pardus",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Pardus.txt",
+      "aliases": [
+        "Pardus"
+      ],
+      "colors": [
+        "3",
+        "7",
+        "6",
+        "1",
+        "8"
+      ],
+      "color_rule": "3 7 6 1 8",
+      "matcher": "\"Pardus\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 176,
+      "original_id": "176_Pardus",
+      "original_file": "Logos/176_Pardus.txt"
+    },
+    {
+      "id": "Parrot",
+      "name": "Parrot",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Parrot.txt",
+      "aliases": [
+        "Parrot"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Parrot\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 177,
+      "original_id": "177_Parrot",
+      "original_file": "Logos/177_Parrot.txt"
+    },
+    {
+      "id": "Parsix",
+      "name": "Parsix",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Parsix.txt",
+      "aliases": [
+        "Parsix"
+      ],
+      "colors": [
+        "3",
+        "1",
+        "7",
+        "8"
+      ],
+      "color_rule": "3 1 7 8",
+      "matcher": "\"Parsix\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 178,
+      "original_id": "178_Parsix",
+      "original_file": "Logos/178_Parsix.txt"
+    },
+    {
+      "id": "PCBSD",
+      "name": "PCBSD",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/PCBSD.txt",
+      "aliases": [
+        "PCBSD",
+        "TrueOS"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"PCBSD\"* | \"TrueOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 179,
+      "original_id": "179_PCBSD",
+      "original_file": "Logos/179_PCBSD.txt"
+    },
+    {
+      "id": "PCLinuxOS",
+      "name": "PCLinuxOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/PCLinuxOS.txt",
+      "aliases": [
+        "PCLinuxOS"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"PCLinuxOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 180,
+      "original_id": "180_PCLinuxOS",
+      "original_file": "Logos/180_PCLinuxOS.txt"
+    },
+    {
+      "id": "Pengwin",
+      "name": "Pengwin",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Pengwin.txt",
+      "aliases": [
+        "Pengwin"
+      ],
+      "colors": [
+        "5",
+        "5",
+        "13"
+      ],
+      "color_rule": "5 5 13",
+      "matcher": "\"Pengwin\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 181,
+      "original_id": "181_Pengwin",
+      "original_file": "Logos/181_Pengwin.txt"
+    },
+    {
+      "id": "Peppermint",
+      "name": "Peppermint",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Peppermint.txt",
+      "aliases": [
+        "Peppermint"
+      ],
+      "colors": [
+        "1",
+        "15",
+        "3"
+      ],
+      "color_rule": "1 15 3",
+      "matcher": "\"Peppermint\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 182,
+      "original_id": "182_Peppermint",
+      "original_file": "Logos/182_Peppermint.txt"
+    },
+    {
+      "id": "Pisi",
+      "name": "Pisi",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Pisi.txt",
+      "aliases": [
+        "Pisi"
+      ],
+      "colors": [
+        "12",
+        "7",
+        "6",
+        "1",
+        "8"
+      ],
+      "color_rule": "12 7 6 1 8",
+      "matcher": "\"Pisi\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 183,
+      "original_id": "183_Pisi",
+      "original_file": "Logos/183_Pisi.txt"
+    },
+    {
+      "id": "PNM_Linux",
+      "name": "PNM Linux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/PNM_Linux.txt",
+      "aliases": [
+        "PNM Linux",
+        "WHPNM Linux"
+      ],
+      "colors": [
+        "33",
+        "9",
+        "15",
+        "202"
+      ],
+      "color_rule": "33 9 15 202",
+      "matcher": "\"PNM Linux\"* | \"WHPNM Linux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 184,
+      "original_id": "184_PNM_Linux",
+      "original_file": "Logos/184_PNM_Linux.txt"
+    },
+    {
+      "id": "popos_Small",
+      "name": "popos_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/popos_Small.txt",
+      "aliases": [
+        "popos_small",
+        "pop_os_small"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"popos_small\"* | \"pop_os_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 185,
+      "original_id": "185_popos_small",
+      "original_file": "Logos/185_popos_small.txt"
+    },
+    {
+      "id": "Pop_OS",
+      "name": "Pop!_OS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Pop_OS.txt",
+      "aliases": [
+        "Pop!_OS",
+        "popos",
+        "pop_os"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Pop!_OS\"* | \"popos\"* | \"pop_os\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 186,
+      "original_id": "186_Pop_OS",
+      "original_file": "Logos/186_Pop_OS.txt"
+    },
+    {
+      "id": "Porteus",
+      "name": "Porteus",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Porteus.txt",
+      "aliases": [
+        "Porteus"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Porteus\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 187,
+      "original_id": "187_Porteus",
+      "original_file": "Logos/187_Porteus.txt"
+    },
+    {
+      "id": "postmarketos_Small",
+      "name": "postmarketos_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/postmarketos_Small.txt",
+      "aliases": [
+        "postmarketos_small"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"postmarketos_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 188,
+      "original_id": "188_postmarketos_small",
+      "original_file": "Logos/188_postmarketos_small.txt"
+    },
+    {
+      "id": "PostMarketOS",
+      "name": "PostMarketOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/PostMarketOS.txt",
+      "aliases": [
+        "PostMarketOS"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"PostMarketOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 189,
+      "original_id": "189_PostMarketOS",
+      "original_file": "Logos/189_PostMarketOS.txt"
+    },
+    {
+      "id": "PuffOS",
+      "name": "PuffOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/PuffOS.txt",
+      "aliases": [
+        "PuffOS"
+      ],
+      "colors": [
+        "3"
+      ],
+      "color_rule": "3",
+      "matcher": "\"PuffOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 190,
+      "original_id": "190_PuffOS",
+      "original_file": "Logos/190_PuffOS.txt"
+    },
+    {
+      "id": "Proxmox",
+      "name": "Proxmox",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Proxmox.txt",
+      "aliases": [
+        "Proxmox"
+      ],
+      "colors": [
+        "7",
+        "202"
+      ],
+      "color_rule": "7 202",
+      "matcher": "\"Proxmox\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 191,
+      "original_id": "191_Proxmox",
+      "original_file": "Logos/191_Proxmox.txt"
+    },
+    {
+      "id": "Puppy",
+      "name": "Puppy",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Puppy.txt",
+      "aliases": [
+        "Puppy",
+        "Quirky Werewolf",
+        "Precise Puppy"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"Puppy\"* | \"Quirky Werewolf\"* | \"Precise Puppy\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 192,
+      "original_id": "192_Puppy",
+      "original_file": "Logos/192_Puppy.txt"
+    },
+    {
+      "id": "pureos_Small",
+      "name": "pureos_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/pureos_Small.txt",
+      "aliases": [
+        "pureos_small"
+      ],
+      "colors": [
+        "2",
+        "7",
+        "7"
+      ],
+      "color_rule": "2 7 7",
+      "matcher": "\"pureos_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 193,
+      "original_id": "193_pureos_small",
+      "original_file": "Logos/193_pureos_small.txt"
+    },
+    {
+      "id": "PureOS",
+      "name": "PureOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/PureOS.txt",
+      "aliases": [
+        "PureOS"
+      ],
+      "colors": [
+        "2",
+        "7",
+        "7"
+      ],
+      "color_rule": "2 7 7",
+      "matcher": "\"PureOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 194,
+      "original_id": "194_PureOS",
+      "original_file": "Logos/194_PureOS.txt"
+    },
+    {
+      "id": "Qubes",
+      "name": "Qubes",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Qubes.txt",
+      "aliases": [
+        "Qubes"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"Qubes\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 195,
+      "original_id": "195_Qubes",
+      "original_file": "Logos/195_Qubes.txt"
+    },
+    {
+      "id": "Qubyt",
+      "name": "Qubyt",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Qubyt.txt",
+      "aliases": [
+        "Qubyt"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "0",
+        "4"
+      ],
+      "color_rule": "4 5 0 4",
+      "matcher": "\"Qubyt\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 196,
+      "original_id": "196_Qubyt",
+      "original_file": "Logos/196_Qubyt.txt"
+    },
+    {
+      "id": "Quibian",
+      "name": "Quibian",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Quibian.txt",
+      "aliases": [
+        "Quibian"
+      ],
+      "colors": [
+        "3",
+        "7"
+      ],
+      "color_rule": "3 7",
+      "matcher": "\"Quibian\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 197,
+      "original_id": "197_Quibian",
+      "original_file": "Logos/197_Quibian.txt"
+    },
+    {
+      "id": "Radix",
+      "name": "Radix",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Radix.txt",
+      "aliases": [
+        "Radix"
+      ],
+      "colors": [
+        "1",
+        "2"
+      ],
+      "color_rule": "1 2",
+      "matcher": "\"Radix\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 198,
+      "original_id": "198_Radix",
+      "original_file": "Logos/198_Radix.txt"
+    },
+    {
+      "id": "Raspbian_Small",
+      "name": "Raspbian_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/Raspbian_Small.txt",
+      "aliases": [
+        "Raspbian_small"
+      ],
+      "colors": [
+        "2",
+        "1"
+      ],
+      "color_rule": "2 1",
+      "matcher": "\"Raspbian_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 199,
+      "original_id": "199_Raspbian_small",
+      "original_file": "Logos/199_Raspbian_small.txt"
+    },
+    {
+      "id": "Raspbian",
+      "name": "Raspbian",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Raspbian.txt",
+      "aliases": [
+        "Raspbian"
+      ],
+      "colors": [
+        "2",
+        "1"
+      ],
+      "color_rule": "2 1",
+      "matcher": "\"Raspbian\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 200,
+      "original_id": "200_Raspbian",
+      "original_file": "Logos/200_Raspbian.txt"
+    },
+    {
+      "id": "Reborn_OS",
+      "name": "Reborn OS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Reborn_OS.txt",
+      "aliases": [
+        "Reborn OS",
+        "Reborn"
+      ],
+      "colors": [
+        "2",
+        "2",
+        "8"
+      ],
+      "color_rule": "2 2 8",
+      "matcher": "\"Reborn OS\"* | \"Reborn\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 201,
+      "original_id": "201_Reborn_OS",
+      "original_file": "Logos/201_Reborn_OS.txt"
+    },
+    {
+      "id": "Red_Star",
+      "name": "Red Star",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Red_Star.txt",
+      "aliases": [
+        "Red Star",
+        "Redstar"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"Red Star\"* | \"Redstar\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 202,
+      "original_id": "202_Red_Star",
+      "original_file": "Logos/202_Red_Star.txt"
+    },
+    {
+      "id": "Redcore",
+      "name": "Redcore",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Redcore.txt",
+      "aliases": [
+        "Redcore"
+      ],
+      "colors": [
+        "1"
+      ],
+      "color_rule": "1",
+      "matcher": "\"Redcore\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 203,
+      "original_id": "203_Redcore",
+      "original_file": "Logos/203_Redcore.txt"
+    },
+    {
+      "id": "redhat_Old",
+      "name": "redhat_old",
+      "family": "Linux",
+      "variant": "old",
+      "file": "Linux/redhat_Old.txt",
+      "aliases": [
+        "redhat_old",
+        "rhel_old"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"redhat_old\" | \"rhel_old\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 204,
+      "original_id": "204_redhat_old",
+      "original_file": "Logos/204_redhat_old.txt"
+    },
+    {
+      "id": "Redhat",
+      "name": "Redhat",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Redhat.txt",
+      "aliases": [
+        "Redhat",
+        "Red Hat",
+        "rhel"
+      ],
+      "colors": [
+        "1"
+      ],
+      "color_rule": "1",
+      "matcher": "\"Redhat\"* | \"Red Hat\"* | \"rhel\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 205,
+      "original_id": "205_Redhat",
+      "original_file": "Logos/205_Redhat.txt"
+    },
+    {
+      "id": "Refracted_Devuan",
+      "name": "Refracted Devuan",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Refracted_Devuan.txt",
+      "aliases": [
+        "Refracted Devuan",
+        "Refracted_Devuan"
+      ],
+      "colors": [
+        "8",
+        "7"
+      ],
+      "color_rule": "8 7",
+      "matcher": "\"Refracted Devuan\"* | \"Refracted_Devuan\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 206,
+      "original_id": "206_Refracted_Devuan",
+      "original_file": "Logos/206_Refracted_Devuan.txt"
+    },
+    {
+      "id": "Regata",
+      "name": "Regata",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Regata.txt",
+      "aliases": [
+        "Regata"
+      ],
+      "colors": [
+        "7",
+        "1",
+        "4",
+        "5",
+        "3",
+        "2"
+      ],
+      "color_rule": "7 1 4 5 3 2",
+      "matcher": "\"Regata\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 207,
+      "original_id": "207_Regata",
+      "original_file": "Logos/207_Regata.txt"
+    },
+    {
+      "id": "Regolith",
+      "name": "Regolith",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Regolith.txt",
+      "aliases": [
+        "Regolith"
+      ],
+      "colors": [
+        "1"
+      ],
+      "color_rule": "1",
+      "matcher": "\"Regolith\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 208,
+      "original_id": "208_Regolith",
+      "original_file": "Logos/208_Regolith.txt"
+    },
+    {
+      "id": "rocky_Small",
+      "name": "rocky_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/rocky_Small.txt",
+      "aliases": [
+        "rocky_small"
+      ],
+      "colors": [
+        "2"
+      ],
+      "color_rule": "2",
+      "matcher": "\"rocky_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 209,
+      "original_id": "209_rocky_small",
+      "original_file": "Logos/209_rocky_small.txt"
+    },
+    {
+      "id": "rocky",
+      "name": "rocky",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/rocky.txt",
+      "aliases": [
+        "rocky"
+      ],
+      "colors": [
+        "35"
+      ],
+      "color_rule": "35",
+      "matcher": "\"rocky\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 210,
+      "original_id": "210_rocky",
+      "original_file": "Logos/210_rocky.txt"
+    },
+    {
+      "id": "Rosa",
+      "name": "Rosa",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Rosa.txt",
+      "aliases": [
+        "Rosa"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Rosa\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 211,
+      "original_id": "211_Rosa",
+      "original_file": "Logos/211_Rosa.txt"
+    },
+    {
+      "id": "sabotage",
+      "name": "sabotage",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/sabotage.txt",
+      "aliases": [
+        "sabotage"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"sabotage\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 212,
+      "original_id": "212_sabotage",
+      "original_file": "Logos/212_sabotage.txt"
+    },
+    {
+      "id": "Sabayon",
+      "name": "Sabayon",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Sabayon.txt",
+      "aliases": [
+        "Sabayon"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Sabayon\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 213,
+      "original_id": "213_Sabayon",
+      "original_file": "Logos/213_Sabayon.txt"
+    },
+    {
+      "id": "Sailfish",
+      "name": "Sailfish",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Sailfish.txt",
+      "aliases": [
+        "Sailfish"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"Sailfish\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 214,
+      "original_id": "214_Sailfish",
+      "original_file": "Logos/214_Sailfish.txt"
+    },
+    {
+      "id": "SalentOS",
+      "name": "SalentOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/SalentOS.txt",
+      "aliases": [
+        "SalentOS"
+      ],
+      "colors": [
+        "2",
+        "1",
+        "3",
+        "7"
+      ],
+      "color_rule": "2 1 3 7",
+      "matcher": "\"SalentOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 215,
+      "original_id": "215_SalentOS",
+      "original_file": "Logos/215_SalentOS.txt"
+    },
+    {
+      "id": "Scientific",
+      "name": "Scientific",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Scientific.txt",
+      "aliases": [
+        "Scientific"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Scientific\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 216,
+      "original_id": "216_Scientific",
+      "original_file": "Logos/216_Scientific.txt"
+    },
+    {
+      "id": "Septor",
+      "name": "Septor",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Septor.txt",
+      "aliases": [
+        "Septor"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "4"
+      ],
+      "color_rule": "4 7 4",
+      "matcher": "\"Septor\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 217,
+      "original_id": "217_Septor",
+      "original_file": "Logos/217_Septor.txt"
+    },
+    {
+      "id": "Serene",
+      "name": "Serene",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Serene.txt",
+      "aliases": [
+        "Serene"
+      ],
+      "colors": [
+        "6",
+        "6"
+      ],
+      "color_rule": "6 6",
+      "matcher": "\"Serene\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 218,
+      "original_id": "218_Serene",
+      "original_file": "Logos/218_Serene.txt"
+    },
+    {
+      "id": "SharkLinux",
+      "name": "SharkLinux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/SharkLinux.txt",
+      "aliases": [
+        "SharkLinux"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"SharkLinux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 219,
+      "original_id": "219_SharkLinux",
+      "original_file": "Logos/219_SharkLinux.txt"
+    },
+    {
+      "id": "Siduction",
+      "name": "Siduction",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Siduction.txt",
+      "aliases": [
+        "Siduction"
+      ],
+      "colors": [
+        "4",
+        "4"
+      ],
+      "color_rule": "4 4",
+      "matcher": "\"Siduction\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 220,
+      "original_id": "220_Siduction",
+      "original_file": "Logos/220_Siduction.txt"
+    },
+    {
+      "id": "slackware_Small",
+      "name": "slackware_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/slackware_Small.txt",
+      "aliases": [
+        "slackware_small"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"slackware_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 221,
+      "original_id": "221_slackware_small",
+      "original_file": "Logos/221_slackware_small.txt"
+    },
+    {
+      "id": "Slackware",
+      "name": "Slackware",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Slackware.txt",
+      "aliases": [
+        "Slackware"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Slackware\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 222,
+      "original_id": "222_Slackware",
+      "original_file": "Logos/222_Slackware.txt"
+    },
+    {
+      "id": "SliTaz",
+      "name": "SliTaz",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/SliTaz.txt",
+      "aliases": [
+        "SliTaz"
+      ],
+      "colors": [
+        "3",
+        "3"
+      ],
+      "color_rule": "3 3",
+      "matcher": "\"SliTaz\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 223,
+      "original_id": "223_SliTaz",
+      "original_file": "Logos/223_SliTaz.txt"
+    },
+    {
+      "id": "SmartOS",
+      "name": "SmartOS",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/SmartOS.txt",
+      "aliases": [
+        "SmartOS"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"SmartOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 224,
+      "original_id": "224_SmartOS",
+      "original_file": "Logos/224_SmartOS.txt"
+    },
+    {
+      "id": "SkiffOS",
+      "name": "SkiffOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/SkiffOS.txt",
+      "aliases": [
+        "SkiffOS"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"SkiffOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 225,
+      "original_id": "225_SkiffOS",
+      "original_file": "Logos/225_SkiffOS.txt"
+    },
+    {
+      "id": "Solus",
+      "name": "Solus",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Solus.txt",
+      "aliases": [
+        "Solus"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Solus\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 226,
+      "original_id": "226_Solus",
+      "original_file": "Logos/226_Solus.txt"
+    },
+    {
+      "id": "Source_Mage",
+      "name": "Source Mage",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Source_Mage.txt",
+      "aliases": [
+        "Source Mage",
+        "Source_Mage"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Source Mage\"* | \"Source_Mage\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 227,
+      "original_id": "227_Source_Mage",
+      "original_file": "Logos/227_Source_Mage.txt"
+    },
+    {
+      "id": "Sparky",
+      "name": "Sparky",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Sparky.txt",
+      "aliases": [
+        "Sparky"
+      ],
+      "colors": [
+        "1",
+        "7"
+      ],
+      "color_rule": "1 7",
+      "matcher": "\"Sparky\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 228,
+      "original_id": "228_Sparky",
+      "original_file": "Logos/228_Sparky.txt"
+    },
+    {
+      "id": "Star",
+      "name": "Star",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Star.txt",
+      "aliases": [
+        "Star"
+      ],
+      "colors": [
+        "7"
+      ],
+      "color_rule": "7",
+      "matcher": "\"Star\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 229,
+      "original_id": "229_Star",
+      "original_file": "Logos/229_Star.txt"
+    },
+    {
+      "id": "SteamOS",
+      "name": "SteamOS",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/SteamOS.txt",
+      "aliases": [
+        "SteamOS"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"SteamOS\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 230,
+      "original_id": "230_SteamOS",
+      "original_file": "Logos/230_SteamOS.txt"
+    },
+    {
+      "id": "sunos_Small",
+      "name": "sunos_small",
+      "family": "Other",
+      "variant": "small",
+      "file": "Other/sunos_Small.txt",
+      "aliases": [
+        "sunos_small",
+        "solaris_small"
+      ],
+      "colors": [
+        "3",
+        "7"
+      ],
+      "color_rule": "3 7",
+      "matcher": "\"sunos_small\" | \"solaris_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 231,
+      "original_id": "231_sunos_small",
+      "original_file": "Logos/231_sunos_small.txt"
+    },
+    {
+      "id": "SunOS",
+      "name": "SunOS",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/SunOS.txt",
+      "aliases": [
+        "SunOS",
+        "Solaris"
+      ],
+      "colors": [
+        "3",
+        "7"
+      ],
+      "color_rule": "3 7",
+      "matcher": "\"SunOS\" | \"Solaris\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 232,
+      "original_id": "232_SunOS",
+      "original_file": "Logos/232_SunOS.txt"
+    },
+    {
+      "id": "openSUSE_Leap",
+      "name": "openSUSE Leap",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/openSUSE_Leap.txt",
+      "aliases": [
+        "openSUSE Leap",
+        "openSUSE_Leap"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"openSUSE Leap\"* | \"openSUSE_Leap\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 233,
+      "original_id": "233_openSUSE_Leap",
+      "original_file": "Logos/233_openSUSE_Leap.txt"
+    },
+    {
+      "id": "t2",
+      "name": "t2",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/t2.txt",
+      "aliases": [
+        "t2"
+      ],
+      "colors": [
+        "7",
+        "4"
+      ],
+      "color_rule": "7 4",
+      "matcher": "\"t2\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 234,
+      "original_id": "234_t2",
+      "original_file": "Logos/234_t2.txt"
+    },
+    {
+      "id": "openSUSE_Tumbleweed",
+      "name": "openSUSE Tumbleweed",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/openSUSE_Tumbleweed.txt",
+      "aliases": [
+        "openSUSE Tumbleweed",
+        "openSUSE_Tumbleweed"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"openSUSE Tumbleweed\"* | \"openSUSE_Tumbleweed\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 235,
+      "original_id": "235_openSUSE_Tumbleweed",
+      "original_file": "Logos/235_openSUSE_Tumbleweed.txt"
+    },
+    {
+      "id": "opensuse_Small",
+      "name": "opensuse_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/opensuse_Small.txt",
+      "aliases": [
+        "opensuse_small",
+        "suse_small"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"opensuse_small\" | \"suse_small\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 236,
+      "original_id": "236_opensuse_small",
+      "original_file": "Logos/236_opensuse_small.txt"
+    },
+    {
+      "id": "openSUSE",
+      "name": "openSUSE",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/openSUSE.txt",
+      "aliases": [
+        "openSUSE",
+        "open SUSE",
+        "SUSE"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"openSUSE\"* | \"open SUSE\"* | \"SUSE\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 237,
+      "original_id": "237_openSUSE",
+      "original_file": "Logos/237_openSUSE.txt"
+    },
+    {
+      "id": "SwagArch",
+      "name": "SwagArch",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/SwagArch.txt",
+      "aliases": [
+        "SwagArch"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"SwagArch\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 238,
+      "original_id": "238_SwagArch",
+      "original_file": "Logos/238_SwagArch.txt"
+    },
+    {
+      "id": "Tails",
+      "name": "Tails",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Tails.txt",
+      "aliases": [
+        "Tails"
+      ],
+      "colors": [
+        "5",
+        "7"
+      ],
+      "color_rule": "5 7",
+      "matcher": "\"Tails\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 239,
+      "original_id": "239_Tails",
+      "original_file": "Logos/239_Tails.txt"
+    },
+    {
+      "id": "Trisquel",
+      "name": "Trisquel",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Trisquel.txt",
+      "aliases": [
+        "Trisquel"
+      ],
+      "colors": [
+        "4",
+        "6"
+      ],
+      "color_rule": "4 6",
+      "matcher": "\"Trisquel\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 240,
+      "original_id": "240_Trisquel",
+      "original_file": "Logos/240_Trisquel.txt"
+    },
+    {
+      "id": "Ubuntu_Cinnamon",
+      "name": "Ubuntu Cinnamon",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Ubuntu_Cinnamon.txt",
+      "aliases": [
+        "Ubuntu Cinnamon",
+        "Ubuntu-Cinnamon"
+      ],
+      "colors": [
+        "1",
+        "7"
+      ],
+      "color_rule": "1 7",
+      "matcher": "\"Ubuntu Cinnamon\"* | \"Ubuntu-Cinnamon\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 241,
+      "original_id": "241_Ubuntu_Cinnamon",
+      "original_file": "Logos/241_Ubuntu_Cinnamon.txt"
+    },
+    {
+      "id": "Ubuntu_Budgie",
+      "name": "Ubuntu Budgie",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Ubuntu_Budgie.txt",
+      "aliases": [
+        "Ubuntu Budgie",
+        "Ubuntu-Budgie"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Ubuntu Budgie\"* | \"Ubuntu-Budgie\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 242,
+      "original_id": "242_Ubuntu_Budgie",
+      "original_file": "Logos/242_Ubuntu_Budgie.txt"
+    },
+    {
+      "id": "Ubuntu_GNOME",
+      "name": "Ubuntu-GNOME",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Ubuntu_GNOME.txt",
+      "aliases": [
+        "Ubuntu-GNOME"
+      ],
+      "colors": [
+        "4",
+        "5",
+        "7",
+        "6"
+      ],
+      "color_rule": "4 5 7 6",
+      "matcher": "\"Ubuntu-GNOME\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 243,
+      "original_id": "243_Ubuntu-GNOME",
+      "original_file": "Logos/243_Ubuntu-GNOME.txt"
+    },
+    {
+      "id": "Ubuntu_MATE",
+      "name": "Ubuntu MATE",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Ubuntu_MATE.txt",
+      "aliases": [
+        "Ubuntu MATE",
+        "Ubuntu-MATE"
+      ],
+      "colors": [
+        "2",
+        "7"
+      ],
+      "color_rule": "2 7",
+      "matcher": "\"Ubuntu MATE\"* | \"Ubuntu-MATE\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 244,
+      "original_id": "244_Ubuntu_MATE",
+      "original_file": "Logos/244_Ubuntu_MATE.txt"
+    },
+    {
+      "id": "ubuntu_Old",
+      "name": "ubuntu_old",
+      "family": "Linux",
+      "variant": "old",
+      "file": "Linux/ubuntu_Old.txt",
+      "aliases": [
+        "ubuntu_old"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"ubuntu_old\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 245,
+      "original_id": "245_ubuntu_old",
+      "original_file": "Logos/245_ubuntu_old.txt"
+    },
+    {
+      "id": "Ubuntu_Studio",
+      "name": "Ubuntu Studio",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Ubuntu_Studio.txt",
+      "aliases": [
+        "Ubuntu Studio",
+        "Ubuntu-Studio"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Ubuntu Studio\"* | \"Ubuntu-Studio\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 246,
+      "original_id": "246_Ubuntu_Studio",
+      "original_file": "Logos/246_Ubuntu_Studio.txt"
+    },
+    {
+      "id": "ubuntu_Small",
+      "name": "ubuntu_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/ubuntu_Small.txt",
+      "aliases": [
+        "ubuntu_small"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"ubuntu_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 247,
+      "original_id": "247_ubuntu_small",
+      "original_file": "Logos/247_ubuntu_small.txt"
+    },
+    {
+      "id": "Ubuntu",
+      "name": "Ubuntu",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Ubuntu.txt",
+      "aliases": [
+        "Ubuntu",
+        "i3buntu"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "3"
+      ],
+      "color_rule": "1 7 3",
+      "matcher": "\"Ubuntu\"* | \"i3buntu\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 248,
+      "original_id": "248_Ubuntu",
+      "original_file": "Logos/248_Ubuntu.txt"
+    },
+    {
+      "id": "Univention",
+      "name": "Univention",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Univention.txt",
+      "aliases": [
+        "Univention"
+      ],
+      "colors": [
+        "1",
+        "7"
+      ],
+      "color_rule": "1 7",
+      "matcher": "\"Univention\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 249,
+      "original_id": "249_Univention",
+      "original_file": "Logos/249_Univention.txt"
+    },
+    {
+      "id": "Venom",
+      "name": "Venom",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Venom.txt",
+      "aliases": [
+        "Venom"
+      ],
+      "colors": [
+        "8",
+        "4"
+      ],
+      "color_rule": "8 4",
+      "matcher": "\"Venom\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 250,
+      "original_id": "250_Venom",
+      "original_file": "Logos/250_Venom.txt"
+    },
+    {
+      "id": "void_Small",
+      "name": "void_small",
+      "family": "Linux",
+      "variant": "small",
+      "file": "Linux/void_Small.txt",
+      "aliases": [
+        "void_small"
+      ],
+      "colors": [
+        "2",
+        "8"
+      ],
+      "color_rule": "2 8",
+      "matcher": "\"void_small\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 251,
+      "original_id": "251_void_small",
+      "original_file": "Logos/251_void_small.txt"
+    },
+    {
+      "id": "Void",
+      "name": "Void",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Void.txt",
+      "aliases": [
+        "Void"
+      ],
+      "colors": [
+        "2",
+        "8"
+      ],
+      "color_rule": "2 8",
+      "matcher": "\"Void\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 252,
+      "original_id": "252_Void",
+      "original_file": "Logos/252_Void.txt"
+    },
+    {
+      "id": "VNux",
+      "name": "VNux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/VNux.txt",
+      "aliases": [
+        "VNux"
+      ],
+      "colors": [
+        "11",
+        "8",
+        "15",
+        "1",
+        "7"
+      ],
+      "color_rule": "11 8 15 1 7",
+      "matcher": "\"VNux\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 253,
+      "original_id": "253_VNux",
+      "original_file": "Logos/253_VNux.txt"
+    },
+    {
+      "id": "LangitKetujuh",
+      "name": "LangitKetujuh",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/LangitKetujuh.txt",
+      "aliases": [
+        "LangitKetujuh"
+      ],
+      "colors": [
+        "7",
+        "4"
+      ],
+      "color_rule": "7 4",
+      "matcher": "\"LangitKetujuh\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 254,
+      "original_id": "254_LangitKetujuh",
+      "original_file": "Logos/254_LangitKetujuh.txt"
+    },
+    {
+      "id": "semc",
+      "name": "semc",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/semc.txt",
+      "aliases": [
+        "semc"
+      ],
+      "colors": [
+        "2",
+        "8",
+        "1"
+      ],
+      "color_rule": "2 8 1",
+      "matcher": "\"semc\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 255,
+      "original_id": "255_semc",
+      "original_file": "Logos/255_semc.txt"
+    },
+    {
+      "id": "Obarun",
+      "name": "Obarun",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Obarun.txt",
+      "aliases": [
+        "Obarun"
+      ],
+      "colors": [
+        "6",
+        "6",
+        "7",
+        "1"
+      ],
+      "color_rule": "6 6 7 1",
+      "matcher": "\"Obarun\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 256,
+      "original_id": "256_Obarun",
+      "original_file": "Logos/256_Obarun.txt"
+    },
+    {
+      "id": "Windows_11",
+      "name": "Windows 11",
+      "family": "Windows",
+      "variant": "default",
+      "file": "Windows/Windows_11.txt",
+      "aliases": [
+        "Windows 11",
+        "windows11"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Windows 11\"* |\"windows11\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 257,
+      "original_id": "257_Windows_11",
+      "original_file": "Logos/257_Windows_11.txt"
+    },
+    {
+      "id": "Windows_10",
+      "name": "Windows 10",
+      "family": "Windows",
+      "variant": "default",
+      "file": "Windows/Windows_10.txt",
+      "aliases": [
+        "Windows 10",
+        "windows10",
+        "windows8"
+      ],
+      "colors": [
+        "6",
+        "7"
+      ],
+      "color_rule": "6 7",
+      "matcher": "\"Windows 10\"* |\"windows10\"|\"windows8\")",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 258,
+      "original_id": "258_Windows_10",
+      "original_file": "Logos/258_Windows_10.txt"
+    },
+    {
+      "id": "Windows",
+      "name": "Windows",
+      "family": "Windows",
+      "variant": "default",
+      "file": "Windows/Windows.txt",
+      "aliases": [
+        "Windows"
+      ],
+      "colors": [
+        "1",
+        "2",
+        "4",
+        "3"
+      ],
+      "color_rule": "1 2 4 3",
+      "matcher": "\"Windows\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 259,
+      "original_id": "259_Windows",
+      "original_file": "Logos/259_Windows.txt"
+    },
+    {
+      "id": "Xubuntu",
+      "name": "Xubuntu",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Xubuntu.txt",
+      "aliases": [
+        "Xubuntu"
+      ],
+      "colors": [
+        "4",
+        "7",
+        "1"
+      ],
+      "color_rule": "4 7 1",
+      "matcher": "\"Xubuntu\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 260,
+      "original_id": "260_Xubuntu",
+      "original_file": "Logos/260_Xubuntu.txt"
+    },
+    {
+      "id": "IRIX",
+      "name": "IRIX",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/IRIX.txt",
+      "aliases": [
+        "IRIX"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"IRIX\"*)",
+      "parent_matcher": "\"Xubuntu\"*)",
+      "source": "NeoFetch",
+      "original_index": 261,
+      "original_id": "261_IRIX",
+      "original_file": "Logos/261_IRIX.txt"
+    },
+    {
+      "id": "Zorin",
+      "name": "Zorin",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Zorin.txt",
+      "aliases": [
+        "Zorin"
+      ],
+      "colors": [
+        "4",
+        "6"
+      ],
+      "color_rule": "4 6",
+      "matcher": "\"Zorin\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 262,
+      "original_id": "262_Zorin",
+      "original_file": "Logos/262_Zorin.txt"
+    },
+    {
+      "id": "BSD_Alt",
+      "name": "BSD",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/BSD_Alt.txt",
+      "aliases": [
+        "BSD"
+      ],
+      "colors": [
+        "1",
+        "7",
+        "4",
+        "3",
+        "6"
+      ],
+      "color_rule": "1 7 4 3 6",
+      "matcher": "*\"BSD\")",
+      "parent_matcher": "*)",
+      "source": "NeoFetch",
+      "original_index": 263,
+      "original_id": "263_BSD",
+      "original_file": "Logos/263_BSD.txt"
+    },
+    {
+      "id": "Darwin",
+      "name": "Darwin",
+      "family": "macOS",
+      "variant": "default",
+      "file": "MacOS/Darwin.txt",
+      "aliases": [
+        "Darwin"
+      ],
+      "colors": [
+        "2",
+        "3",
+        "1",
+        "1",
+        "5",
+        "4"
+      ],
+      "color_rule": "2 3 1 1 5 4",
+      "matcher": "\"Darwin\")",
+      "parent_matcher": "`--{__________)",
+      "source": "NeoFetch",
+      "original_index": 264,
+      "original_id": "264_Darwin",
+      "original_file": "Logos/264_Darwin.txt"
+    },
+    {
+      "id": "GNU_Alt",
+      "name": "GNU",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/GNU_Alt.txt",
+      "aliases": [
+        "GNU"
+      ],
+      "colors": [
+        "fg",
+        "7"
+      ],
+      "color_rule": "fg 7",
+      "matcher": "\"GNU\"*)",
+      "parent_matcher": "`--{__________)",
+      "source": "NeoFetch",
+      "original_index": 265,
+      "original_id": "265_GNU",
+      "original_file": "Logos/265_GNU.txt"
+    },
+    {
+      "id": "Linux_Alt",
+      "name": "Linux",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Linux_Alt.txt",
+      "aliases": [
+        "Linux"
+      ],
+      "colors": [
+        "fg",
+        "8",
+        "3"
+      ],
+      "color_rule": "fg 8 3",
+      "matcher": "\"Linux\")",
+      "parent_matcher": ",'/''     (( \\ `  )",
+      "source": "NeoFetch",
+      "original_index": 266,
+      "original_id": "266_Linux",
+      "original_file": "Logos/266_Linux.txt"
+    },
+    {
+      "id": "Profelis_SambaBOX",
+      "name": "Profelis SambaBOX",
+      "family": "Linux",
+      "variant": "default",
+      "file": "Linux/Profelis_SambaBOX.txt",
+      "aliases": [
+        "Profelis SambaBOX",
+        "SambaBOX"
+      ],
+      "colors": [
+        "3",
+        "6"
+      ],
+      "color_rule": "3 6",
+      "matcher": "\"Profelis SambaBOX\"* | \"SambaBOX\"*)",
+      "parent_matcher": null,
+      "source": "NeoFetch",
+      "original_index": 267,
+      "original_id": "267_Profelis_SambaBOX",
+      "original_file": "Logos/267_Profelis_SambaBOX.txt"
+    },
+    {
+      "id": "SunOS_Alt",
+      "name": "SunOS",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/SunOS_Alt.txt",
+      "aliases": [
+        "SunOS"
+      ],
+      "colors": [
+        "3",
+        "7"
+      ],
+      "color_rule": "3 7",
+      "matcher": "\"SunOS\")",
+      "parent_matcher": "\"Profelis SambaBOX\"* | \"SambaBOX\"*)",
+      "source": "NeoFetch",
+      "original_index": 268,
+      "original_id": "268_SunOS",
+      "original_file": "Logos/268_SunOS.txt"
+    },
+    {
+      "id": "IRIX_Alt",
+      "name": "IRIX",
+      "family": "Other",
+      "variant": "default",
+      "file": "Other/IRIX_Alt.txt",
+      "aliases": [
+        "IRIX"
+      ],
+      "colors": [
+        "4",
+        "7"
+      ],
+      "color_rule": "4 7",
+      "matcher": "\"IRIX\"*)",
+      "parent_matcher": "\"Profelis SambaBOX\"* | \"SambaBOX\"*)",
+      "source": "NeoFetch",
+      "original_index": 269,
+      "original_id": "269_IRIX",
+      "original_file": "Logos/269_IRIX.txt"
+    }
+  ]
+}

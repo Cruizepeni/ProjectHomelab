@@ -1,0 +1,14 @@
+{
+  "format": "PythoFetchArtCatalogue",
+  "format_version": 2,
+  "source_project": "PythoFetch",
+  "curated": true,
+  "entry_count": 0,
+  "family_counts": {
+    "Windows": 0,
+    "Linux": 0,
+    "macOS": 0,
+    "Other": 0
+  },
+  "entries": []
+}
