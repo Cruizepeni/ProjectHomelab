@@ -256,14 +256,19 @@ PythoFetch
 
 The TUI presents:
 
-- ProjectHomelab / PythoFetch header
+- a centered `PROJECT HOMELAB / PRESENTS / PYTHOFETCH` header
+- blank spacing above and below the three header lines
 - operating-system artwork
 - system information
 - NeoFetch-derived color blocks
 - PythoFetch version
-- provider and artwork ID
+- provider and a human-readable artwork ID
 
-The layout changes between side-by-side and stacked presentation according to available terminal width.
+`PROJECT HOMELAB` and `PYTHOFETCH` are bold. `PRESENTS` uses normal terminal weight so it appears visually softer between them.
+
+Artwork IDs keep their database form internally, such as `Windows_11`, but the TUI footer replaces underscores with spaces for display, such as `Windows 11`.
+
+The layout changes between side-by-side and stacked presentation according to available terminal width. The final border is written without a trailing newline so a TUI that exactly fills the terminal height does not force the viewport to scroll upward by one row.
 
 ### Classic Mode
 
@@ -422,17 +427,25 @@ ZIP is the preferred ProjectHomelab release format.
 
 TAR, TAR.GZ, and TGZ update packages are not supported by PythoFetch 1.0.0.
 
-A ZIP release must contain exactly one executable whose filename matches the executable expected for the target PythoFetch version.
+For Windows and Linux application files, a ZIP release must contain exactly one expected PythoFetch application file. A macOS ZIP release must contain exactly one expected `.app` bundle.
 
-The normal versioned executable names are:
+The normal packaged application names are:
 
 ```text
 Windows : PythoFetch_<version>.exe
-Linux   : PythoFetch_<version>
-macOS   : PythoFetch_<version>
+Linux   : PythoFetch_<version>_Linux_<arch>.AppImage
+macOS   : PythoFetch_<version>.app
 ```
 
-The manifest can override the expected executable filename with the asset-level `executable` field.
+A non-AppImage Unix executable can still use the generic fallback name:
+
+```text
+PythoFetch_<version>
+```
+
+The manifest can override the expected application filename with the asset-level `executable` field.
+
+On Linux, a packaged AppImage uses the runtime-provided `APPIMAGE` path as the self-update target. On macOS, PythoFetch walks upward from the running executable to locate the enclosing `.app` bundle and treats the whole bundle as the application artifact.
 
 ### Update Verification
 
@@ -458,13 +471,14 @@ The executable checksum is optional, but using it provides an additional integri
 
 ### Versioned Self-Replacement
 
-PythoFetch executables are versioned so multiple releases do not share the same permanent filename.
+Packaged PythoFetch application artifacts are versioned so releases do not share the same permanent filename.
 
-For example:
+Examples:
 
 ```text
-PythoFetch_1.0.0.exe
-PythoFetch_1.0.1.exe
+Windows : PythoFetch_1.0.0.exe
+Linux   : PythoFetch_1.0.0_Linux_x86_64.AppImage
+macOS   : PythoFetch_1.0.0.app
 ```
 
 When a packaged build updates:
@@ -472,22 +486,24 @@ When a packaged build updates:
 ```text
 1. PythoFetch reads the release manifest.
 2. It selects the best platform and architecture asset.
-3. It downloads the release package beside the running executable using a temporary update filename.
-4. It verifies the package SHA-256 and size.
-5. For ZIP releases, it locates exactly one expected versioned executable inside the archive.
-6. It extracts that executable to a temporary update file.
-7. If supplied, it verifies the extracted executable SHA-256 and size.
+3. It identifies the currently running application artifact.
+4. It downloads the release package beside that artifact using a temporary update filename.
+5. It verifies the outer package SHA-256 and size.
+6. For ZIP releases, it extracts exactly one expected application artifact.
+7. If supplied, it verifies the extracted application SHA-256 and size.
 8. It starts an operating-system-specific handoff process.
 9. The handoff waits for the current PythoFetch process to exit.
-10. The new versioned executable is moved into place.
-11. The previous versioned executable is removed when its filename differs from the new version.
-12. The new PythoFetch executable is launched.
+10. The replacement artifact is moved into its versioned destination.
+11. The previous versioned artifact is removed when its path differs from the new version.
+12. The replacement PythoFetch application is launched.
 13. Temporary updater files are cleaned up.
 ```
 
-Windows uses a temporary PowerShell handoff.
+Windows uses a temporary PowerShell handoff to replace and relaunch the EXE.
 
-Linux and macOS use a temporary shell handoff and ensure the replacement binary is executable before launch.
+Linux uses a temporary shell handoff. For an AppImage release it replaces the outer AppImage file, marks the replacement executable, and launches the new AppImage. It does not replace only the PyInstaller binary embedded inside the AppImage.
+
+macOS uses a temporary shell handoff to replace the whole `.app` bundle and relaunch it with `open`. macOS application bundles must be distributed inside ZIP release packages.
 
 ### Release Manifest Asset Example
 
@@ -562,17 +578,101 @@ Selection order is:
 
 ## Dependencies
 
-The source version requires Python and `psutil`.
-
-Most remaining functionality uses the Python standard library plus operating-system facilities where appropriate.
+The PythoFetch application source has no required third-party Python package dependency. It uses the Python standard library plus operating-system facilities where appropriate.
 
 Examples include:
 
 - PowerShell/CIM on Windows
-- `/proc`, `/sys`, `lscpu`, and `lspci` where available on Linux
+- `/proc` and `/sys` on Linux
+- `lscpu` and `lspci` when available on Linux
 - `system_profiler` and `sysctl` on macOS
+- `tkinter` as an optional screen-resolution fallback when available
 
-Packaged builds can bundle Python dependencies so the end user does not need to install Python modules manually.
+Optional host helpers are allowed to be missing. PythoFetch omits or degrades the affected field rather than requiring a separate Python package such as `psutil`.
+
+Packaged builds bundle the Python runtime, the application source, and the art database so the end user does not need Python or a loose PythoFetch art database.
+
+## Release Compiler Tools
+
+PythoFetch 1.0.0 includes separate host-specific release compilers:
+
+```text
+PythoFetchWindowsCompiler_1.0.0.py
+PythoFetchLinuxCompiler_1.0.0.py
+```
+
+The compiler version is independent from the PythoFetch application version. The current compiler version is `1.0.0`, while the application version used for output names is read from the selected source file's `PYTHOFETCH_VERSION` value.
+
+Both compilers:
+
+- locate PythoFetch source beside the compiler
+- read `PYTHOFETCH_VERSION` from the source instead of relying on the source filename alone
+- prefer the canonical `PythoFetch_<version>.py` filename when more than one source candidate exists
+- locate the newest `PythoFetchArt_<version>.db` beside the compiler
+- use a local PythoFetch icon when it is already present
+- fetch the correct icon from the ProjectHomelab GitHub icon folder when the local icon is missing
+- create an isolated temporary build environment
+- test the source before packaging
+- test the compiled application before producing the release package
+- create the release ZIP
+- print the release ZIP and contained application SHA-256 hashes and byte sizes
+- remove the temporary build workspace after a normal successful build
+
+The Windows compiler must run on Windows and uses:
+
+```text
+Icon_PythoFetch.ico
+PyInstaller 6.22.3
+```
+
+The resulting ZIP contains:
+
+```text
+PythoFetch_<version>.exe
+```
+
+The Linux compiler must run on Linux and uses:
+
+```text
+Icon_PythoFetch.png
+PyInstaller 6.22.3
+Pillow 11.3.0
+appimagetool 1.9.1
+pinned type-2 AppImage runtime
+```
+
+The resulting ZIP contains:
+
+```text
+PythoFetch_<version>_Linux_<arch>.AppImage
+```
+
+The compilers intentionally leave the release ZIP as the only normal generated release artifact beside the source files. Loose EXE/AppImage files, build-report JSON files, and temporary build directories are not retained after a successful normal build.
+
+A typical release-build working directory is therefore:
+
+```text
+PythoFetch_<version>.py
+PythoFetchArt_<version>.db
+PythoFetchWindowsCompiler_1.0.0.py
+PythoFetchLinuxCompiler_1.0.0.py
+```
+
+The relevant local icon may also be present, but it is optional because the compiler can retrieve it from ProjectHomelab.
+
+After running the compiler for the current host, the only new permanent release artifact is the platform ZIP, for example:
+
+```text
+PythoFetch_1.0.0_Windows_x86_64.zip
+```
+
+or:
+
+```text
+PythoFetch_1.0.0_Linux_x86_64.zip
+```
+
+`--clean-cache` removes an existing compiler cache before building. `--keep-work` keeps the temporary build workspace for inspection or debugging.
 
 ## Error Handling
 
@@ -601,6 +701,8 @@ The development tree is expected to resemble:
 ```text
 PythoFetch/
 ├── PythoFetch_1.0.0.py
+├── PythoFetchWindowsCompiler_1.0.0.py
+├── PythoFetchLinuxCompiler_1.0.0.py
 └── PythoFetchArtAssets/
     ├── PythoFetchArtManager/
     │   └── PythoFetchArtManager_1.0.0.py
@@ -620,6 +722,8 @@ PythoFetch/
         ├── PythoFetchArt_<version>.db
         └── PythoFetchArtDB_Manifest.json
 ```
+
+For release compilation, the selected versioned art database is placed beside the compiler and PythoFetch source. This keeps the compiler input deterministic while the canonical database history and manifest remain under `PythoFetchArtAssets/ArtAssetsDB`.
 
 The filesystem folder is named `MacOS` to match ProjectHomelab's folder-naming convention.
 

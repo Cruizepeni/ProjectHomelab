@@ -2360,6 +2360,16 @@ def tui_full_row(value, width, border_color):
     )
 
 
+def tui_header_lines():
+    return [
+        "",
+        ANSI_BOLD + "PROJECT HOMELAB" + ANSI_RESET,
+        "PRESENTS",
+        ANSI_BOLD + "PYTHOFETCH" + ANSI_RESET,
+        "",
+    ]
+
+
 def tui_side_by_side_layout(logo_lines, info_lines):
     logo_width = max(
         (visible_width(line) for line in logo_lines),
@@ -2413,8 +2423,6 @@ def render_tui_side_by_side(snapshot, logo_lines, palette, payload):
     full_width = left_width + gap + right_width
     label_number = info_label_number(palette)
     border_color = ansi_bold_color(label_number)
-    heading_color = ANSI_BOLD
-
     print(
         border_piece(
             "╔" + ("═" * full_width) + "╗",
@@ -2422,16 +2430,10 @@ def render_tui_side_by_side(snapshot, logo_lines, palette, payload):
         )
     )
 
-    for value in (
-        "PROJECT HOMELAB",
-        "PRESENTS",
-        "PYTHOFETCH",
-    ):
+    for value in tui_header_lines():
         print(
             tui_full_row(
-                heading_color
-                + value
-                + ANSI_RESET,
+                value,
                 full_width,
                 border_color,
             )
@@ -2507,7 +2509,7 @@ def render_tui_side_by_side(snapshot, logo_lines, palette, payload):
     footer = (
         f"PythoFetch {PYTHOFETCH_VERSION}"
         f"   {snapshot.get('provider')}"
-        f" / {payload.get('id')}"
+        f" / {str(payload.get('id') or '').replace('_', ' ')}"
         "   Enter: Exit"
     )
 
@@ -2519,12 +2521,13 @@ def render_tui_side_by_side(snapshot, logo_lines, palette, payload):
         )
     )
 
-    print(
+    sys.stdout.write(
         border_piece(
             "╚" + ("═" * full_width) + "╝",
             border_color,
         )
     )
+    sys.stdout.flush()
 
 
 def render_tui_stacked(snapshot, logo_lines, palette, payload):
@@ -2554,8 +2557,6 @@ def render_tui_stacked(snapshot, logo_lines, palette, payload):
 
     label_number = info_label_number(palette)
     border_color = ansi_bold_color(label_number)
-    heading_color = ANSI_BOLD
-
     print(
         border_piece(
             "╔" + ("═" * content_width) + "╗",
@@ -2563,16 +2564,10 @@ def render_tui_stacked(snapshot, logo_lines, palette, payload):
         )
     )
 
-    for value in (
-        "PROJECT HOMELAB",
-        "PRESENTS",
-        "PYTHOFETCH",
-    ):
+    for value in tui_header_lines():
         print(
             tui_full_row(
-                heading_color
-                + value
-                + ANSI_RESET,
+                value,
                 content_width,
                 border_color,
             )
@@ -2646,7 +2641,7 @@ def render_tui_stacked(snapshot, logo_lines, palette, payload):
     footer = (
         f"PythoFetch {PYTHOFETCH_VERSION}"
         f"   {snapshot.get('provider')}"
-        f" / {payload.get('id')}"
+        f" / {str(payload.get('id') or '').replace('_', ' ')}"
         "   Enter: Exit"
     )
 
@@ -2658,12 +2653,13 @@ def render_tui_stacked(snapshot, logo_lines, palette, payload):
         )
     )
 
-    print(
+    sys.stdout.write(
         border_piece(
             "╚" + ("═" * content_width) + "╝",
             border_color,
         )
     )
+    sys.stdout.flush()
 
 
 def render_tui(snapshot):
