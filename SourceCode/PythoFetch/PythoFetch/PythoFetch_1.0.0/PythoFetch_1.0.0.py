@@ -14,6 +14,7 @@ import subprocess
 import sys
 import time
 import urllib.request
+import zipfile
 from datetime import timedelta
 from pathlib import Path
 
@@ -2545,40 +2546,310 @@ def powershell_literal(value):
     )
 
 
+def release_executable_name(
+    latest,
+    asset,
+):
+    configured = str(
+        asset.get("executable")
+        or ""
+    ).strip()
+
+    if configured:
+        normalized = configured.replace(
+            "\\",
+            "/",
+        )
+
+        if "/" in normalized:
+            raise RuntimeError(
+                "Release manifest executable "
+                "must be a filename, not a path."
+            )
+
+        return normalized
+
+    if platform.system() == "Windows":
+        return (
+            f"PythoFetch_{latest}.exe"
+        )
+
+    return f"PythoFetch_{latest}"
+
+
+def verify_update_payload(
+    path,
+    expected_sha256=None,
+    expected_size=None,
+):
+    path = Path(path)
+
+    if (
+        not path.is_file()
+        or path.stat().st_size == 0
+    ):
+        raise RuntimeError(
+            "Extracted update executable "
+            "is missing or empty."
+        )
+
+    if expected_size is not None:
+        try:
+            required_size = int(
+                expected_size
+            )
+        except Exception as exc:
+            raise RuntimeError(
+                "Manifest contains an invalid "
+                "update executable size."
+            ) from exc
+
+        if (
+            path.stat().st_size
+            != required_size
+        ):
+            raise RuntimeError(
+                "Extracted update executable "
+                "size does not match the "
+                "manifest."
+            )
+
+    expected_hash = str(
+        expected_sha256 or ""
+    ).strip().lower()
+
+    if expected_hash:
+        actual_hash = sha256_file(
+            path
+        ).lower()
+
+        if actual_hash != expected_hash:
+            raise RuntimeError(
+                "Extracted update executable "
+                "failed SHA-256 verification."
+            )
+
+    return path
+
+
+def extract_zip_update(
+    archive_path,
+    executable_name,
+    destination,
+    asset,
+):
+    archive_path = Path(
+        archive_path
+    )
+    destination = Path(
+        destination
+    )
+
+    if destination.exists():
+        destination.unlink()
+
+    selected = None
+
+    try:
+        with zipfile.ZipFile(
+            archive_path,
+            "r",
+        ) as archive:
+            candidates = []
+
+            for info in archive.infolist():
+                if info.is_dir():
+                    continue
+
+                member_name = (
+                    info.filename
+                    .replace("\\", "/")
+                    .rsplit("/", 1)[-1]
+                )
+
+                if (
+                    member_name.casefold()
+                    == executable_name.casefold()
+                ):
+                    candidates.append(
+                        info
+                    )
+
+            if len(candidates) != 1:
+                raise RuntimeError(
+                    "Release archive must contain "
+                    "exactly one expected PythoFetch "
+                    "executable."
+                )
+
+            selected = candidates[0]
+
+            with archive.open(
+                selected,
+                "r",
+            ) as source:
+                with destination.open(
+                    "wb"
+                ) as target:
+                    shutil.copyfileobj(
+                        source,
+                        target,
+                    )
+
+        verify_update_payload(
+            destination,
+            asset.get(
+                "executable_sha256"
+            ),
+            asset.get(
+                "executable_size_bytes"
+            ),
+        )
+
+        return destination
+
+    except Exception:
+        if destination.exists():
+            destination.unlink()
+        raise
+
+    finally:
+        if archive_path.exists():
+            archive_path.unlink()
+
+
+def prepare_update_payload(
+    downloaded,
+    filename,
+    latest,
+    asset,
+    target,
+):
+    filename = str(
+        filename
+    ).strip()
+
+    executable_name = (
+        release_executable_name(
+            latest,
+            asset,
+        )
+    )
+
+    lower_name = filename.lower()
+
+    if lower_name.endswith(".zip"):
+        destination = (
+            target.with_name(
+                "."
+                + executable_name
+                + ".update"
+            )
+        )
+
+        payload = extract_zip_update(
+            downloaded,
+            executable_name,
+            destination,
+            asset,
+        )
+
+        return (
+            payload,
+            executable_name,
+        )
+
+    if lower_name.endswith(
+        (
+            ".tar",
+            ".tar.gz",
+            ".tgz",
+        )
+    ):
+        if Path(downloaded).exists():
+            Path(downloaded).unlink()
+
+        raise RuntimeError(
+            "This PythoFetch version supports "
+            "ZIP release archives or direct "
+            "executables, not TAR archives."
+        )
+
+    verify_update_payload(
+        downloaded
+    )
+
+    return (
+        Path(downloaded),
+        executable_name,
+    )
+
+
 def schedule_windows_update(
     downloaded,
     target,
+    destination,
 ):
     script_path = target.with_name(
         "." + target.name + ".update.ps1"
     )
 
-    script = "\n".join(
+    target_literal = powershell_literal(
+        target
+    )
+
+    destination_literal = (
+        powershell_literal(
+            destination
+        )
+    )
+
+    script_lines = [
+        (
+            "$targetPid = "
+            f"{os.getpid()}"
+        ),
+        (
+            "while (Get-Process -Id "
+            "$targetPid -ErrorAction "
+            "SilentlyContinue) {"
+        ),
+        (
+            "    Start-Sleep "
+            "-Milliseconds 250"
+        ),
+        "}",
+        (
+            "Move-Item -LiteralPath "
+            f"{powershell_literal(downloaded)} "
+            "-Destination "
+            f"{destination_literal} "
+            "-Force"
+        ),
+    ]
+
+    if (
+        os.path.normcase(
+            str(target)
+        )
+        != os.path.normcase(
+            str(destination)
+        )
+    ):
+        script_lines.append(
+            (
+                "Remove-Item -LiteralPath "
+                f"{target_literal} "
+                "-Force -ErrorAction "
+                "SilentlyContinue"
+            )
+        )
+
+    script_lines.extend(
         [
             (
-                "$targetPid = "
-                f"{os.getpid()}"
-            ),
-            (
-                "while (Get-Process -Id "
-                "$targetPid -ErrorAction "
-                "SilentlyContinue) {"
-            ),
-            (
-                "    Start-Sleep "
-                "-Milliseconds 250"
-            ),
-            "}",
-            (
-                "Move-Item -LiteralPath "
-                f"{powershell_literal(downloaded)} "
-                "-Destination "
-                f"{powershell_literal(target)} "
-                "-Force"
-            ),
-            (
                 "Start-Process -FilePath "
-                f"{powershell_literal(target)}"
+                f"{destination_literal}"
             ),
             (
                 "Remove-Item -LiteralPath "
@@ -2586,6 +2857,10 @@ def schedule_windows_update(
                 "-Force"
             ),
         ]
+    )
+
+    script = "\n".join(
+        script_lines
     )
 
     script_path.write_text(
@@ -2632,6 +2907,7 @@ def schedule_windows_update(
 def schedule_unix_update(
     downloaded,
     target,
+    destination,
 ):
     script_path = target.with_name(
         "." + target.name + ".update.sh"
@@ -2645,32 +2921,55 @@ def schedule_unix_update(
         str(target)
     )
 
+    destination_q = shlex.quote(
+        str(destination)
+    )
+
     script_q = shlex.quote(
         str(script_path)
     )
 
-    script = "\n".join(
+    script_lines = [
+        f"pid={os.getpid()}",
+        (
+            'while kill -0 "$pid" '
+            "2>/dev/null; do"
+        ),
+        "    sleep 0.25",
+        "done",
+        (
+            f"mv -f {downloaded_q} "
+            f"{destination_q}"
+        ),
+        f"chmod +x {destination_q}",
+    ]
+
+    if (
+        os.path.normcase(
+            str(target)
+        )
+        != os.path.normcase(
+            str(destination)
+        )
+    ):
+        script_lines.append(
+            f"rm -f -- {target_q}"
+        )
+
+    script_lines.extend(
         [
-            f"pid={os.getpid()}",
             (
-                'while kill -0 "$pid" '
-                "2>/dev/null; do"
-            ),
-            "    sleep 0.25",
-            "done",
-            (
-                f"mv -f {downloaded_q} "
-                f"{target_q}"
-            ),
-            f"chmod +x {target_q}",
-            (
-                f"{target_q} "
+                f"{destination_q} "
                 ">/dev/null 2>&1 &"
             ),
             (
                 f"rm -f -- {script_q}"
             ),
         ]
+    )
+
+    script = "\n".join(
+        script_lines
     )
 
     script_path.write_text(
@@ -2692,20 +2991,27 @@ def schedule_unix_update(
 
 def schedule_self_update(
     downloaded,
+    executable_name,
 ):
     target = Path(
         sys.executable
     ).resolve()
 
+    destination = target.with_name(
+        executable_name
+    )
+
     if platform.system() == "Windows":
         schedule_windows_update(
             downloaded,
             target,
+            destination,
         )
     else:
         schedule_unix_update(
             downloaded,
             target,
+            destination,
         )
 
 
@@ -2821,19 +3127,20 @@ def run_update():
         or "PythoFetch.update"
     )
 
-    if filename.lower().endswith(
-        (
-            ".zip",
-            ".tar",
-            ".tar.gz",
-            ".tgz",
-        )
-    ):
+    release_filename = (
+        filename.replace(
+            "\\",
+            "/",
+        ).rsplit(
+            "/",
+            1,
+        )[-1]
+    )
+
+    if not release_filename:
         raise RuntimeError(
-            "Automatic updating requires "
-            "the release manifest to point "
-            "to the executable or binary "
-            "itself, not an archive."
+            "Selected release asset does "
+            "not provide a valid filename."
         )
 
     target = Path(
@@ -2842,9 +3149,7 @@ def run_update():
 
     downloaded = target.with_name(
         "."
-        + target.name
-        + "."
-        + latest
+        + release_filename
         + ".update"
     )
 
@@ -2862,8 +3167,20 @@ def run_update():
         asset.get("size_bytes"),
     )
 
+    (
+        payload,
+        executable_name,
+    ) = prepare_update_payload(
+        downloaded,
+        release_filename,
+        latest,
+        asset,
+        target,
+    )
+
     schedule_self_update(
-        downloaded
+        payload,
+        executable_name,
     )
 
     print(
