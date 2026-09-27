@@ -1,6 +1,20 @@
 {
   "schema": 1,
   "application": "PythoFetch",
-  "latest_version": null,
-  "releases": {}
+  "latest_version": "1.0.0",
+  "releases": {
+    "1.0.0": {
+      "assets": {
+        "Windows_x86_64": {
+          "file": "PythoFetch_1.0.0_Windows_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/PythoFetch/PythoFetch_1.0.0_Windows_x86_64.zip",
+          "sha256": "d36770d40b0abd29486eee1f412242077d6074c64b8bca8096409dccc8cd9ab6",
+          "size_bytes": 15810048,
+          "executable": "PythoFetch_1.0.0.exe",
+          "executable_sha256": "bc8815ac5f75979d4eed44dca6c9ac566a62d12f58809b8fe5caed7a014e130e",
+          "executable_size_bytes": 16105916
+        }
+      }
+    }
+  }
 }
