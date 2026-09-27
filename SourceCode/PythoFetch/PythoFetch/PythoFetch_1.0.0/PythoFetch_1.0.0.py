@@ -18,12 +18,6 @@ import zipfile
 from datetime import timedelta
 from pathlib import Path
 
-try:
-    import psutil
-except ImportError:
-    raise SystemExit("PythoFetch requires psutil. Install it with: pip install psutil")
-
-
 PYTHOFETCH_VERSION = "1.0.0"
 ART_DATABASE_SCHEMA_VERSION = 1
 NARROW_ART_WIDTH = 80
@@ -279,6 +273,342 @@ def mib(value):
     return int(round(value / 1024 / 1024))
 
 
+def get_memory_snapshot():
+    system = platform.system()
+
+    if system == "Windows":
+        class MemoryStatus(ctypes.Structure):
+            _fields_ = [
+                ("dwLength", ctypes.c_ulong),
+                ("dwMemoryLoad", ctypes.c_ulong),
+                ("ullTotalPhys", ctypes.c_ulonglong),
+                ("ullAvailPhys", ctypes.c_ulonglong),
+                ("ullTotalPageFile", ctypes.c_ulonglong),
+                ("ullAvailPageFile", ctypes.c_ulonglong),
+                ("ullTotalVirtual", ctypes.c_ulonglong),
+                ("ullAvailVirtual", ctypes.c_ulonglong),
+                ("ullAvailExtendedVirtual", ctypes.c_ulonglong),
+            ]
+
+        try:
+            status = MemoryStatus()
+            status.dwLength = ctypes.sizeof(status)
+
+            if ctypes.windll.kernel32.GlobalMemoryStatusEx(
+                ctypes.byref(status)
+            ):
+                total = int(status.ullTotalPhys)
+                available = int(status.ullAvailPhys)
+                used = max(0, total - available)
+                percent = used / total * 100 if total else 0
+
+                return {
+                    "used": used,
+                    "total": total,
+                    "percent": percent,
+                }
+        except Exception:
+            pass
+
+    if system == "Linux":
+        values = {}
+
+        try:
+            with open(
+                "/proc/meminfo",
+                "r",
+                encoding="utf-8",
+                errors="replace",
+            ) as handle:
+                for raw in handle:
+                    if ":" not in raw:
+                        continue
+
+                    key, value = raw.split(":", 1)
+                    match = re.search(r"\d+", value)
+
+                    if match:
+                        values[key.strip()] = int(match.group(0)) * 1024
+        except Exception:
+            values = {}
+
+        total = values.get("MemTotal")
+        available = values.get("MemAvailable")
+
+        if available is None:
+            available = sum(
+                values.get(name, 0)
+                for name in (
+                    "MemFree",
+                    "Buffers",
+                    "Cached",
+                    "SReclaimable",
+                )
+            )
+
+        if total:
+            used = max(0, total - int(available or 0))
+
+            return {
+                "used": used,
+                "total": total,
+                "percent": used / total * 100,
+            }
+
+    if system == "Darwin":
+        total_text = run_command(
+            ["sysctl", "-n", "hw.memsize"]
+        )
+        vm_text = run_command(["vm_stat"])
+
+        try:
+            total = int(total_text)
+        except Exception:
+            total = 0
+
+        page_size = 4096
+        match = re.search(
+            r"page size of\s+(\d+)\s+bytes",
+            vm_text,
+            re.IGNORECASE,
+        )
+
+        if match:
+            page_size = int(match.group(1))
+
+        page_values = {}
+
+        for raw in vm_text.splitlines():
+            match = re.match(
+                r"([^:]+):\s+(\d+)",
+                raw.strip(),
+            )
+
+            if not match:
+                continue
+
+            page_values[match.group(1).strip()] = int(match.group(2))
+
+        available_pages = sum(
+            page_values.get(name, 0)
+            for name in (
+                "Pages free",
+                "Pages inactive",
+                "Pages speculative",
+                "Pages purgeable",
+            )
+        )
+
+        if total:
+            available = available_pages * page_size
+            used = max(0, min(total, total - available))
+
+            return {
+                "used": used,
+                "total": total,
+                "percent": used / total * 100,
+            }
+
+    return {
+        "used": 0,
+        "total": 0,
+        "percent": 0,
+    }
+
+
+def get_cpu_counts():
+    logical = os.cpu_count() or None
+    physical = None
+    system = platform.system()
+
+    if system == "Windows":
+        script = (
+            "$cpus = @(Get-CimInstance Win32_Processor); "
+            "$physical = ($cpus | Measure-Object -Property "
+            "NumberOfCores -Sum).Sum; "
+            "$logical = ($cpus | Measure-Object -Property "
+            "NumberOfLogicalProcessors -Sum).Sum; "
+            "[pscustomobject]@{Physical=$physical;Logical=$logical} "
+            "| ConvertTo-Json -Compress"
+        )
+
+        output = run_powershell(
+            script,
+            timeout=4,
+        )
+
+        try:
+            data = json.loads(output)
+            physical = int(data.get("Physical"))
+            logical = int(data.get("Logical"))
+        except Exception:
+            pass
+
+    elif system == "Linux":
+        core_pairs = set()
+        current_physical = None
+        current_core = None
+
+        try:
+            with open(
+                "/proc/cpuinfo",
+                "r",
+                encoding="utf-8",
+                errors="replace",
+            ) as handle:
+                rows = list(handle)
+
+            for raw in rows + ["\n"]:
+                line = raw.strip()
+
+                if not line:
+                    if (
+                        current_physical is not None
+                        and current_core is not None
+                    ):
+                        core_pairs.add(
+                            (
+                                current_physical,
+                                current_core,
+                            )
+                        )
+
+                    current_physical = None
+                    current_core = None
+                    continue
+
+                if ":" not in line:
+                    continue
+
+                key, value = line.split(":", 1)
+                key = key.strip().lower()
+                value = value.strip()
+
+                if key == "physical id":
+                    current_physical = value
+                elif key == "core id":
+                    current_core = value
+
+            if core_pairs:
+                physical = len(core_pairs)
+        except Exception:
+            pass
+
+        if physical is None:
+            output = run_command(
+                ["lscpu", "-p=core"]
+            )
+
+            core_ids = {
+                line.strip()
+                for line in output.splitlines()
+                if line.strip() and not line.startswith("#")
+            }
+
+            if core_ids:
+                physical = len(core_ids)
+
+    elif system == "Darwin":
+        physical_text = run_command(
+            ["sysctl", "-n", "hw.physicalcpu"]
+        )
+        logical_text = run_command(
+            ["sysctl", "-n", "hw.logicalcpu"]
+        )
+
+        try:
+            physical = int(physical_text)
+        except Exception:
+            pass
+
+        try:
+            logical = int(logical_text)
+        except Exception:
+            pass
+
+    return physical, logical
+
+
+def get_boot_time():
+    system = platform.system()
+
+    if system == "Windows":
+        try:
+            uptime_ms = ctypes.windll.kernel32.GetTickCount64()
+            return time.time() - float(uptime_ms) / 1000.0
+        except Exception:
+            pass
+
+    if system == "Linux":
+        try:
+            uptime = float(
+                Path("/proc/uptime")
+                .read_text(
+                    encoding="utf-8",
+                    errors="replace",
+                )
+                .split()[0]
+            )
+            return time.time() - uptime
+        except Exception:
+            pass
+
+    if system == "Darwin":
+        output = run_command(
+            ["sysctl", "-n", "kern.boottime"]
+        )
+
+        match = re.search(
+            r"sec\s*=\s*(\d+)",
+            output,
+        )
+
+        if match:
+            return float(match.group(1))
+
+    return time.time()
+
+
+def get_linux_cpu_max_mhz():
+    values = []
+    cpu_root = Path("/sys/devices/system/cpu")
+
+    try:
+        for path in cpu_root.glob(
+            "cpu[0-9]*/cpufreq/cpuinfo_max_freq"
+        ):
+            try:
+                value = float(
+                    path.read_text(
+                        encoding="utf-8",
+                        errors="replace",
+                    ).strip()
+                )
+
+                if value > 0:
+                    values.append(value / 1000.0)
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    if values:
+        return max(values)
+
+    output = run_command(["lscpu"])
+
+    for raw in output.splitlines():
+        if raw.lower().startswith("cpu max mhz:"):
+            try:
+                return float(
+                    raw.split(":", 1)[1].strip()
+                )
+            except Exception:
+                pass
+
+    return None
+
+
 
 def format_cpu_display(cpu_name, logical_cores=None, max_mhz=None):
     name = compact_spaces(cpu_name) or "Unknown"
@@ -303,18 +633,53 @@ def format_cpu_display(cpu_name, logical_cores=None, max_mhz=None):
 
 
 def get_parent_process_names():
+    if platform.system() == "Windows":
+        return []
+
     names = []
-    try:
-        process = psutil.Process(os.getpid())
-        for _ in range(8):
-            process = process.parent()
-            if process is None:
-                break
-            name = process.name()
-            if name:
-                names.append(name)
-    except Exception:
-        pass
+    pid = os.getppid()
+
+    for _ in range(8):
+        if not pid or pid <= 1:
+            break
+
+        name = run_command(
+            [
+                "ps",
+                "-o",
+                "comm=",
+                "-p",
+                str(pid),
+            ],
+            timeout=2,
+        )
+
+        if name:
+            names.append(
+                os.path.basename(name.strip())
+            )
+
+        parent = run_command(
+            [
+                "ps",
+                "-o",
+                "ppid=",
+                "-p",
+                str(pid),
+            ],
+            timeout=2,
+        )
+
+        try:
+            next_pid = int(parent.strip())
+        except Exception:
+            break
+
+        if next_pid == pid:
+            break
+
+        pid = next_pid
+
     return names
 
 
@@ -623,7 +988,7 @@ def get_primary_disk():
 
 def collect_windows_snapshot():
     cim = get_windows_cim_snapshot()
-    memory = psutil.virtual_memory()
+    memory = get_memory_snapshot()
     disk = get_primary_disk()
 
     os_caption = compact_spaces(cim.get("OSCaption"))
@@ -651,8 +1016,7 @@ def collect_windows_snapshot():
         gpus = [gpus]
     gpus = [compact_spaces(gpu) for gpu in gpus if compact_spaces(gpu)]
 
-    physical = psutil.cpu_count(logical=False)
-    logical = psutil.cpu_count(logical=True)
+    physical, logical = get_cpu_counts()
 
     cpu_display = format_cpu_display(cpu_name, logical, max_mhz)
 
@@ -664,7 +1028,7 @@ def collect_windows_snapshot():
         "host": host_model,
         "kernel": kernel,
         "build": build or None,
-        "uptime": format_uptime(time.time() - psutil.boot_time()),
+        "uptime": format_uptime(time.time() - get_boot_time()),
         "packages": get_windows_packages(),
         "shell": get_shell(),
         "resolution": get_resolution(),
@@ -681,9 +1045,9 @@ def collect_windows_snapshot():
         "logical_cores": logical,
         "cpu_max_mhz": max_mhz,
         "gpus": gpus or ["Unknown"],
-        "memory_used_mib": mib(memory.used),
-        "memory_total_mib": mib(memory.total),
-        "memory_percent": memory.percent,
+        "memory_used_mib": mib(memory["used"]),
+        "memory_total_mib": mib(memory["total"]),
+        "memory_percent": memory["percent"],
         "disk": disk,
         "architecture": platform.machine() or None,
     }
@@ -691,17 +1055,15 @@ def collect_windows_snapshot():
 
 def collect_linux_snapshot():
     os_release = get_linux_os_release()
-    memory = psutil.virtual_memory()
+    memory = get_memory_snapshot()
     disk = get_primary_disk()
 
     pretty = os_release.get("PRETTY_NAME") or os_release.get("NAME") or "Linux"
     cpu_name = get_linux_cpu_name() or "Unknown"
-    physical = psutil.cpu_count(logical=False)
-    logical = psutil.cpu_count(logical=True)
+    physical, logical = get_cpu_counts()
 
     try:
-        freq = psutil.cpu_freq()
-        max_mhz = freq.max if freq and freq.max else None
+        max_mhz = get_linux_cpu_max_mhz()
     except Exception:
         max_mhz = None
 
@@ -715,7 +1077,7 @@ def collect_linux_snapshot():
         "host": get_linux_machine_model(),
         "kernel": platform.release(),
         "build": None,
-        "uptime": format_uptime(time.time() - psutil.boot_time()),
+        "uptime": format_uptime(time.time() - get_boot_time()),
         "packages": None,
         "shell": get_shell(),
         "resolution": get_resolution(),
@@ -732,9 +1094,9 @@ def collect_linux_snapshot():
         "logical_cores": logical,
         "cpu_max_mhz": max_mhz,
         "gpus": get_linux_gpus() or ["Unknown"],
-        "memory_used_mib": mib(memory.used),
-        "memory_total_mib": mib(memory.total),
-        "memory_percent": memory.percent,
+        "memory_used_mib": mib(memory["used"]),
+        "memory_total_mib": mib(memory["total"]),
+        "memory_percent": memory["percent"],
         "disk": disk,
         "architecture": platform.machine() or None,
         "distro_id": os_release.get("ID"),
@@ -744,13 +1106,12 @@ def collect_linux_snapshot():
 
 def collect_macos_snapshot():
     details = get_macos_snapshot()
-    memory = psutil.virtual_memory()
+    memory = get_memory_snapshot()
     disk = get_primary_disk()
 
     mac_version = platform.mac_ver()[0]
     cpu_name = details["cpu"] or "Unknown"
-    physical = psutil.cpu_count(logical=False)
-    logical = psutil.cpu_count(logical=True)
+    physical, logical = get_cpu_counts()
 
     cpu_display = format_cpu_display(cpu_name, logical, None)
 
@@ -762,7 +1123,7 @@ def collect_macos_snapshot():
         "host": details["model"],
         "kernel": platform.release(),
         "build": None,
-        "uptime": format_uptime(time.time() - psutil.boot_time()),
+        "uptime": format_uptime(time.time() - get_boot_time()),
         "packages": None,
         "shell": get_shell(),
         "resolution": get_resolution(),
@@ -779,9 +1140,9 @@ def collect_macos_snapshot():
         "logical_cores": logical,
         "cpu_max_mhz": None,
         "gpus": details["gpus"] or ["Unknown"],
-        "memory_used_mib": mib(memory.used),
-        "memory_total_mib": mib(memory.total),
-        "memory_percent": memory.percent,
+        "memory_used_mib": mib(memory["used"]),
+        "memory_total_mib": mib(memory["total"]),
+        "memory_percent": memory["percent"],
         "disk": disk,
         "architecture": platform.machine() or None,
     }
@@ -1999,9 +2360,7 @@ def tui_full_row(value, width, border_color):
     )
 
 
-def render_tui_side_by_side(snapshot, logo_lines, palette, payload):
-    info_lines = tui_info_lines(snapshot, palette)
-
+def tui_side_by_side_layout(logo_lines, info_lines):
     logo_width = max(
         (visible_width(line) for line in logo_lines),
         default=0,
@@ -2013,16 +2372,44 @@ def render_tui_side_by_side(snapshot, logo_lines, palette, payload):
     )
 
     left_width = max(
-        logo_width + 4,
-        32,
+        logo_width + 3,
+        30,
     )
 
     right_width = max(
-        info_width + 4,
-        52,
+        info_width + 3,
+        44,
     )
 
-    gap = 4
+    gap = 2
+    terminal_width = (
+        left_width
+        + gap
+        + right_width
+        + 2
+    )
+
+    return (
+        left_width,
+        right_width,
+        gap,
+        terminal_width,
+    )
+
+
+def render_tui_side_by_side(snapshot, logo_lines, palette, payload):
+    info_lines = tui_info_lines(snapshot, palette)
+
+    (
+        left_width,
+        right_width,
+        gap,
+        _,
+    ) = tui_side_by_side_layout(
+        logo_lines,
+        info_lines,
+    )
+
     full_width = left_width + gap + right_width
     label_number = info_label_number(palette)
     border_color = ansi_bold_color(label_number)
@@ -2291,28 +2678,23 @@ def render_tui(snapshot):
         palette,
     )
 
-    logo_width = max(
-        (visible_width(line) for line in logo_lines),
-        default=0,
+    (
+        _,
+        _,
+        _,
+        required_width,
+    ) = tui_side_by_side_layout(
+        logo_lines,
+        info_lines,
     )
 
-    info_width = max(
-        (visible_width(line) for line in info_lines),
-        default=0,
-    )
-
-    required_width = (
-        max(logo_width + 4, 32)
-        + max(info_width + 4, 52)
-        + 3
-    )
+    terminal_width = shutil.get_terminal_size(
+        (120, 30)
+    ).columns
 
     clear_terminal()
 
-    if (
-        shutil.get_terminal_size((120, 30)).columns
-        >= required_width
-    ):
+    if terminal_width >= required_width:
         render_tui_side_by_side(
             snapshot,
             logo_lines,
@@ -2546,9 +2928,78 @@ def powershell_literal(value):
     )
 
 
+def runtime_application_path():
+    system = platform.system()
+
+    if system == "Linux":
+        appimage_value = str(
+            os.environ.get("APPIMAGE")
+            or ""
+        ).strip()
+
+        if appimage_value:
+            appimage_path = Path(
+                appimage_value
+            ).expanduser().resolve()
+
+            if appimage_path.is_file():
+                return appimage_path
+
+    executable = Path(
+        sys.executable
+    ).resolve()
+
+    if system == "Darwin":
+        candidates = (
+            executable,
+            *executable.parents,
+        )
+
+        for candidate in candidates:
+            if (
+                candidate.name.lower().endswith(
+                    ".app"
+                )
+                and candidate.is_dir()
+            ):
+                return candidate
+
+    return executable
+
+
+def runtime_application_kind(
+    target=None,
+):
+    target = Path(
+        target
+        or runtime_application_path()
+    )
+
+    if (
+        platform.system() == "Linux"
+        and target.is_file()
+        and target.name.lower().endswith(
+            ".appimage"
+        )
+    ):
+        return "appimage"
+
+    if (
+        platform.system() == "Darwin"
+        and target.is_dir()
+        and target.name.lower().endswith(
+            ".app"
+        )
+    ):
+        return "app_bundle"
+
+    return "executable"
+
+
 def release_executable_name(
     latest,
     asset,
+    target=None,
 ):
     configured = str(
         asset.get("executable")
@@ -2569,12 +3020,80 @@ def release_executable_name(
 
         return normalized
 
+    kind = runtime_application_kind(
+        target
+    )
+
     if platform.system() == "Windows":
         return (
             f"PythoFetch_{latest}.exe"
         )
 
+    if kind == "appimage":
+        return (
+            f"PythoFetch_{latest}_Linux_"
+            f"{normalized_architecture()}.AppImage"
+        )
+
+    if kind == "app_bundle":
+        return f"PythoFetch_{latest}.app"
+
     return f"PythoFetch_{latest}"
+
+
+def remove_update_path(path):
+    path = Path(path)
+
+    if path.is_symlink() or path.is_file():
+        path.unlink()
+        return
+
+    if path.is_dir():
+        shutil.rmtree(path)
+
+
+def normalized_zip_member_name(value):
+    normalized = str(value).replace(
+        "\\",
+        "/",
+    )
+
+    while normalized.startswith("./"):
+        normalized = normalized[2:]
+
+    if (
+        not normalized
+        or normalized.startswith("/")
+        or "\x00" in normalized
+    ):
+        raise RuntimeError(
+            "Release archive contains an "
+            "invalid member path."
+        )
+
+    parts = [
+        part
+        for part in normalized.split("/")
+        if part not in ("", ".")
+    ]
+
+    if (
+        not parts
+        or any(
+            part == ".."
+            for part in parts
+        )
+        or (
+            len(parts[0]) >= 2
+            and parts[0][1] == ":"
+        )
+    ):
+        raise RuntimeError(
+            "Release archive contains an "
+            "unsafe member path."
+        )
+
+    return "/".join(parts)
 
 
 def verify_update_payload(
@@ -2589,7 +3108,7 @@ def verify_update_payload(
         or path.stat().st_size == 0
     ):
         raise RuntimeError(
-            "Extracted update executable "
+            "Extracted update application "
             "is missing or empty."
         )
 
@@ -2601,7 +3120,7 @@ def verify_update_payload(
         except Exception as exc:
             raise RuntimeError(
                 "Manifest contains an invalid "
-                "update executable size."
+                "update application size."
             ) from exc
 
         if (
@@ -2609,7 +3128,7 @@ def verify_update_payload(
             != required_size
         ):
             raise RuntimeError(
-                "Extracted update executable "
+                "Extracted update application "
                 "size does not match the "
                 "manifest."
             )
@@ -2625,7 +3144,7 @@ def verify_update_payload(
 
         if actual_hash != expected_hash:
             raise RuntimeError(
-                "Extracted update executable "
+                "Extracted update application "
                 "failed SHA-256 verification."
             )
 
@@ -2645,10 +3164,9 @@ def extract_zip_update(
         destination
     )
 
-    if destination.exists():
-        destination.unlink()
-
-    selected = None
+    remove_update_path(
+        destination
+    )
 
     try:
         with zipfile.ZipFile(
@@ -2658,13 +3176,20 @@ def extract_zip_update(
             candidates = []
 
             for info in archive.infolist():
+                member_path = (
+                    normalized_zip_member_name(
+                        info.filename
+                    )
+                )
+
                 if info.is_dir():
                     continue
 
                 member_name = (
-                    info.filename
-                    .replace("\\", "/")
-                    .rsplit("/", 1)[-1]
+                    member_path.rsplit(
+                        "/",
+                        1,
+                    )[-1]
                 )
 
                 if (
@@ -2679,7 +3204,7 @@ def extract_zip_update(
                 raise RuntimeError(
                     "Release archive must contain "
                     "exactly one expected PythoFetch "
-                    "executable."
+                    "application file."
                 )
 
             selected = candidates[0]
@@ -2690,10 +3215,10 @@ def extract_zip_update(
             ) as source:
                 with destination.open(
                     "wb"
-                ) as target:
+                ) as target_handle:
                     shutil.copyfileobj(
                         source,
-                        target,
+                        target_handle,
                     )
 
         verify_update_payload(
@@ -2709,13 +3234,190 @@ def extract_zip_update(
         return destination
 
     except Exception:
-        if destination.exists():
-            destination.unlink()
+        remove_update_path(
+            destination
+        )
         raise
 
     finally:
-        if archive_path.exists():
-            archive_path.unlink()
+        remove_update_path(
+            archive_path
+        )
+
+
+def validate_macos_bundle(path):
+    path = Path(path)
+
+    if (
+        not path.is_dir()
+        or not path.name.lower().endswith(
+            ".app"
+        )
+    ):
+        raise RuntimeError(
+            "Extracted macOS application "
+            "bundle is missing."
+        )
+
+    contents = path / "Contents"
+    info_plist = contents / "Info.plist"
+    macos_dir = contents / "MacOS"
+
+    if (
+        not info_plist.is_file()
+        or not macos_dir.is_dir()
+    ):
+        raise RuntimeError(
+            "Extracted macOS application "
+            "bundle is malformed."
+        )
+
+    launchers = [
+        child
+        for child in macos_dir.iterdir()
+        if (
+            child.is_file()
+            and os.access(
+                child,
+                os.X_OK,
+            )
+        )
+    ]
+
+    if not launchers:
+        raise RuntimeError(
+            "Extracted macOS application "
+            "bundle has no executable launcher."
+        )
+
+    return path
+
+
+def extract_macos_bundle_update(
+    archive_path,
+    application_name,
+    destination,
+):
+    archive_path = Path(
+        archive_path
+    )
+    destination = Path(
+        destination
+    )
+    staging = destination.with_name(
+        destination.name + ".extract"
+    )
+
+    remove_update_path(
+        destination
+    )
+    remove_update_path(
+        staging
+    )
+
+    try:
+        with zipfile.ZipFile(
+            archive_path,
+            "r",
+        ) as archive:
+            expected = (
+                application_name.casefold()
+            )
+            found_expected = False
+            application_roots = set()
+
+            for info in archive.infolist():
+                member_path = (
+                    normalized_zip_member_name(
+                        info.filename
+                    )
+                )
+                root = member_path.split(
+                    "/",
+                    1,
+                )[0]
+                root_folded = root.casefold()
+
+                if root_folded == "__macosx":
+                    continue
+
+                if root_folded.endswith(
+                    ".app"
+                ):
+                    application_roots.add(
+                        root_folded
+                    )
+
+                if root_folded == expected:
+                    found_expected = True
+
+            if (
+                not found_expected
+                or application_roots
+                != {expected}
+            ):
+                raise RuntimeError(
+                    "Release archive must contain "
+                    "exactly one expected PythoFetch "
+                    "macOS application bundle."
+                )
+
+        staging.mkdir(
+            parents=True,
+            exist_ok=False,
+        )
+
+        result = subprocess.run(
+            [
+                "ditto",
+                "-x",
+                "-k",
+                str(archive_path),
+                str(staging),
+            ],
+            capture_output=True,
+            text=True,
+            timeout=120,
+            encoding="utf-8",
+            errors="replace",
+        )
+
+        if result.returncode != 0:
+            raise RuntimeError(
+                "macOS could not extract the "
+                "application update."
+            )
+
+        extracted = staging / application_name
+
+        validate_macos_bundle(
+            extracted
+        )
+
+        shutil.move(
+            str(extracted),
+            str(destination),
+        )
+
+        validate_macos_bundle(
+            destination
+        )
+
+        return destination
+
+    except Exception:
+        remove_update_path(
+            destination
+        )
+        raise
+
+    finally:
+        remove_update_path(
+            staging
+        )
+        remove_update_path(
+            archive_path
+        )
 
 
 def prepare_update_payload(
@@ -2733,26 +3435,46 @@ def prepare_update_payload(
         release_executable_name(
             latest,
             asset,
+            target,
         )
     )
 
     lower_name = filename.lower()
 
     if lower_name.endswith(".zip"):
-        destination = (
-            target.with_name(
-                "."
-                + executable_name
-                + ".update"
+        is_macos_bundle = (
+            platform.system() == "Darwin"
+            and executable_name.lower().endswith(
+                ".app"
             )
         )
 
-        payload = extract_zip_update(
-            downloaded,
-            executable_name,
-            destination,
-            asset,
-        )
+        if is_macos_bundle:
+            destination = target.with_name(
+                ".update-"
+                + executable_name
+            )
+            payload = (
+                extract_macos_bundle_update(
+                    downloaded,
+                    executable_name,
+                    destination,
+                )
+            )
+        else:
+            destination = (
+                target.with_name(
+                    "."
+                    + executable_name
+                    + ".update"
+                )
+            )
+            payload = extract_zip_update(
+                downloaded,
+                executable_name,
+                destination,
+                asset,
+            )
 
         return (
             payload,
@@ -2766,13 +3488,26 @@ def prepare_update_payload(
             ".tgz",
         )
     ):
-        if Path(downloaded).exists():
-            Path(downloaded).unlink()
+        remove_update_path(
+            downloaded
+        )
 
         raise RuntimeError(
             "This PythoFetch version supports "
             "ZIP release archives or direct "
-            "executables, not TAR archives."
+            "application files, not TAR archives."
+        )
+
+    if executable_name.lower().endswith(
+        ".app"
+    ):
+        remove_update_path(
+            downloaded
+        )
+
+        raise RuntimeError(
+            "macOS application bundles must be "
+            "distributed inside a ZIP archive."
         )
 
     verify_update_payload(
@@ -2989,20 +3724,115 @@ def schedule_unix_update(
     )
 
 
+def schedule_macos_update(
+    downloaded,
+    target,
+    destination,
+):
+    script_path = target.with_name(
+        "." + target.name + ".update.sh"
+    )
+
+    downloaded_q = shlex.quote(
+        str(downloaded)
+    )
+
+    target_q = shlex.quote(
+        str(target)
+    )
+
+    destination_q = shlex.quote(
+        str(destination)
+    )
+
+    script_q = shlex.quote(
+        str(script_path)
+    )
+
+    script_lines = [
+        f"pid={os.getpid()}",
+        (
+            'while kill -0 "$pid" '
+            "2>/dev/null; do"
+        ),
+        "    sleep 0.25",
+        "done",
+        (
+            f"rm -rf -- {destination_q}"
+        ),
+        (
+            f"mv -f {downloaded_q} "
+            f"{destination_q}"
+        ),
+    ]
+
+    if (
+        os.path.normcase(
+            str(target)
+        )
+        != os.path.normcase(
+            str(destination)
+        )
+    ):
+        script_lines.append(
+            f"rm -rf -- {target_q}"
+        )
+
+    script_lines.extend(
+        [
+            (
+                f"open {destination_q} "
+                ">/dev/null 2>&1"
+            ),
+            (
+                f"rm -f -- {script_q}"
+            ),
+        ]
+    )
+
+    script = "\n".join(
+        script_lines
+    )
+
+    script_path.write_text(
+        script + "\n",
+        encoding="utf-8",
+    )
+
+    subprocess.Popen(
+        [
+            "/bin/sh",
+            str(script_path),
+        ],
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+
+
 def schedule_self_update(
     downloaded,
     executable_name,
 ):
-    target = Path(
-        sys.executable
-    ).resolve()
+    target = runtime_application_path()
 
     destination = target.with_name(
         executable_name
     )
 
+    kind = runtime_application_kind(
+        target
+    )
+
     if platform.system() == "Windows":
         schedule_windows_update(
+            downloaded,
+            target,
+            destination,
+        )
+    elif kind == "app_bundle":
+        schedule_macos_update(
             downloaded,
             target,
             destination,
@@ -3143,9 +3973,7 @@ def run_update():
             "not provide a valid filename."
         )
 
-    target = Path(
-        sys.executable
-    ).resolve()
+    target = runtime_application_path()
 
     downloaded = target.with_name(
         "."
