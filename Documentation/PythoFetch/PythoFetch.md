@@ -397,16 +397,123 @@ The release manifest identifies:
 - latest application version
 - available releases
 - platform assets
-- file names
+- release package file names
 - download URLs
-- SHA-256 checksums
-- file sizes
+- release-package SHA-256 checksums
+- release-package file sizes
+- optional explicit executable names
+- optional extracted-executable SHA-256 checksums
+- optional extracted-executable file sizes
 
 A source checkout can check the manifest but does not replace the running Python source automatically.
 
 Automatic self-replacement is intended for packaged/frozen releases.
 
-The update asset must point to the executable/binary itself rather than a ZIP, TAR, or similar archive.
+### Release Package Formats
+
+PythoFetch 1.0.0 supports two update payload styles:
+
+```text
+ZIP release package
+direct executable / binary
+```
+
+ZIP is the preferred ProjectHomelab release format.
+
+TAR, TAR.GZ, and TGZ update packages are not supported by PythoFetch 1.0.0.
+
+A ZIP release must contain exactly one executable whose filename matches the executable expected for the target PythoFetch version.
+
+The normal versioned executable names are:
+
+```text
+Windows : PythoFetch_<version>.exe
+Linux   : PythoFetch_<version>
+macOS   : PythoFetch_<version>
+```
+
+The manifest can override the expected executable filename with the asset-level `executable` field.
+
+### Update Verification
+
+The downloaded release asset is always verified against the asset-level:
+
+```text
+sha256
+size_bytes
+```
+
+For a ZIP release, these values describe the ZIP itself.
+
+A ZIP asset can additionally provide:
+
+```text
+executable_sha256
+executable_size_bytes
+```
+
+These values describe the executable inside the ZIP and allow PythoFetch to verify the extracted program independently of the outer release package.
+
+The executable checksum is optional, but using it provides an additional integrity check.
+
+### Versioned Self-Replacement
+
+PythoFetch executables are versioned so multiple releases do not share the same permanent filename.
+
+For example:
+
+```text
+PythoFetch_1.0.0.exe
+PythoFetch_1.0.1.exe
+```
+
+When a packaged build updates:
+
+```text
+1. PythoFetch reads the release manifest.
+2. It selects the best platform and architecture asset.
+3. It downloads the release package beside the running executable using a temporary update filename.
+4. It verifies the package SHA-256 and size.
+5. For ZIP releases, it locates exactly one expected versioned executable inside the archive.
+6. It extracts that executable to a temporary update file.
+7. If supplied, it verifies the extracted executable SHA-256 and size.
+8. It starts an operating-system-specific handoff process.
+9. The handoff waits for the current PythoFetch process to exit.
+10. The new versioned executable is moved into place.
+11. The previous versioned executable is removed when its filename differs from the new version.
+12. The new PythoFetch executable is launched.
+13. Temporary updater files are cleaned up.
+```
+
+Windows uses a temporary PowerShell handoff.
+
+Linux and macOS use a temporary shell handoff and ensure the replacement binary is executable before launch.
+
+### Release Manifest Asset Example
+
+A Windows x86-64 ZIP release can be represented as:
+
+```json
+{
+  "Windows_x86_64": {
+    "file": "PythoFetch_1.0.0_Windows_x86_64.zip",
+    "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/PythoFetch/PythoFetch_1.0.0_Windows_x86_64.zip",
+    "sha256": "<release-zip-sha256>",
+    "size_bytes": 12345678,
+    "executable": "PythoFetch_1.0.0.exe",
+    "executable_sha256": "<executable-sha256>",
+    "executable_size_bytes": 16000000
+  }
+}
+```
+
+The checksum strings and byte counts in the example are placeholders and must be replaced with the values calculated from the actual release files.
+
+The `sha256` and `size_bytes` fields are required by the downloader.
+
+The `executable` field is optional when the executable follows PythoFetch's standard versioned naming convention.
+
+The `executable_sha256` and `executable_size_bytes` fields are optional but recommended for ZIP releases.
 
 ### Platform Asset Names
 
