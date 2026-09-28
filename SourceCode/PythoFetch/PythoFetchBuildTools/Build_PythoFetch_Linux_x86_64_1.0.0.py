@@ -31,10 +31,6 @@ APPIMAGE_RUNTIME_ASSETS = {
         "url": "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64",
         "sha256": "1cc49bcf1e2ccd593c379adb17c9f85a36d619088296504de95b1d06215aebbf",
     },
-    "aarch64": {
-        "url": "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-aarch64",
-        "sha256": "7d5d772b7c32f0c84caf0a452a3072a5709027d7eac5856feb89a7a7a8881372",
-    },
 }
 SOURCE_PATTERN = re.compile(r"^PythoFetch(?:_[^/]+)?\.py$", re.IGNORECASE)
 DATABASE_PATTERN = re.compile(r"^PythoFetchArt_(\d+\.\d+\.\d+)\.db$", re.IGNORECASE)
@@ -94,12 +90,12 @@ def record(path):
 
 def find_source(root):
     candidates = []
-    compiler_name = Path(__file__).name.lower()
+    build_tool_name = Path(__file__).name.lower()
 
     for path in root.iterdir():
         if not path.is_file():
             continue
-        if path.name.lower() == compiler_name:
+        if path.name.lower() == build_tool_name:
             continue
         if not SOURCE_PATTERN.match(path.name):
             continue
@@ -123,7 +119,7 @@ def find_source(root):
     if not candidates:
         raise RuntimeError(
             "No PythoFetch Python source containing PYTHOFETCH_VERSION "
-            "was found beside PythoFetchLinuxCompiler.py."
+            "was found beside this build tool."
         )
 
     highest_key = max(
@@ -255,9 +251,10 @@ def detect_architecture():
     machine = str(platform.machine() or "").strip().lower()
     if machine in ("x86_64", "amd64", "x64"):
         return "x86_64", "x86_64"
-    if machine in ("aarch64", "arm64"):
-        return "arm64", "aarch64"
-    raise RuntimeError(f"Unsupported Linux architecture: {machine or 'Unknown'}")
+    raise RuntimeError(
+        "This build tool targets Linux x86_64 only. "
+        f"Detected architecture: {machine or 'Unknown'}"
+    )
 
 
 def ensure_build_environment(cache_dir):
@@ -286,7 +283,7 @@ def download(url, destination):
         temporary.unlink()
     request = urllib.request.Request(
         url,
-        headers={"User-Agent": f"PythoFetchLinuxCompiler/{BUILDER_VERSION}"},
+        headers={"User-Agent": f"PythoFetchLinuxBuildTool/{BUILDER_VERSION}"},
     )
     show("DOWNLOAD", url)
     try:
@@ -331,7 +328,7 @@ def ensure_appimage_runtime(cache_dir, appimage_arch):
             runtime.unlink()
         raise RuntimeError(
             "Pinned AppImage runtime checksum mismatch. "
-            "The upstream continuous asset changed; update PythoFetchLinuxCompiler.py before building."
+            "The upstream continuous asset changed; update this build tool before building."
         )
     return runtime
 
@@ -681,7 +678,7 @@ def build_report(
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(prog="PythoFetchLinuxCompiler")
+    parser = argparse.ArgumentParser(prog="Build_PythoFetch_Linux_x86_64_1.0.0")
     parser.add_argument("--clean-cache", action="store_true")
     parser.add_argument("--keep-work", action="store_true")
     return parser.parse_args()
@@ -692,7 +689,7 @@ def main():
 
     if platform.system() != "Linux":
         raise RuntimeError(
-            "This compiler must be run "
+            "This build tool must be run "
             "on Linux."
         )
 
@@ -785,7 +782,7 @@ def main():
     print()
 
     print(
-        "PythoFetch Linux Compiler "
+        "PythoFetch Linux x86_64 Build Tool "
         f"{BUILDER_VERSION}"
     )
 

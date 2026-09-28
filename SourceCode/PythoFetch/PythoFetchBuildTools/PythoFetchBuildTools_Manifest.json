@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "application": "PythoFetch",
+  "folder": "SourceCode/PythoFetch/PythoFetchBuildTools",
+  "purpose": "Versioned build tools for producing PythoFetch release packages.",
+  "usage": "Copy the required build tool into SourceCode/PythoFetch/PythoFetch/PythoFetch_<version>/, run it on its target operating system, then remove the copied build tool.",
+  "tools": {
+    "Windows_x86_64": {
+      "latest_version": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "file": "Build_PythoFetch_Windows_x86_64_1.0.0.py",
+          "sha256": "1c71de662e1448e9d38fc79f74497e94e777c8cf7fb978db5f72e2a934f1044f",
+          "size_bytes": 16877,
+          "platform": "Windows",
+          "architecture": "x86_64"
+        }
+      }
+    },
+    "Linux_x86_64": {
+      "latest_version": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "file": "Build_PythoFetch_Linux_x86_64_1.0.0.py",
+          "sha256": "ea288dfd4264178f09c0a8c34bd5b9f1c4050745c8eaae0371cf9369a13adae7",
+          "size_bytes": 25987,
+          "platform": "Linux",
+          "architecture": "x86_64"
+        }
+      }
+    }
+  }
+}

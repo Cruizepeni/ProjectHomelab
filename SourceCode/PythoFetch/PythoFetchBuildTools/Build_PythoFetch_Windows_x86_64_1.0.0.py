@@ -135,13 +135,13 @@ def record(path):
 
 def find_source(root):
     candidates = []
-    compiler_name = Path(__file__).name.lower()
+    build_tool_name = Path(__file__).name.lower()
 
     for path in root.iterdir():
         if not path.is_file():
             continue
 
-        if path.name.lower() == compiler_name:
+        if path.name.lower() == build_tool_name:
             continue
 
         if not SOURCE_PATTERN.match(path.name):
@@ -174,7 +174,7 @@ def find_source(root):
         raise RuntimeError(
             "No PythoFetch Python source "
             "containing PYTHOFETCH_VERSION "
-            "was found beside this compiler."
+            "was found beside this build tool."
         )
 
     highest_key = max(
@@ -254,7 +254,7 @@ def find_database(root):
     if not candidates:
         raise RuntimeError(
             "No PythoFetchArt_<version>.db "
-            "file was found beside this compiler."
+            "file was found beside this build tool."
         )
 
     candidates.sort(
@@ -301,7 +301,7 @@ def download(
         url,
         headers={
             "User-Agent":
-                f"PythoFetchWindowsCompiler/{BUILDER_VERSION}",
+                f"PythoFetchWindowsBuildTool/{BUILDER_VERSION}",
         },
     )
 
@@ -388,14 +388,9 @@ def detect_architecture():
     ):
         return "x86_64"
 
-    if machine in (
-        "arm64",
-        "aarch64",
-    ):
-        return "arm64"
-
     raise RuntimeError(
-        "Unsupported Windows architecture: "
+        "This build tool targets Windows "
+        "x86_64 only. Detected architecture: "
         f"{machine or 'Unknown'}"
     )
 
@@ -697,7 +692,7 @@ def build_report(
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        prog="PythoFetchWindowsCompiler"
+        prog="Build_PythoFetch_Windows_x86_64_1.0.0"
     )
 
     parser.add_argument(
@@ -718,7 +713,7 @@ def main():
 
     if platform.system() != "Windows":
         raise RuntimeError(
-            "This compiler must be run "
+            "This build tool must be run "
             "on Windows."
         )
 
@@ -802,7 +797,7 @@ def main():
     print()
 
     print(
-        "PythoFetch Windows Compiler "
+        "PythoFetch Windows x86_64 Build Tool "
         f"{BUILDER_VERSION}"
     )
 
