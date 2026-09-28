@@ -592,23 +592,53 @@ Optional host helpers are allowed to be missing. PythoFetch omits or degrades th
 
 Packaged builds bundle the Python runtime, the application source, and the art database so the end user does not need Python or a loose PythoFetch art database.
 
-## Release Compiler Tools
+## Build Tools
 
-PythoFetch 1.0.0 includes separate host-specific release compilers:
+PythoFetch release packaging is handled by separate versioned build tools stored under:
 
 ```text
-PythoFetchWindowsCompiler_1.0.0.py
-PythoFetchLinuxCompiler_1.0.0.py
+SourceCode/PythoFetch/PythoFetchBuildTools/
 ```
 
-The compiler version is independent from the PythoFetch application version. The current compiler version is `1.0.0`, while the application version used for output names is read from the selected source file's `PYTHOFETCH_VERSION` value.
+The current x86_64 build tools are:
 
-Both compilers:
+```text
+Build_PythoFetch_Windows_x86_64_1.0.0.py
+Build_PythoFetch_Linux_x86_64_1.0.0.py
+```
 
-- locate PythoFetch source beside the compiler
+Build-tool versions are independent from the PythoFetch application version. A build tool can remain at version `1.0.0` while packaging later PythoFetch application versions. If the build process itself changes, a new build-tool version can be added without changing the application version.
+
+The canonical build tools remain in `PythoFetchBuildTools`. To build a specific PythoFetch version, copy the required build tool into the exact application-version folder being built:
+
+```text
+SourceCode/PythoFetch/PythoFetch/PythoFetch_<version>/
+```
+
+That folder should contain the application source and selected art database, for example:
+
+```text
+PythoFetch_1.0.0.py
+PythoFetchArt_1.0.0.db
+Build_PythoFetch_Windows_x86_64_1.0.0.py
+```
+
+or:
+
+```text
+PythoFetch_1.0.0.py
+PythoFetchArt_1.0.0.db
+Build_PythoFetch_Linux_x86_64_1.0.0.py
+```
+
+Run the copied build tool on its matching operating system and architecture. After the release ZIP has been reviewed, the copied build tool can be deleted from the application-version folder because the canonical copy remains under `PythoFetchBuildTools`.
+
+Both build tools:
+
+- locate PythoFetch source beside the copied build tool
 - read `PYTHOFETCH_VERSION` from the source instead of relying on the source filename alone
 - prefer the canonical `PythoFetch_<version>.py` filename when more than one source candidate exists
-- locate the newest `PythoFetchArt_<version>.db` beside the compiler
+- locate the newest `PythoFetchArt_<version>.db` beside the copied build tool
 - use a local PythoFetch icon when it is already present
 - fetch the correct icon from the ProjectHomelab GitHub icon folder when the local icon is missing
 - create an isolated temporary build environment
@@ -617,8 +647,9 @@ Both compilers:
 - create the release ZIP
 - print the release ZIP and contained application SHA-256 hashes and byte sizes
 - remove the temporary build workspace after a normal successful build
+- leave the release ZIP as the only normal generated release artifact
 
-The Windows compiler must run on Windows and uses:
+The Windows x86_64 build tool must run on Windows x86_64 and uses:
 
 ```text
 Icon_PythoFetch.ico
@@ -631,7 +662,7 @@ The resulting ZIP contains:
 PythoFetch_<version>.exe
 ```
 
-The Linux compiler must run on Linux and uses:
+The Linux x86_64 build tool must run on Linux x86_64 and uses:
 
 ```text
 Icon_PythoFetch.png
@@ -644,23 +675,14 @@ pinned type-2 AppImage runtime
 The resulting ZIP contains:
 
 ```text
-PythoFetch_<version>_Linux_<arch>.AppImage
+PythoFetch_<version>_Linux_x86_64.AppImage
 ```
 
-The compilers intentionally leave the release ZIP as the only normal generated release artifact beside the source files. Loose EXE/AppImage files, build-report JSON files, and temporary build directories are not retained after a successful normal build.
+Loose EXE/AppImage files, build-report JSON files, and temporary build directories are not retained after a successful normal build.
 
-A typical release-build working directory is therefore:
+The relevant local icon is optional because the build tool can retrieve it from ProjectHomelab when required.
 
-```text
-PythoFetch_<version>.py
-PythoFetchArt_<version>.db
-PythoFetchWindowsCompiler_1.0.0.py
-PythoFetchLinuxCompiler_1.0.0.py
-```
-
-The relevant local icon may also be present, but it is optional because the compiler can retrieve it from ProjectHomelab.
-
-After running the compiler for the current host, the only new permanent release artifact is the platform ZIP, for example:
+After a normal successful build, the only new permanent release artifact is the platform ZIP, for example:
 
 ```text
 PythoFetch_1.0.0_Windows_x86_64.zip
@@ -672,7 +694,66 @@ or:
 PythoFetch_1.0.0_Linux_x86_64.zip
 ```
 
-`--clean-cache` removes an existing compiler cache before building. `--keep-work` keeps the temporary build workspace for inspection or debugging.
+`--clean-cache` removes an existing build-tool cache before building. `--keep-work` keeps the temporary build workspace for inspection or debugging.
+
+### Build Tools Manifest
+
+The build-tools folder also contains:
+
+```text
+PythoFetchBuildTools_Manifest.json
+```
+
+The manifest is informational and is not required by PythoFetch or by the build tools at runtime.
+
+It documents the build tools available in the folder and records details such as:
+
+```text
+platform
+architecture
+latest build-tool version
+filename
+SHA-256
+size in bytes
+```
+
+This provides a simple integrity and inventory record for the versioned build-tool collection.
+
+
+## Source Manifest Hierarchy
+
+The PythoFetch source tree uses a small hierarchy of informational JSON manifests so each major source area can be inventoried independently while the root manifest provides a single entry point.
+
+The top-level source manifest is:
+
+```text
+SourceCode/PythoFetch/PythoFetch_Source_Manifest.json
+```
+
+It points to the three component manifests:
+
+```text
+SourceCode/PythoFetch/PythoFetch/PythoFetch_Manifest.json
+SourceCode/PythoFetch/PythoFetchArtAssets/PythoFetchArtAssets_Manifest.json
+SourceCode/PythoFetch/PythoFetchBuildTools/PythoFetchBuildTools_Manifest.json
+```
+
+`PythoFetch_Manifest.json` tracks versioned PythoFetch application source releases. Each version entry records the source folder, source file, selected art database, SHA-256 hashes, byte sizes, and raw GitHub paths.
+
+`PythoFetchArtAssets_Manifest.json` inventories the immediate artwork-asset folders:
+
+```text
+ArtAssetsDB
+ArtAssetsNeofetch
+ArtAssetsPythoFetch
+PythoFetchArtManager
+```
+
+Where a folder has its own catalogue or manifest, the artwork-assets manifest records that file and its integrity information.
+
+`PythoFetchBuildTools_Manifest.json` inventories the versioned platform build tools and records their filenames, target platforms and architectures, versions, SHA-256 hashes, and byte sizes.
+
+These manifests are informational project metadata. PythoFetch does not require the top-level source manifest, artwork-assets manifest, or build-tools manifest at runtime.
 
 ## Error Handling
 
@@ -696,14 +777,22 @@ ProjectHomelab features that require continuous telemetry, history, alerts, or l
 
 ## Source and Artwork Structure
 
-The development tree is expected to resemble:
+The PythoFetch source tree is expected to resemble:
 
 ```text
-PythoFetch/
-├── PythoFetch_1.0.0.py
-├── PythoFetchWindowsCompiler_1.0.0.py
-├── PythoFetchLinuxCompiler_1.0.0.py
+SourceCode/PythoFetch/
+├── PythoFetch_Source_Manifest.json
+├── PythoFetch/
+│   ├── PythoFetch_Manifest.json
+│   └── PythoFetch_<version>/
+│       ├── PythoFetch_<version>.py
+│       └── PythoFetchArt_<version>.db
+├── PythoFetchBuildTools/
+│   ├── PythoFetchBuildTools_Manifest.json
+│   ├── Build_PythoFetch_Windows_x86_64_1.0.0.py
+│   └── Build_PythoFetch_Linux_x86_64_1.0.0.py
 └── PythoFetchArtAssets/
+    ├── PythoFetchArtAssets_Manifest.json
     ├── PythoFetchArtManager/
     │   └── PythoFetchArtManager_1.0.0.py
     ├── ArtAssetsNeofetch/
@@ -723,7 +812,9 @@ PythoFetch/
         └── PythoFetchArtDB_Manifest.json
 ```
 
-For release compilation, the selected versioned art database is placed beside the compiler and PythoFetch source. This keeps the compiler input deterministic while the canonical database history and manifest remain under `PythoFetchArtAssets/ArtAssetsDB`.
+The canonical build tools are stored separately from the application source. For release packaging, the required build tool is copied temporarily into the exact `PythoFetch_<version>` folder being built so the source, selected database, and build tool share one deterministic working directory.
+
+The selected versioned art database is placed beside the PythoFetch source for the build, while the canonical database history and manifest remain under `PythoFetchArtAssets/ArtAssetsDB`.
 
 The filesystem folder is named `MacOS` to match ProjectHomelab's folder-naming convention.
 

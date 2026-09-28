@@ -1,0 +1,49 @@
+{
+  "schema": 1,
+  "application": "PythoFetch",
+  "component": "Artwork Assets",
+  "folder": "SourceCode/PythoFetch/PythoFetchArtAssets",
+  "folders": {
+    "ArtAssetsDB": {
+      "path": "SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB",
+      "purpose": "Compiled PythoFetch artwork databases and the database release manifest.",
+      "file_count": 2,
+      "manifest": {
+        "file": "PythoFetchArtDB_Manifest.json",
+        "path": "SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB/PythoFetchArtDB_Manifest.json",
+        "sha256": "46f6cb5d9e421705c0aede663a5582b50325688c03cea6134423526a516cd3d4",
+        "size_bytes": 854,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB/PythoFetchArtDB_Manifest.json"
+      }
+    },
+    "ArtAssetsNeofetch": {
+      "path": "SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsNeofetch",
+      "purpose": "Curated artwork imported from NeoFetch source material.",
+      "file_count": 272,
+      "catalogue": {
+        "file": "Catalogue.json",
+        "path": "SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsNeofetch/Catalogue.json",
+        "sha256": "6e2ae0eae10cb25639ac944929c6d60b248b29659b9bdfd4c797365c22238253",
+        "size_bytes": 142087,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsNeofetch/Catalogue.json"
+      }
+    },
+    "ArtAssetsPythoFetch": {
+      "path": "SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsPythoFetch",
+      "purpose": "PythoFetch-native artwork and overrides.",
+      "file_count": 1,
+      "catalogue": {
+        "file": "Catalogue.json",
+        "path": "SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsPythoFetch/Catalogue.json",
+        "sha256": "2c68e16f8fb94eacca0bdd90ae3efa45e558ea653f9ff4c55d3fb647870b3807",
+        "size_bytes": 259,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsPythoFetch/Catalogue.json"
+      }
+    },
+    "PythoFetchArtManager": {
+      "path": "SourceCode/PythoFetch/PythoFetchArtAssets/PythoFetchArtManager",
+      "purpose": "Versioned tools used to manage and compile PythoFetch artwork assets.",
+      "file_count": 1
+    }
+  }
+}
