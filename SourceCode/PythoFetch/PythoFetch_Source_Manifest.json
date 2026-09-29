@@ -6,7 +6,7 @@
       "manifest": {
         "file": "PythoFetch_Manifest.json",
         "path": "SourceCode/PythoFetch/PythoFetch/PythoFetch_Manifest.json",
-        "sha256": "f4ff13ef89fb6ccc6ceee97c49fcc95d20bf197bdd8e7ee010ac272037370e52",
+        "sha256": "5ef74790918bb72240e81a2afac67f792bac847dacd6773e5fd56ab44489112b",
         "size_bytes": 1035,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetch/PythoFetch_Manifest.json"
       }
@@ -15,7 +15,7 @@
       "manifest": {
         "file": "PythoFetchUpdater_Manifest.json",
         "path": "SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Manifest.json",
-        "sha256": "381b66d36f8bd9419ef61e2b5336dde3cec6cb5efb2c1fd40ce899106cbf0fbd",
+        "sha256": "903f460850d91cd3ac2613747b112c26dcfac3740ee89bedd8b3479eb3b1b5c7",
         "size_bytes": 642,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Manifest.json"
       }
@@ -33,7 +33,7 @@
       "manifest": {
         "file": "PythoFetchBuildTools_Manifest.json",
         "path": "SourceCode/PythoFetch/PythoFetchBuildTools/PythoFetchBuildTools_Manifest.json",
-        "sha256": "4db655470709fe248aa12dda062e0b804439ab4868e89888b955fab08ede3d1e",
+        "sha256": "37d1b320626657dc9ff9f71cbe0905b6fe7168a0f8c72b2b3cd73e43ba1cd5ac",
         "size_bytes": 2897,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchBuildTools/PythoFetchBuildTools_Manifest.json"
       }

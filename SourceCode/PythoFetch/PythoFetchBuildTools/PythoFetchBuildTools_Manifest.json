@@ -40,8 +40,8 @@
         "versions": {
           "1.0.0": {
             "file": "Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py",
-            "sha256": "437d0ebb5748cf87b782d0bde66a3dbee863d9e759357e94fca2fb6b55b77652",
-            "size_bytes": 25849,
+            "sha256": "f11150a3ca8713c54579c9d6d3f1d8edfd9e733cfac1a758a12053a70065a1f0",
+            "size_bytes": 27810,
             "platform": "Linux",
             "architecture": "x86_64"
           }

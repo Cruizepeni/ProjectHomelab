@@ -692,6 +692,27 @@ def clean_launch_environment():
             None,
         )
 
+    environment[
+        "PYINSTALLER_RESET_ENVIRONMENT"
+    ] = "1"
+
+    if platform.system() == "Linux":
+        original_library_path = (
+            environment.get(
+                "LD_LIBRARY_PATH_ORIG"
+            )
+        )
+
+        if original_library_path is None:
+            environment.pop(
+                "LD_LIBRARY_PATH",
+                None,
+            )
+        else:
+            environment[
+                "LD_LIBRARY_PATH"
+            ] = original_library_path
+
     return environment
 
 
@@ -726,6 +747,7 @@ def launch_application(
             cwd=str(
                 target.parent
             ),
+            env=clean_launch_environment(),
             close_fds=True,
             creationflags=creation_flags,
         )

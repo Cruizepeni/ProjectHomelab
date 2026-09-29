@@ -1030,6 +1030,54 @@ def build_appdir(
     return appdir
 
 
+def validate_appdir(appdir):
+    required = [
+        appdir / "AppRun",
+        appdir / ".DirIcon",
+        appdir / "pythofetchupdater.png",
+        appdir / "pythofetchupdater.desktop",
+        appdir / "usr" / "bin" / "PythoFetchUpdater",
+        appdir / "usr" / "share" / "applications" / "pythofetchupdater.desktop",
+        appdir / "usr" / "share" / "icons" / "hicolor" / "256x256" / "apps" / "pythofetchupdater.png",
+    ]
+
+    missing = [
+        str(path)
+        for path in required
+        if not (
+            path.exists()
+            or path.is_symlink()
+        )
+    ]
+
+    if missing:
+        raise RuntimeError(
+            "AppDir validation failed. Missing: "
+            + ", ".join(
+                missing
+            )
+        )
+
+    if not os.access(
+        appdir / "AppRun",
+        os.X_OK,
+    ):
+        raise RuntimeError(
+            "AppRun is not executable."
+        )
+
+    if not os.access(
+        appdir
+        / "usr"
+        / "bin"
+        / "PythoFetchUpdater",
+        os.X_OK,
+    ):
+        raise RuntimeError(
+            "Bundled PythoFetchUpdater binary is not executable."
+        )
+
+
 def build_appimage(
     tool,
     runtime,
@@ -1080,6 +1128,62 @@ def build_appimage(
     verify_embedded_runtime(
         output,
         runtime,
+    )
+
+
+def test_appimage(
+    appimage,
+    version,
+):
+    extracted_env = os.environ.copy()
+    extracted_env[
+        "APPIMAGE_EXTRACT_AND_RUN"
+    ] = "1"
+
+    result = run(
+        [
+            appimage,
+            "--appimage-version",
+        ],
+        cwd=appimage.parent,
+        env=extracted_env,
+        capture=True,
+    )
+
+    output = (
+        (result.stdout or "")
+        + (result.stderr or "")
+    ).strip()
+
+    if not output:
+        raise RuntimeError(
+            "AppImage runtime version test returned no output."
+        )
+
+    test_version_command(
+        [
+            appimage,
+            "--version",
+        ],
+        appimage.parent,
+        version,
+        env=extracted_env,
+    )
+
+    direct_env = os.environ.copy()
+    direct_env.pop(
+        "APPIMAGE_EXTRACT_AND_RUN",
+        None,
+    )
+
+    test_version_command(
+        [
+            appimage,
+            "--version",
+        ],
+        appimage.parent,
+        version,
+        env=direct_env,
     )
 
 
@@ -1309,6 +1413,10 @@ def main():
         version,
     )
 
+    validate_appdir(
+        appdir
+    )
+
     show(
         "SETUP",
         f"appimagetool {APPIMAGETOOL_VERSION}",
@@ -1343,24 +1451,14 @@ def main():
         version,
     )
 
-    extracted_env = os.environ.copy()
-    extracted_env[
-        "APPIMAGE_EXTRACT_AND_RUN"
-    ] = "1"
-
     show(
         "TEST",
         "AppImage",
     )
 
-    test_version_command(
-        [
-            appimage_output,
-            "--version",
-        ],
-        appimage_output.parent,
+    test_appimage(
+        appimage_output,
         version,
-        env=extracted_env,
     )
 
     show(
