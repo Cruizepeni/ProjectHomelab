@@ -40,8 +40,12 @@ The updater release manifest explicitly records `compatibility_family`.
 
 ```text
 Windows: PythoFetchUpdater.exe
-Linux:   PythoFetchUpdater.AppImage
+Linux:   PythoFetchUpdater
 ```
+
+The Linux updater is a standalone PyInstaller-built x86_64 ELF executable.
+
+It is deliberately not packaged as an AppImage. PythoFetch itself remains an AppImage on Linux, while the transient updater runs as a plain executable so the replacement path does not create a second AppImage/FUSE lifecycle.
 
 Updater package names remain versioned:
 
@@ -49,6 +53,16 @@ Updater package names remain versioned:
 PythoFetchUpdater_<version>_Windows_x86_64.zip
 PythoFetchUpdater_<version>_Linux_x86_64.zip
 ```
+
+## Linux Updater Handoff
+
+When Linux PythoFetch is started from an existing terminal, the updater continues from that terminal.
+
+When PythoFetch was started through its AppImage auto-terminal path, PythoFetch opens a separate terminal for PythoFetchUpdater before the original PythoFetch terminal closes.
+
+This prevents the updater from inheriting terminal file descriptors that disappear when the original temporary terminal exits.
+
+The updater receives the installed AppImage path through PythoFetch's resolved runtime target and performs the replacement outside the AppImage payload.
 
 ## Application Update Lifecycle
 
@@ -61,21 +75,25 @@ PythoFetchUpdater_<version>_Linux_x86_64.zip
 6. The updater manifest reference is verified.
 7. PythoFetch selects the newest updater compatible with its X.Y family.
 8. The updater ZIP is downloaded and verified.
-9. The updater runtime is extracted and verified.
+9. The updater runtime is extracted and independently verified.
 10. PythoFetch launches the updater and exits.
-11. PythoFetchUpdater waits for the old PythoFetch process to exit.
-12. The current stable runtime is renamed to the temporary backup name.
-13. PythoFetchUpdater fetches PythoFetch_Release_Manifest.json directly.
-14. The target release ZIP is downloaded and verified.
-15. The new stable runtime is extracted and independently verified.
-16. The new runtime replaces the stable target.
-17. The new runtime is launched with --updated, --updater-pid, and --previous-version.
-18. PythoFetchUpdater exits.
-19. The new PythoFetch waits for the updater to exit.
-20. Post-update compatibility/migration work completes.
-21. The temporary old runtime and updater are removed.
-22. Normal startup continues.
+11. On Linux, an auto-terminal PythoFetch launch hands the updater to a separate terminal; an existing user terminal can be reused.
+12. PythoFetchUpdater fetches PythoFetch_Release_Manifest.json directly.
+13. The target release ZIP is downloaded and verified.
+14. The new stable runtime is extracted to a staging path and independently verified before the installed runtime is touched.
+15. PythoFetchUpdater waits for the old PythoFetch payload process to exit.
+16. The current stable runtime is renamed to the temporary backup name.
+17. The verified staged runtime replaces the stable target.
+18. Linux executable permissions are restored on the new AppImage.
+19. The new runtime is launched with --updated, --updater-pid, and --previous-version.
+20. PythoFetchUpdater exits.
+21. The new PythoFetch waits for the updater to exit.
+22. Post-update compatibility/migration work completes.
+23. The temporary old runtime and updater are removed.
+24. Normal startup continues.
 ```
+
+The target release is therefore downloaded, extracted, and verified before the installed runtime is moved aside.
 
 ## Temporary Runtime Names
 
@@ -90,6 +108,8 @@ The old runtime is retained until the new runtime has been installed/launched fa
 
 If installation fails after the old runtime was moved aside, PythoFetchUpdater attempts to restore and relaunch the previous runtime.
 
+Failures that occur while downloading, extracting, or verifying the new release happen before the installed runtime is renamed.
+
 ## Build Tools
 
 Updater releases are built using:
@@ -100,5 +120,9 @@ Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py
 ```
 
 Both use folder-authoritative versioning and the temporary copy/run/remove Build Tool workflow.
+
+The Windows updater is packaged as `PythoFetchUpdater.exe`.
+
+The Linux updater is packaged as the plain executable `PythoFetchUpdater`.
 
 See `PythoFetch_Build_Tools.md`.

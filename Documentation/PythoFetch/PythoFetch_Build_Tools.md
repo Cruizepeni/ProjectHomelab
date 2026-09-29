@@ -176,6 +176,8 @@ PythoFetch_<version>_Linux_x86_64.zip
 └── PythoFetch.AppImage
 ```
 
+PythoFetch itself remains an AppImage on Linux.
+
 ## Updater Platform Build Workflow
 
 Updater Build Tools use the same copy/run/remove rule.
@@ -228,28 +230,47 @@ Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py
 
 Runs on Linux.
 
-Pinned dependencies include:
+Pinned dependency:
 
 ```text
 PyInstaller 6.22.3
-Pillow 11.3.0
-appimagetool 1.9.1
 ```
 
-It uses the same pinned Type 2 AppImage runtime family as the Linux application builder.
+The Linux updater is intentionally built as a plain one-file PyInstaller ELF executable rather than an AppImage.
 
-Shared updater icon:
+The Build Tool:
 
 ```text
-Resources/Icons/Shared/Updater/Icon_Updater.png
+1. validates the updater target folder and source
+2. normalizes the source updater version if needed
+3. prepares the pinned PyInstaller build environment
+4. tests the updater source --version command
+5. builds a one-file executable named PythoFetchUpdater
+6. verifies executable permissions and the ELF magic header
+7. tests the compiled PythoFetchUpdater --version command
+8. creates the versioned updater ZIP
+9. verifies the ZIP contains exactly one PythoFetchUpdater payload
+10. reports ZIP and executable SHA-256 hashes and byte sizes
+```
+
+The Linux updater build does not use:
+
+```text
+Pillow
+appimagetool
+an AppDir
+an AppImage runtime
+FUSE packaging
 ```
 
 Output:
 
 ```text
 PythoFetchUpdater_<version>_Linux_x86_64.zip
-└── PythoFetchUpdater.AppImage
+└── PythoFetchUpdater
 ```
+
+Keeping the transient updater as a plain executable avoids introducing a second AppImage/FUSE lifecycle while it replaces `PythoFetch.AppImage`.
 
 ## Art Database Build Tool
 
@@ -396,6 +417,8 @@ For an application source change:
 ```
 
 If updater packages or resource structure have not changed, the updater does not need to be rebuilt just because the PythoFetch application source changed.
+
+If the Linux updater itself changes, rebuild `PythoFetchUpdater_<version>_Linux_x86_64.zip` and rerun the Manifest Build Tool in `Resources/FirstParty/PythoFetch` so the updater package/executable verification data is regenerated.
 
 ## Current 1.0.0 Resource-Entry Correction
 

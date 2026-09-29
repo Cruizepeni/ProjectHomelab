@@ -263,6 +263,25 @@ That manifest is verified using the hash/size recorded in `PythoFetch_Resources_
 
 The updater release manifest then provides the package and executable verification data for the selected compatible updater.
 
+Current updater runtime names are:
+
+```text
+Windows: PythoFetchUpdater.exe
+Linux:   PythoFetchUpdater
+```
+
+The Linux updater is a plain PyInstaller-built ELF executable rather than an AppImage. The application itself remains `PythoFetch.AppImage`.
+
+### Linux Updater Launch Behavior
+
+Linux PythoFetch supports two update handoff cases.
+
+When PythoFetch is already running from a persistent user terminal, the updater can continue from that terminal.
+
+When the AppImage opened PythoFetch through its own temporary terminal, PythoFetch starts PythoFetchUpdater in a separate terminal before exiting. This keeps the updater's terminal alive after the original PythoFetch terminal closes.
+
+The updater downloads, extracts, and verifies the new AppImage into a staging path before the installed AppImage is renamed. After the old PythoFetch payload exits, the updater moves the existing AppImage to `PythoFetchTemp.AppImage`, installs the verified staged AppImage at the stable `PythoFetch.AppImage` path, and launches it with the internal post-update arguments.
+
 See `PythoFetch_Updater.md` for the full lifecycle.
 
 ## Generic ProjectHomelab Routers
@@ -347,6 +366,13 @@ Resources/
             ├── PythoFetchUpdater_Release_Manifest.json
             ├── PythoFetchUpdater_<version>_Windows_x86_64.zip
             └── PythoFetchUpdater_<version>_Linux_x86_64.zip
+```
+
+The Linux updater ZIP contains the plain executable:
+
+```text
+PythoFetchUpdater_<version>_Linux_x86_64.zip
+└── PythoFetchUpdater
 ```
 
 ## Release Tree
