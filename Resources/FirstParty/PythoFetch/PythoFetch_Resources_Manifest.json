@@ -6,8 +6,8 @@
       "manifest": {
         "file": "PythoFetchUpdater_Release_Manifest.json",
         "path": "Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json",
-        "sha256": "d31ede2f68ba71482acc3132361556927bbd3a2134f01283e1c4e5c840ac1825",
-        "size_bytes": 1452,
+        "sha256": "cd377658194ba71751b86bed6650fa823587a7d2f56a8847649f6ca2f202d1cd",
+        "size_bytes": 1421,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json"
       }
     }

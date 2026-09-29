@@ -156,14 +156,17 @@ def write_json(path, payload):
         exist_ok=True,
     )
 
-    path.write_text(
-        json.dumps(
-            payload,
-            indent=2,
-            ensure_ascii=False,
+    path.write_bytes(
+        (
+            json.dumps(
+                payload,
+                indent=2,
+                ensure_ascii=False,
+            )
+            + "\n"
+        ).encode(
+            "utf-8"
         )
-        + "\n",
-        encoding="utf-8",
     )
 
     json.loads(

@@ -9,8 +9,8 @@
       "manifest": {
         "file": "PythoFetchArtDB_Manifest.json",
         "path": "SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB/PythoFetchArtDB_Manifest.json",
-        "sha256": "cf2c46e340659ff35c327afcb5fb0170260fc658253afd7f694bee8a24c98df2",
-        "size_bytes": 854,
+        "sha256": "115d212bc60f077381b62863873927d9f9db20798ab02a782ab7ebf4f2a4516e",
+        "size_bytes": 826,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB/PythoFetchArtDB_Manifest.json"
       }
     },

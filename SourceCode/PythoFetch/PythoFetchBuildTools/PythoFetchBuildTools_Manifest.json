@@ -77,8 +77,8 @@
       "versions": {
         "1.0.0": {
           "file": "Build_PythoFetchManifests_1.0.0.py",
-          "sha256": "a28cd0199e03ced13cbfac4319a23a39ef7bf2aa8cd4de6af3e657a9b3764141",
-          "size_bytes": 44839
+          "sha256": "0fd63d2d33fb7a6eeba3cb971d7f640c93f03c075ac8c76090d69c7e437e4a72",
+          "size_bytes": 44895
         }
       }
     }
