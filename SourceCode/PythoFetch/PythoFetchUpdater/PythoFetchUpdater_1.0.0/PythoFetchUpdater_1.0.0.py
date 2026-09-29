@@ -686,6 +686,7 @@ def clean_launch_environment():
         "ARGV0",
         "OWD",
         "PYTHOFETCH_APPIMAGE_TERMINAL",
+        "APPIMAGE_EXTRACT_AND_RUN",
     ):
         environment.pop(
             name,

@@ -4108,6 +4108,7 @@ def clean_launch_environment():
         "ARGV0",
         "OWD",
         "PYTHOFETCH_APPIMAGE_TERMINAL",
+        "APPIMAGE_EXTRACT_AND_RUN",
     ):
         environment.pop(
             name,
@@ -4150,6 +4151,13 @@ def launch_updater(
         runtime_application_path()
     )
 
+    environment = clean_launch_environment()
+
+    if platform.system() == "Linux":
+        environment[
+            "APPIMAGE_EXTRACT_AND_RUN"
+        ] = "1"
+
     command = [
         str(updater),
         "--parent-pid",
@@ -4187,7 +4195,7 @@ def launch_updater(
             cwd=str(
                 updater.parent
             ),
-            env=clean_launch_environment(),
+            env=environment,
             close_fds=True,
             creationflags=creation_flags,
         )
@@ -4199,7 +4207,7 @@ def launch_updater(
         cwd=str(
             updater.parent
         ),
-        env=clean_launch_environment(),
+        env=environment,
         close_fds=True,
         start_new_session=True,
     )
