@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "application": "PythoFetch",
+  "components": {
+    "PythoFetchUpdater": {
+      "manifest": {
+        "file": "PythoFetchUpdater_Release_Manifest.json",
+        "path": "Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json",
+        "sha256": "d31ede2f68ba71482acc3132361556927bbd3a2134f01283e1c4e5c840ac1825",
+        "size_bytes": 1452,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json"
+      }
+    }
+  }
+}

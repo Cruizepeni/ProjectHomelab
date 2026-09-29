@@ -1,0 +1,86 @@
+{
+  "schema": 1,
+  "application": "PythoFetch",
+  "usage": {
+    "application_builds": "Copy the required platform build tool into the matching application version folder, run it, then remove the copied tool.",
+    "updater_builds": "Copy the required updater platform build tool into the matching updater version folder, run it, then remove the copied tool.",
+    "art_database": "Run Build_PythoFetchArtDB_<version>.py from PythoFetchBuildTools.",
+    "manifests": "Copy Build_PythoFetchManifests_<version>.py into the PythoFetch SourceCode, Releases, or Resources root, run it, then remove the copied tool."
+  },
+  "platform_tools": {
+    "PythoFetch": {
+      "Linux_x86_64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_PythoFetch_Linux_x86_64_1.0.0.py",
+            "sha256": "b280a880d9f1471203caa4756c71ab84e4eeaa797e0e8375328f1616ada08c5c",
+            "size_bytes": 29392,
+            "platform": "Linux",
+            "architecture": "x86_64"
+          }
+        }
+      },
+      "Windows_x86_64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_PythoFetch_Windows_x86_64_1.0.0.py",
+            "sha256": "c6786590f2ec81956b61968fb79768baa0d50c1f234479e206b7479169b118a6",
+            "size_bytes": 16717,
+            "platform": "Windows",
+            "architecture": "x86_64"
+          }
+        }
+      }
+    },
+    "PythoFetchUpdater": {
+      "Linux_x86_64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py",
+            "sha256": "437d0ebb5748cf87b782d0bde66a3dbee863d9e759357e94fca2fb6b55b77652",
+            "size_bytes": 25849,
+            "platform": "Linux",
+            "architecture": "x86_64"
+          }
+        }
+      },
+      "Windows_x86_64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_PythoFetchUpdater_Windows_x86_64_1.0.0.py",
+            "sha256": "0b88e8e97ba136e2c14e92b2abbd8689ffe00416b67d36b889b7ce6a48729858",
+            "size_bytes": 12302,
+            "platform": "Windows",
+            "architecture": "x86_64"
+          }
+        }
+      }
+    }
+  },
+  "general_tools": {
+    "PythoFetchArtDB": {
+      "latest_version": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "file": "Build_PythoFetchArtDB_1.0.0.py",
+          "sha256": "0a2b29c0c0a8571b85781aa844b9ea7a6d071659cc98ecd4cb84720889c0809c",
+          "size_bytes": 58413
+        }
+      }
+    },
+    "PythoFetchManifests": {
+      "latest_version": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "file": "Build_PythoFetchManifests_1.0.0.py",
+          "sha256": "a28cd0199e03ced13cbfac4319a23a39ef7bf2aa8cd4de6af3e657a9b3764141",
+          "size_bytes": 44839
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "application": "PythoFetch",
+  "component": "PythoFetchUpdater Source",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "source": {
+        "file": "PythoFetchUpdater_1.0.0.py",
+        "path": "SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0/PythoFetchUpdater_1.0.0.py",
+        "sha256": "0e7e50b4d80d6bca6e9ae95bd67818a48e2d58c6297f60d24edc56359e7f4455",
+        "size_bytes": 21793,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0/PythoFetchUpdater_1.0.0.py"
+      }
+    }
+  }
+}

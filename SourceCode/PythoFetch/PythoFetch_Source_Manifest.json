@@ -1,0 +1,42 @@
+{
+  "schema": 1,
+  "application": "PythoFetch",
+  "components": {
+    "PythoFetch": {
+      "manifest": {
+        "file": "PythoFetch_Manifest.json",
+        "path": "SourceCode/PythoFetch/PythoFetch/PythoFetch_Manifest.json",
+        "sha256": "931d9d9ec655536b299e6e3e896f361a7b596e4743133867063b6e50d5b483f4",
+        "size_bytes": 1059,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetch/PythoFetch_Manifest.json"
+      }
+    },
+    "PythoFetchUpdater": {
+      "manifest": {
+        "file": "PythoFetchUpdater_Manifest.json",
+        "path": "SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Manifest.json",
+        "sha256": "9933b5fe518aaab8ecd513150be5ec654ad6b6b0f38db1fc2cff00ad49a0c670",
+        "size_bytes": 659,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Manifest.json"
+      }
+    },
+    "PythoFetchArtAssets": {
+      "manifest": {
+        "file": "PythoFetchArtAssets_Manifest.json",
+        "path": "SourceCode/PythoFetch/PythoFetchArtAssets/PythoFetchArtAssets_Manifest.json",
+        "sha256": "6b93c41cf76632a400aab211d914e9a7b2b247ba936b56c28b2113b16dc44701",
+        "size_bytes": 1884,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchArtAssets/PythoFetchArtAssets_Manifest.json"
+      }
+    },
+    "PythoFetchBuildTools": {
+      "manifest": {
+        "file": "PythoFetchBuildTools_Manifest.json",
+        "path": "SourceCode/PythoFetch/PythoFetchBuildTools/PythoFetchBuildTools_Manifest.json",
+        "sha256": "57205dfa2f2370fef100b6157ba39f860d31a6d768aa6bd5079768b55c261de2",
+        "size_bytes": 2983,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchBuildTools/PythoFetchBuildTools_Manifest.json"
+      }
+    }
+  }
+}
