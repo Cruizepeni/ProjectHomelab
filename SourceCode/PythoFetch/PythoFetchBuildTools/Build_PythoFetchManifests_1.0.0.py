@@ -1477,7 +1477,7 @@ def updater_release_payload(
     if system == "Linux":
         return find_single_file_payload(
             archive,
-            "PythoFetchUpdater.AppImage",
+            "PythoFetchUpdater",
             label,
         )
 

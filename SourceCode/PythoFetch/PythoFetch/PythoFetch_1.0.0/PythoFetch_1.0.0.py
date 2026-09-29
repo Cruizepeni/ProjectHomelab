@@ -3800,7 +3800,7 @@ def expected_updater_name():
         return "PythoFetchUpdater.exe"
 
     if system == "Linux":
-        return "PythoFetchUpdater.AppImage"
+        return "PythoFetchUpdater"
 
     raise RuntimeError(
         "No packaged PythoFetchUpdater is currently available for this operating system."
@@ -4152,11 +4152,6 @@ def launch_updater(
     )
 
     environment = clean_launch_environment()
-
-    if platform.system() == "Linux":
-        environment[
-            "APPIMAGE_EXTRACT_AND_RUN"
-        ] = "1"
 
     command = [
         str(updater),

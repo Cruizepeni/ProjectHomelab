@@ -40,8 +40,8 @@
         "versions": {
           "1.0.0": {
             "file": "Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py",
-            "sha256": "f11150a3ca8713c54579c9d6d3f1d8edfd9e733cfac1a758a12053a70065a1f0",
-            "size_bytes": 27810,
+            "sha256": "3559cfd6c954d5c1c9054c549755966c4306d9ac40019e60e53879b086f18f29",
+            "size_bytes": 11887,
             "platform": "Linux",
             "architecture": "x86_64"
           }
@@ -77,8 +77,8 @@
       "versions": {
         "1.0.0": {
           "file": "Build_PythoFetchManifests_1.0.0.py",
-          "sha256": "0fd63d2d33fb7a6eeba3cb971d7f640c93f03c075ac8c76090d69c7e437e4a72",
-          "size_bytes": 44895
+          "sha256": "56591f8f25f285fad766ecfeaef9a00d223d64f658006cc186c55d03ee7d043e",
+          "size_bytes": 44886
         }
       }
     }

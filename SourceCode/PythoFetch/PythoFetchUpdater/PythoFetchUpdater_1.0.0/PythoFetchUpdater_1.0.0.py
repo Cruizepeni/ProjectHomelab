@@ -929,6 +929,38 @@ def main():
     installed = False
 
     try:
+        show(
+            "DOWNLOAD",
+            package_name,
+        )
+
+        download_verified_file(
+            package_url,
+            archive_path,
+            asset.get(
+                "sha256"
+            ),
+            asset.get(
+                "size_bytes"
+            ),
+        )
+
+        show(
+            "STAGE",
+            expected_runtime_name,
+        )
+
+        extract_runtime(
+            archive_path,
+            expected_runtime_name,
+            staging_target,
+            asset,
+        )
+
+        remove_path(
+            archive_path
+        )
+
         wait_for_parent(
             args.parent_pid
         )
@@ -949,31 +981,8 @@ def main():
         renamed = True
 
         show(
-            "DOWNLOAD",
-            package_name,
-        )
-
-        download_verified_file(
-            package_url,
-            archive_path,
-            asset.get(
-                "sha256"
-            ),
-            asset.get(
-                "size_bytes"
-            ),
-        )
-
-        show(
             "INSTALL",
             expected_runtime_name,
-        )
-
-        extract_runtime(
-            archive_path,
-            expected_runtime_name,
-            staging_target,
-            asset,
         )
 
         os.replace(
