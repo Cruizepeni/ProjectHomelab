@@ -4139,6 +4139,60 @@ def clean_launch_environment():
     return environment
 
 
+def linux_updater_terminal_command(
+    command,
+):
+    candidates = (
+        (
+            "gnome-terminal",
+            (
+                "--title=PythoFetch Update",
+                "--",
+            ),
+        ),
+        (
+            "kgx",
+            (
+                "--",
+            ),
+        ),
+        (
+            "x-terminal-emulator",
+            (
+                "-e",
+            ),
+        ),
+        (
+            "konsole",
+            (
+                "-e",
+            ),
+        ),
+        (
+            "xterm",
+            (
+                "-T",
+                "PythoFetch Update",
+                "-e",
+            ),
+        ),
+    )
+
+    for executable, arguments in candidates:
+        resolved = shutil.which(
+            executable
+        )
+
+        if resolved:
+            return [
+                resolved,
+                *arguments,
+                *command,
+            ]
+
+    return None
+
+
 def launch_updater(
     updater,
     target_version,
@@ -4149,6 +4203,16 @@ def launch_updater(
 
     target = (
         runtime_application_path()
+    )
+
+    auto_terminal = (
+        platform.system() == "Linux"
+        and str(
+            os.environ.get(
+                "PYTHOFETCH_APPIMAGE_TERMINAL"
+            )
+            or ""
+        ).strip() == "1"
     )
 
     environment = clean_launch_environment()
@@ -4193,6 +4257,33 @@ def launch_updater(
             env=environment,
             close_fds=True,
             creationflags=creation_flags,
+        )
+
+        return
+
+    if auto_terminal:
+        terminal_command = (
+            linux_updater_terminal_command(
+                command
+            )
+        )
+
+        if terminal_command is None:
+            raise RuntimeError(
+                "Could not open a terminal for PythoFetchUpdater."
+            )
+
+        subprocess.Popen(
+            terminal_command,
+            cwd=str(
+                updater.parent
+            ),
+            env=environment,
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            close_fds=True,
+            start_new_session=True,
         )
 
         return

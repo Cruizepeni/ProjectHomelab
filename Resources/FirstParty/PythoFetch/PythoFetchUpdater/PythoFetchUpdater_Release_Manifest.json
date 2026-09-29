@@ -10,20 +10,20 @@
         "Windows_x86_64": {
           "file": "PythoFetchUpdater_1.0.0_Windows_x86_64.zip",
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0_Windows_x86_64.zip",
-          "sha256": "8cce9d089839fe5a97253e4fa8f365728ec773a3c4b297d61917d6769470c212",
-          "size_bytes": 8623789,
+          "sha256": "2d71043092168ea1ee529cc1dbc2357f846171834c3a1676f128facee9de712b",
+          "size_bytes": 8621489,
           "executable": "PythoFetchUpdater.exe",
-          "executable_sha256": "d231494b36c7e6177620cc425c6b113e7e361faed9a7be36af49a14694a0dc4c",
-          "executable_size_bytes": 8824849
+          "executable_sha256": "3a54989db8e891e50d3b05391ea226d9ea663df52a9acace7a45be796ca660df",
+          "executable_size_bytes": 8822347
         },
         "Linux_x86_64": {
           "file": "PythoFetchUpdater_1.0.0_Linux_x86_64.zip",
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0_Linux_x86_64.zip",
-          "sha256": "bb1ea7b1426b0b38c15df41b46c7ebdc0ce1bb9d1083ee0b96b85a45de2d686b",
-          "size_bytes": 8051958,
+          "sha256": "6199277a8dab302c8bae6ae08e87de88bb75cf009fb48f04dec8a4ce747896c7",
+          "size_bytes": 8052460,
           "executable": "PythoFetchUpdater",
-          "executable_sha256": "361dac36db172d5454bab74bda2cca7e62356d987eec75dd8ddecf6271242095",
-          "executable_size_bytes": 8165592
+          "executable_sha256": "ff9942a925ab60ee9be14880eb9a0bd06de5549984ee2f12def03712f3c87e07",
+          "executable_size_bytes": 8165544
         }
       }
     }
