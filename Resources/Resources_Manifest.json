@@ -1,35 +1,35 @@
 {
-  "schema_version": 1,
+  "schema": 1,
   "name": "ProjectHomelab Resources",
-  "documentation": "Documentation/Resources/Resources.md",
-  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources",
+  "folder": "Resources",
+  "purpose": "Top-level router manifest for ProjectHomelab resources.",
   "resources": {
-    "7zip": {
-      "manifest": "7Zip/7Zip_Manifest.json"
-    },
-    "calibre": {
-      "manifest": "Calibre/Calibre_Manifest.json"
-    },
-    "deno": {
-      "manifest": "Deno/Deno_Manifest.json"
-    },
-    "emukit": {
-      "manifest": "EmuKit/EmuKit_Manifest.json"
-    },
-    "icons": {
-      "path": "Icons",
-      "features": {
-        "emukit": "Icons/Features/EmuKit"
+    "Icons": {
+      "manifest": {
+        "file": "Icons_Resources_Manifest.json",
+        "path": "Resources/Icons/Icons_Resources_Manifest.json",
+        "sha256": "1ee0b7d31ab14d044be6023afe0a06dcd7d2db7af9be0f32278eb59072f53371",
+        "size_bytes": 178,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/Icons/Icons_Resources_Manifest.json"
       }
     },
-    "ffmpeg": {
-      "manifest": "Ffmpeg/Ffmpeg_Manifest.json"
+    "FirstParty": {
+      "manifest": {
+        "file": "FirstParty_Resources_Manifest.json",
+        "path": "Resources/FirstParty/FirstParty_Resources_Manifest.json",
+        "sha256": "201598646e44e9048b80a9facf1808466aed614c5616b82fd025efd5e7b361cb",
+        "size_bytes": 665,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/FirstParty_Resources_Manifest.json"
+      }
     },
-    "smartmontools": {
-      "manifest": "SmartMonTools/SmartMonTools_Manifest.json"
-    },
-    "yt-dlp": {
-      "manifest": "Yt-dlp/Yt-dlp_Manifest.json"
+    "ThirdParty": {
+      "manifest": {
+        "file": "ThirdParty_Resources_Manifest.json",
+        "path": "Resources/ThirdParty/ThirdParty_Resources_Manifest.json",
+        "sha256": "b26885009c8d701f0da7a614e30a813faa59acb0d014416bc93c9bca916bdbb1",
+        "size_bytes": 197,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/ThirdParty_Resources_Manifest.json"
+      }
     }
   }
 }

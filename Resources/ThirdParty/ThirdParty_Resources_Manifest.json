@@ -1,0 +1,7 @@
+{
+  "schema": 1,
+  "name": "ProjectHomelab Third-Party Resources",
+  "folder": "Resources/ThirdParty",
+  "purpose": "Router manifest for ProjectHomelab third-party resources.",
+  "resources": {}
+}
