@@ -1,6 +1,13 @@
 {
   "schema": 1,
   "application": "PythoFetch",
+  "readme": {
+    "file": "PythoFetch_README.md",
+    "path": "Releases/PythoFetch/PythoFetch_README.md",
+    "sha256": "a2ad838aa8769802c986fc7144b2434a65d0d26f6513b0948e25120a4151e485",
+    "size_bytes": 2472,
+    "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/PythoFetch/PythoFetch_README.md"
+  },
   "latest_version": "1.0.0",
   "releases": {
     "1.0.0": {

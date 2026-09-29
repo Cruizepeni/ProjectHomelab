@@ -1607,13 +1607,42 @@ def build_application_release_manifest(root):
         in ordered_versions
     }
 
+    readme_path = None
+
+    for name in (
+        "README.md",
+        "PythoFetch_README.md",
+    ):
+        candidate = (
+            root
+            / name
+        )
+
+        if candidate.is_file():
+            readme_path = candidate
+            break
+
     payload = {
         "schema": 1,
         "application": "PythoFetch",
-        "latest_version":
-            ordered_versions[0],
-        "releases": releases,
     }
+
+    if readme_path is not None:
+        payload[
+            "readme"
+        ] = repo_record(
+            readme_path,
+            "Releases/PythoFetch/"
+            + readme_path.name,
+        )
+
+    payload[
+        "latest_version"
+    ] = ordered_versions[0]
+
+    payload[
+        "releases"
+    ] = releases
 
     return write_json(
         root

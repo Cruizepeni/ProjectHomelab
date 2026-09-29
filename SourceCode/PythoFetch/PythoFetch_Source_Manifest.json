@@ -33,7 +33,7 @@
       "manifest": {
         "file": "PythoFetchBuildTools_Manifest.json",
         "path": "SourceCode/PythoFetch/PythoFetchBuildTools/PythoFetchBuildTools_Manifest.json",
-        "sha256": "6fcf44ef09be128d07d99c865ef6f02b697bf1954896dc631263adf9671aabf8",
+        "sha256": "844f3d5ffcecd286a4444fa69939f412878855115993acda52921b1ef7793360",
         "size_bytes": 2897,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchBuildTools/PythoFetchBuildTools_Manifest.json"
       }
