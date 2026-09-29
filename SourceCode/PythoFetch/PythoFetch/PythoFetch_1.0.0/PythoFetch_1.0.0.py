@@ -18,7 +18,7 @@ import zipfile
 from datetime import timedelta
 from pathlib import Path
 
-PYTHOFETCH_VERSION = "1.0.1"
+PYTHOFETCH_VERSION = "1.0.0"
 ART_DATABASE_SCHEMA_VERSION = 1
 NARROW_ART_WIDTH = 80
 

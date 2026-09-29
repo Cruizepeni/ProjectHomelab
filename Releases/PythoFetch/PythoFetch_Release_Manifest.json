@@ -13,6 +13,15 @@
           "executable": "PythoFetch.exe",
           "executable_sha256": "3bfd63148ae72635799751e46e7e780c3beddc3a367daec4186409c6d1b5f797",
           "executable_size_bytes": 12942799
+        },
+        "Linux_x86_64": {
+          "file": "PythoFetch_1.0.1_Linux_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/PythoFetch/PythoFetch_1.0.1_Linux_x86_64.zip",
+          "sha256": "2b4697b9cad2ffea651356c4d151e09d06375ea640b518da11365d6f621b8dc6",
+          "size_bytes": 14499776,
+          "executable": "PythoFetch.AppImage",
+          "executable_sha256": "715168e7b9f4b10bb366edbb214dc91ee1f8d3b318f533ae21e323a7e16c6858",
+          "executable_size_bytes": 14993912
         }
       }
     },
@@ -26,6 +35,15 @@
           "executable": "PythoFetch.exe",
           "executable_sha256": "b7ccbf8dc784cd2f9c98e38689b4247face3bbcfa7c919a0ee5d1e748634c99a",
           "executable_size_bytes": 12942659
+        },
+        "Linux_x86_64": {
+          "file": "PythoFetch_1.0.0_Linux_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/PythoFetch/PythoFetch_1.0.0_Linux_x86_64.zip",
+          "sha256": "791da667e4b32b0bb89a4cdfabc51a9a3d359c2e3af737dffaf3472cfb80cc39",
+          "size_bytes": 14498287,
+          "executable": "PythoFetch.AppImage",
+          "executable_sha256": "d6ab674cb176a55c24c294c46ed052791a6c30a86d8268ba32f81d9428c771fe",
+          "executable_size_bytes": 14993912
         }
       }
     }

@@ -15,6 +15,15 @@
           "executable": "PythoFetchUpdater.exe",
           "executable_sha256": "6ca5ab419218c28b2584b1721132f9e5bcce59ffd4ef2f90c073eefeff4a68e9",
           "executable_size_bytes": 8824387
+        },
+        "Linux_x86_64": {
+          "file": "PythoFetchUpdater_1.0.0_Linux_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0_Linux_x86_64.zip",
+          "sha256": "bf982d3288da829d23c3b5350835bf0afbaf67d7291777016b0d5a9d50c41a3e",
+          "size_bytes": 8539640,
+          "executable": "PythoFetchUpdater.AppImage",
+          "executable_sha256": "e4ac10de31475382bd325608a720adec6037804b8abc104264610d2d6d045dcd",
+          "executable_size_bytes": 9026040
         }
       }
     }
