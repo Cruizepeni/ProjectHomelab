@@ -1,15 +1,17 @@
 {
   "schema": 1,
-  "name": "ProjectHomelab First-Party Resources",
-  "folder": "Resources/FirstParty",
-  "purpose": "Router manifest for ProjectHomelab first-party resources.",
   "resources": {
+    "EmuKit": {
+      "manifest": {
+        "file": "EmuKit_Resources_Manifest.json",
+        "path": "Resources/FirstParty/EmuKit/EmuKit_Resources_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/EmuKit/EmuKit_Resources_Manifest.json"
+      }
+    },
     "PythoFetch": {
       "manifest": {
         "file": "PythoFetch_Resources_Manifest.json",
         "path": "Resources/FirstParty/PythoFetch/PythoFetch_Resources_Manifest.json",
-        "sha256": "85bb33de90e4959c82f4797ed67ae2294c39f613d407473bcde162c499ae7784",
-        "size_bytes": 763,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetch_Resources_Manifest.json"
       }
     }
