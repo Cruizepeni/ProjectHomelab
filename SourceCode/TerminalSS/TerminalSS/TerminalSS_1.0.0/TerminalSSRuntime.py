@@ -142,6 +142,44 @@ def complete_relocation(runtime_path: Path, source_value: str | None, pid_value:
         source_path.unlink()
 
 
+def ensure_windows_folder_icon(runtime_path: Path) -> bool:
+    if platform.system() != "Windows":
+        return False
+    runtime_path = runtime_path.resolve()
+    runtime_directory = runtime_path.parent
+    if runtime_path.name.casefold() != f"{FEATURE_NAME}.exe".casefold():
+        return False
+    if runtime_directory.name.casefold() != FEATURE_NAME.casefold() or not runtime_path.is_file():
+        return False
+    desktop_ini = runtime_directory / "desktop.ini"
+    content = "[.ShellClassInfo]\r\n" f"IconResource={runtime_path.name},0\r\n"
+    try:
+        current = desktop_ini.read_bytes() if desktop_ini.is_file() else None
+        expected = content.encode("utf-16")
+        if current != expected:
+            desktop_ini.write_bytes(expected)
+        flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        subprocess.run(
+            ["attrib", "+h", "+s", str(desktop_ini)],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+            creationflags=flags,
+        )
+        subprocess.run(
+            ["attrib", "+r", str(runtime_directory)],
+            stdin=subprocess.DEVNULL,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            check=False,
+            creationflags=flags,
+        )
+        return desktop_ini.is_file()
+    except Exception:
+        return False
+
+
 def resolve_app_root(runtime_directory: Path) -> tuple[Path, bool]:
     runtime_directory = runtime_directory.resolve()
     for candidate in runtime_directory.parents:
@@ -164,6 +202,8 @@ def prepare_runtime(
             launch_relocated_runtime(runtime_path, raw_arguments)
             return None
         complete_relocation(runtime_path, relocation_source, relocation_pid)
+        if system == "Windows":
+            ensure_windows_folder_icon(runtime_path)
     runtime_directory = runtime_path.parent.resolve() if packaged else Path(source_entry).resolve().parent
     app_root, integrated = resolve_app_root(runtime_directory)
     return TerminalSSRuntimeContext(
