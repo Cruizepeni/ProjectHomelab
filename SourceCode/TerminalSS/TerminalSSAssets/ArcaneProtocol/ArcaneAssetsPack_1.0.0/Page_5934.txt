@@ -1,0 +1,21 @@
+PageSource: GRIMOIRE
+Page: 5934
+Language: High Gothic
+Origin: The Emperor's Bible
+Classification: Biblical Text
+AnalysisCompletion: 100
+
+Message:
+The Emperor is Love,
+The Emperor is Life,
+He Will Return.
+
+Art:
+             /\
+        /\  /  \  /\
+       /  \/ /\ \/  \
+      <    / /  \ \    >
+       \  \ \  / /  /
+        \/\\/\//\/
+           \  /
+            \/

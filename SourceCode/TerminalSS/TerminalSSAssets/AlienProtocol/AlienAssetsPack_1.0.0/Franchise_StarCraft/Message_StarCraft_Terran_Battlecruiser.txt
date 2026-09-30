@@ -1,0 +1,9 @@
+Source: Terran Battlecruiser
+Origin: Unknown
+Distance: Unknown
+Classification: Terran / Military
+Transmission Type: Status Broadcast
+Language: Terran Standard
+Decryption Completion: 100
+
+BATTLECRUISER OPERATIONAL.

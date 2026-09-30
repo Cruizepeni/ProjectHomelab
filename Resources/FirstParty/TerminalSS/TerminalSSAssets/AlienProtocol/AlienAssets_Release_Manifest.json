@@ -1,0 +1,183 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "Alien Assets",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "folder": "AlienAssetsPack_1.0.0",
+      "package": {
+        "file": "AlienAssetsPack_1.0.0.zip",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/TerminalSS/TerminalSSAssets/AlienProtocol/AlienAssetsPack_1.0.0.zip",
+        "sha256": "8420d67564448000f610b3d5d51c98ebca1be5ee7eae38b0cf7056fa3936458a",
+        "size_bytes": 11622
+      },
+      "files": [
+        {
+          "file": "Message_Cyberman_Delete.txt",
+          "path": "Franchise_DoctorWho/Cybermen/Message_Cyberman_Delete.txt",
+          "sha256": "33beb84ab2946b0f425ecf9d5986a7b4ec26f443449387b94face89e96eba9fc",
+          "size_bytes": 187
+        },
+        {
+          "file": "Message_Cyberman_Emotion.txt",
+          "path": "Franchise_DoctorWho/Cybermen/Message_Cyberman_Emotion.txt",
+          "sha256": "134ff33df6d0a35befc9aad0606cd183bfe0b2443b1b4e7ac5e266f14051761e",
+          "size_bytes": 255
+        },
+        {
+          "file": "Message_Cyberman_UpgradeDirective.txt",
+          "path": "Franchise_DoctorWho/Cybermen/Message_Cyberman_UpgradeDirective.txt",
+          "sha256": "bf37ec9d0b4dd0a25288cbbcf3c46a729f8b1b186e8ba021b9ddaf9ec25935af",
+          "size_bytes": 383
+        },
+        {
+          "file": "Message_Cyberman_YouWillBeUpgraded.txt",
+          "path": "Franchise_DoctorWho/Cybermen/Message_Cyberman_YouWillBeUpgraded.txt",
+          "sha256": "354647c8478dd7220c880f76ed98d8b99347144e1f57a74bdbeed190d53feb55",
+          "size_bytes": 213
+        },
+        {
+          "file": "Message_Dalek_CommandBroadcast.txt",
+          "path": "Franchise_DoctorWho/Daleks/Message_Dalek_CommandBroadcast.txt",
+          "sha256": "5d91ac742195ddea6121ae1a9e185824868379836fcef5a6a618411e97eedc74",
+          "size_bytes": 373
+        },
+        {
+          "file": "Message_Dalek_Exterminate.txt",
+          "path": "Franchise_DoctorWho/Daleks/Message_Dalek_Exterminate.txt",
+          "sha256": "985ef611f50928983a7293927e1f67cf6ad3c058a3c796afc36316adeb6ad6b3",
+          "size_bytes": 201
+        },
+        {
+          "file": "Message_Dalek_Obey.txt",
+          "path": "Franchise_DoctorWho/Daleks/Message_Dalek_Obey.txt",
+          "sha256": "e4a0d7dc367cdda6f84aae4cfd57f5927c30dd87f3bd9cf9bf4248b5336987af",
+          "size_bytes": 198
+        },
+        {
+          "file": "Message_Dalek_WeAreTheDaleks.txt",
+          "path": "Franchise_DoctorWho/Daleks/Message_Dalek_WeAreTheDaleks.txt",
+          "sha256": "86979e1940512010793f3800a0d6bf283a5ad5db616b1ac47070e476c78b9f3e",
+          "size_bytes": 211
+        },
+        {
+          "file": "Message_StarCraft_DarkTemplar.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_DarkTemplar.txt",
+          "sha256": "ef02f33f9dc4be02abef5235e8d4489db0a0c7ec4d153ecb8a27fb078dbf7f00",
+          "size_bytes": 282
+        },
+        {
+          "file": "Message_StarCraft_Kerrigan_Swarm.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Kerrigan_Swarm.txt",
+          "sha256": "ea1bf8579cee94e7099401626a9a8729cc1d66e0ebc11fba39aa5136b8d120f9",
+          "size_bytes": 280
+        },
+        {
+          "file": "Message_StarCraft_Protoss_AiurBeacon.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Protoss_AiurBeacon.txt",
+          "sha256": "23c42f615280689b9cd419b069f01761dd59dc4b294eda88ee65cb38510eeea9",
+          "size_bytes": 297
+        },
+        {
+          "file": "Message_StarCraft_Protoss_MyLifeForAiur.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Protoss_MyLifeForAiur.txt",
+          "sha256": "64628ee34296adbd37f83bb2b179886ede48bdab40670d63c590ba9ba727b9ea",
+          "size_bytes": 197
+        },
+        {
+          "file": "Message_StarCraft_Protoss_PowerOverwhelming.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Protoss_PowerOverwhelming.txt",
+          "sha256": "c6e7228c78d0741b51164aa89ef303e8957b786f3b4a74167872c21e6fa39c46",
+          "size_bytes": 221
+        },
+        {
+          "file": "Message_StarCraft_Protoss_PylonWarning.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Protoss_PylonWarning.txt",
+          "sha256": "9222a445c8f5b1dd032909b45f97f76ef7c993b63caca045daa2888cea45aa71",
+          "size_bytes": 241
+        },
+        {
+          "file": "Message_StarCraft_Protoss_WarpArrival.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Protoss_WarpArrival.txt",
+          "sha256": "ba0ee0660ce37c1cdbc8472098cb942c0618a0152bca14ffd704c11d612bf6f2",
+          "size_bytes": 302
+        },
+        {
+          "file": "Message_StarCraft_Terran_Adjutant.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Terran_Adjutant.txt",
+          "sha256": "739f67e5df1cb2d6690960ab5d4f053888440282fab798df670d9712aa443968",
+          "size_bytes": 355
+        },
+        {
+          "file": "Message_StarCraft_Terran_Battlecruiser.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Terran_Battlecruiser.txt",
+          "sha256": "940d006e625d0b54df8b01e9f6eb9c3a01db4562a9aa4e78a5b86fba19f3dacb",
+          "size_bytes": 214
+        },
+        {
+          "file": "Message_StarCraft_Terran_DistressSignal.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Terran_DistressSignal.txt",
+          "sha256": "36ca2b7839ca53bf10a55441eaf85c67a51d070f4972b2ab830a7c808b3147d6",
+          "size_bytes": 369
+        },
+        {
+          "file": "Message_StarCraft_Terran_NuclearLaunch.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Terran_NuclearLaunch.txt",
+          "sha256": "eefe358f70c5802a7af16f425f1b81ec9c7bf3299358d3fb9b75841755b159b2",
+          "size_bytes": 215
+        },
+        {
+          "file": "Message_StarCraft_Zerg_ForTheSwarm.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Zerg_ForTheSwarm.txt",
+          "sha256": "4c292b37295cd1c5d71542a50818c8fb22e46de1f79c2eb6540b14fab5177822",
+          "size_bytes": 207
+        },
+        {
+          "file": "Message_StarCraft_Zerg_HiveSignal.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Zerg_HiveSignal.txt",
+          "sha256": "d15d93023ccc168733a4475cfb7ac775a6bfeede462c0c5169d3a071a2c381d6",
+          "size_bytes": 345
+        },
+        {
+          "file": "Message_StarCraft_Zerg_Infestation.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Zerg_Infestation.txt",
+          "sha256": "7276238cec85cfb39a3efa463a92f76f59a390b7cf8c232d54722cba2ebb41a6",
+          "size_bytes": 265
+        },
+        {
+          "file": "Message_StarCraft_Zerg_Overmind.txt",
+          "path": "Franchise_StarCraft/Message_StarCraft_Zerg_Overmind.txt",
+          "sha256": "a283123d85b9dac32d8781e99192981948e78f23462b65f96fcbfc584e1c5f75",
+          "size_bytes": 306
+        },
+        {
+          "file": "Message_Borg_Assimilation.txt",
+          "path": "Franchise_StarTrek/Borg/Message_Borg_Assimilation.txt",
+          "sha256": "63d0319f61330d0923072392df76b83448228f65bb8528b04b63e7717e6d89a7",
+          "size_bytes": 211
+        },
+        {
+          "file": "Message_Borg_CollectiveContact.txt",
+          "path": "Franchise_StarTrek/Borg/Message_Borg_CollectiveContact.txt",
+          "sha256": "0faf5ad41d51ef4ed3f405726040aef134b61208cfb2a43d76d079020a9dbecb",
+          "size_bytes": 364
+        },
+        {
+          "file": "Message_Borg_ResistanceIsFutile.txt",
+          "path": "Franchise_StarTrek/Borg/Message_Borg_ResistanceIsFutile.txt",
+          "sha256": "8302f68d5377598724649721e97a8d3cb15da51be1e22cac8d934b002a2a4b32",
+          "size_bytes": 221
+        },
+        {
+          "file": "Message_Borg_WeAreTheBorg.txt",
+          "path": "Franchise_StarTrek/Borg/Message_Borg_WeAreTheBorg.txt",
+          "sha256": "3707392df87a046346b8ded1adc765aaeac67fe8808decc4e9e9e213b1f107b2",
+          "size_bytes": 218
+        }
+      ]
+    }
+  },
+  "protocol": "Alien"
+}

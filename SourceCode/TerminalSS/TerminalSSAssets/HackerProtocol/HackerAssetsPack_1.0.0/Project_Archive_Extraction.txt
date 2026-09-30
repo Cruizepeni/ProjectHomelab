@@ -1,0 +1,11 @@
+Operation: Project Archive Extraction
+Target: Research Workstation
+TargetAddress: https://archive.example
+Location: Remote
+Objective: Download Files
+Security: 72
+SuccessRate: 82
+FreezeRate: 4
+GlitchRate: 8
+HackBackChance: 6
+BlockAttempts: 5

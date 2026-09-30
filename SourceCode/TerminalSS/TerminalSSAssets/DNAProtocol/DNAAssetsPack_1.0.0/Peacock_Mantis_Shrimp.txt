@@ -1,0 +1,21 @@
+SpeciesName: Peacock Mantis Shrimp
+ScientificName: Odontodactylus scyllarus
+SpeciesCategory: Crustacean
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Branchial
+Reproduction: Sexual / Oviparous
+BodyPlan: Decapodal
+StructuralSystem: Exoskeleton
+Locomotion: Aquatic
+Habitat: Tropical Marine / Reef
+EnvironmentalRange: Aquatic
+ChromosomeCount: Unknown
+
+Sequence:
+ATCGGTAACGCTTAGC
+CGTATTCAGGACCTAA
+TTACGGATCGTAACGC
+
+GeneticBehaviour:
+Stable Sexual Recombination

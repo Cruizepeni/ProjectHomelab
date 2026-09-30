@@ -1,0 +1,35 @@
+SpeciesName: Human
+ScientificName: Homo sapiens
+SpeciesCategory: Human
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Viviparous
+BodyPlan: Bipedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial
+Habitat: Highly Variable
+EnvironmentalRange: Terrestrial
+ChromosomeCount: 46
+
+Sequence:
+ATGCGTACCTAGGCTA
+CGTACCGTTAACGGTA
+GGCATTAACGTCCGAT
+
+GeneticBehaviour:
+Stable Sexual Recombination
+
+Art:
+       _____
+     /       \
+    |  o   o  |
+    |    ^    |
+    |  \___/  |
+     \_______/
+        | |
+      __| |__
+     /  | |  \
+        | |
+       /   \
+      /     \

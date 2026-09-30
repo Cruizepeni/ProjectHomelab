@@ -1,0 +1,55 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "usage": {
+    "application_builds": "Copy the required platform build tool into the matching TerminalSS_X.Y.Z source folder, run it, then remove the copied tool.",
+    "updater_builds": "Copy the required updater platform build tool into the matching TerminalSSUpdater_X.Y.Z source folder, run it, then remove the copied tool.",
+    "manifests": "Copy Build_TerminalSSManifests_<version>.py into the TerminalSS SourceCode, Releases, or Resources root, run it, then remove the copied tool."
+  },
+  "platform_tools": {
+    "TerminalSSUpdater": {
+      "Linux_x86_64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_TerminalSSUpdater_Linux_x86_64_1.0.0.py",
+            "path": "TerminalSSBuildTools/Build_TerminalSSUpdater_Linux_x86_64_1.0.0.py",
+            "sha256": "b439dcf1a24f581796a32a77fa074d5bc3cbbf44c89607c27c5e0d955537dd59",
+            "size_bytes": 7925,
+            "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSBuildTools/Build_TerminalSSUpdater_Linux_x86_64_1.0.0.py",
+            "platform": "Linux",
+            "architecture": "x86_64"
+          }
+        }
+      },
+      "Windows_x86_64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_TerminalSSUpdater_Windows_x86_64_1.0.0.py",
+            "path": "TerminalSSBuildTools/Build_TerminalSSUpdater_Windows_x86_64_1.0.0.py",
+            "sha256": "002009cbe906d9e816c417d5c0cbf7e74e3b62681a73abf160c30b6d922ccc24",
+            "size_bytes": 8222,
+            "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSBuildTools/Build_TerminalSSUpdater_Windows_x86_64_1.0.0.py",
+            "platform": "Windows",
+            "architecture": "x86_64"
+          }
+        }
+      }
+    }
+  },
+  "general_tools": {
+    "TerminalSSManifests": {
+      "latest_version": "1.0.0",
+      "versions": {
+        "1.0.0": {
+          "file": "Build_TerminalSSManifests_1.0.0.py",
+          "path": "TerminalSSBuildTools/Build_TerminalSSManifests_1.0.0.py",
+          "sha256": "1b628455a6076b1c6b7c85fa0dddb43321474da8c4c8cfd712a69570cb89b94d",
+          "size_bytes": 32207,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSBuildTools/Build_TerminalSSManifests_1.0.0.py"
+        }
+      }
+    }
+  }
+}

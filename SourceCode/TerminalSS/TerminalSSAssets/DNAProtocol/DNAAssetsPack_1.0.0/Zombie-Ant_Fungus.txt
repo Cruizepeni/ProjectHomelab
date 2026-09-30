@@ -1,0 +1,34 @@
+SpeciesName: Zombie-Ant Fungus
+ScientificName: Ophiocordyceps unilateralis
+SpeciesCategory: Fungus
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Aerobic Cellular
+Reproduction: Sexual / Asexual Spores
+BodyPlan: Filamentous Mycelial
+StructuralSystem: Chitin Cell Wall
+Locomotion: Sessile / Spore Dispersal
+Habitat: Tropical Forest / Host Organism
+EnvironmentalRange: Terrestrial
+ChromosomeCount: Unknown
+
+Sequence:
+ATCGTAACGGCTTAGC
+CGGATTACCTAACGTA
+TTAACGGCATCGTAGC
+
+GeneticBehaviour:
+Adaptive
+Mutable
+
+Art:
+          _
+         / \
+        /   \
+       /_____\
+         ||
+      ___||___
+    _/   ||   \_
+  _/  ___||___  \_
+ /___/   ||   \___\
+        _||_

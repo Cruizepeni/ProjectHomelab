@@ -1,0 +1,21 @@
+SpeciesName: Great White Shark
+ScientificName: Carcharodon carcharias
+SpeciesCategory: Animal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Branchial
+Reproduction: Sexual / Viviparous
+BodyPlan: Fusiform
+StructuralSystem: Cartilaginous Endoskeleton
+Locomotion: Aquatic
+Habitat: Marine / Pelagic
+EnvironmentalRange: Aquatic
+ChromosomeCount: Unknown
+
+Sequence:
+ATGGCATTCGTAACCG
+CGTTAACGGTACCTGA
+TACCGATGGCATTCGA
+
+GeneticBehaviour:
+Stable Sexual Recombination

@@ -1,0 +1,17 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "TerminalSSUpdater Source",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "source": {
+        "file": "TerminalSSUpdater_1.0.0.py",
+        "path": "TerminalSSUpdater/TerminalSSUpdater_1.0.0/TerminalSSUpdater_1.0.0.py",
+        "sha256": "c630c532c791f1a41ab6959b69a8cc39a99320519b906ad7ec4371808f700f2c",
+        "size_bytes": 15678,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSUpdater/TerminalSSUpdater_1.0.0/TerminalSSUpdater_1.0.0.py"
+      }
+    }
+  }
+}

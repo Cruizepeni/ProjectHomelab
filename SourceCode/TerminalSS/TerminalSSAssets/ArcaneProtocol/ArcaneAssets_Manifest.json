@@ -1,0 +1,36 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "Arcane Assets",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "folder": "TerminalSSAssets/ArcaneProtocol/ArcaneAssetsPack_1.0.0",
+      "files": [
+        {
+          "file": "Page_5934.txt",
+          "path": "TerminalSSAssets/ArcaneProtocol/ArcaneAssetsPack_1.0.0/Page_5934.txt",
+          "sha256": "ec6b4fe02f7eaf79dae7aca63685c3fc212291f61657abc815a9f292a3be6270",
+          "size_bytes": 366,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/ArcaneProtocol/ArcaneAssetsPack_1.0.0/Page_5934.txt"
+        },
+        {
+          "file": "Page_Ouroboros.txt",
+          "path": "TerminalSSAssets/ArcaneProtocol/ArcaneAssetsPack_1.0.0/Page_Ouroboros.txt",
+          "sha256": "952794f681d29574c8c934394b15bc3882d1f22e29ae3e4229fdfef1b3851f40",
+          "size_bytes": 477,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/ArcaneProtocol/ArcaneAssetsPack_1.0.0/Page_Ouroboros.txt"
+        },
+        {
+          "file": "Page_Unrecoverable.txt",
+          "path": "TerminalSSAssets/ArcaneProtocol/ArcaneAssetsPack_1.0.0/Page_Unrecoverable.txt",
+          "sha256": "6b5c0b6e46e94228323d730e4e36ac361cf98548badc645c3d21b4cc96e74031",
+          "size_bytes": 232,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/ArcaneProtocol/ArcaneAssetsPack_1.0.0/Page_Unrecoverable.txt"
+        }
+      ]
+    }
+  },
+  "protocol": "Arcane"
+}

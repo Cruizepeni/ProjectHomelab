@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "components": {
+    "TerminalSSUpdater": {
+      "manifest": {
+        "file": "TerminalSSUpdater_Release_Manifest.json",
+        "path": "TerminalSSUpdater/TerminalSSUpdater_Release_Manifest.json",
+        "sha256": "4d01cd5f56cdbd30111d3376014d49816892b10ab7f46070a65e547e9fbdf77c",
+        "size_bytes": 1412,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/TerminalSS/TerminalSSUpdater/TerminalSSUpdater_Release_Manifest.json"
+      }
+    },
+    "TerminalSSAssets": {
+      "manifest": {
+        "file": "TerminalSSAssets_Release_Manifest.json",
+        "path": "TerminalSSAssets/TerminalSSAssets_Release_Manifest.json",
+        "sha256": "88b084440457bc17aa6f02c5375cb591cba1793e2ce534720ef940da0268fc5b",
+        "size_bytes": 3102,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/TerminalSS/TerminalSSAssets/TerminalSSAssets_Release_Manifest.json"
+      }
+    }
+  }
+}

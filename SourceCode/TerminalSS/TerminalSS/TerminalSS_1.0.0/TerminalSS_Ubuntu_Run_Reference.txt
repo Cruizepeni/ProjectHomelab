@@ -1,0 +1,18 @@
+python3 ~/Desktop/TerminalSS/TerminalSS_1.0.0/TerminalSS.py
+
+
+
+
+hacker protocol setup veriablity/research/make it more interesting/believeable
+
+Settings per protocol
+
+update setup + pythofetch update setup
+
+tweek file design so if not in its own folder on startup build folder around itself
+
+final ui tweeks and final cross os compatability check
+
+build scripts for linux appimage and windows exe
+
+

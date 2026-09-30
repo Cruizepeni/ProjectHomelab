@@ -1,0 +1,32 @@
+SpeciesName: Western Honey Bee
+ScientificName: Apis mellifera
+SpeciesCategory: Insect
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Tracheal
+Reproduction: Sexual / Oviparous
+BodyPlan: Hexapodal
+StructuralSystem: Exoskeleton
+Locomotion: Terrestrial / Aerial
+Habitat: Highly Variable
+EnvironmentalRange: Terrestrial / Aerial
+ChromosomeCount: 32 Female / 16 Male
+
+Sequence:
+ATCGGTAACCGTATCG
+CGTAACGGCTTAGCTA
+TTCGACCATGGTACGA
+
+GeneticBehaviour:
+Haplodiploid Sex Determination
+
+Art:
+       \     /
+        \.-./
+      .-'   '-.
+     /  .- -.  \
+    |  /     \  |
+     \ | === | /
+      '._===_.'
+       /  |  \
+     _/   |   \_

@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "Hacker Assets",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "folder": "HackerAssetsPack_1.0.0",
+      "package": {
+        "file": "HackerAssetsPack_1.0.0.zip",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/TerminalSS/TerminalSSAssets/HackerProtocol/HackerAssetsPack_1.0.0.zip",
+        "sha256": "85ae8a76e61c31ad7d4ef4cc3d2a04a2214c4334db00fc5dba16ebd2f0064cb4",
+        "size_bytes": 1085
+      },
+      "files": [
+        {
+          "file": "Internal_Audit_Simulation.txt",
+          "path": "Internal_Audit_Simulation.txt",
+          "sha256": "39e40f19f7e0a886fe81f2ac5b0c9dd8eb8a5966f3cd1a8bea2a9cbb0a5c3ae8",
+          "size_bytes": 238
+        },
+        {
+          "file": "Local_Persistence_Test.txt",
+          "path": "Local_Persistence_Test.txt",
+          "sha256": "51846ff892d113036eb7a2d893d61a209c891a1dc8fe6203564d2dcfeb925a08",
+          "size_bytes": 224
+        },
+        {
+          "file": "Project_Archive_Extraction.txt",
+          "path": "Project_Archive_Extraction.txt",
+          "sha256": "6f1c5c44ae3cd609fae74d4fb5a58abbe1c5a42e9fdfc82422cdc8a1a030ff97",
+          "size_bytes": 241
+        }
+      ]
+    }
+  },
+  "protocol": "Hacker"
+}

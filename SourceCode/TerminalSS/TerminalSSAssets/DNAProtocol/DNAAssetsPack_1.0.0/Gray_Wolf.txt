@@ -1,0 +1,21 @@
+SpeciesName: Gray Wolf
+ScientificName: Canis lupus
+SpeciesCategory: Animal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Viviparous
+BodyPlan: Quadrupedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial
+Habitat: Forest / Tundra / Grassland
+EnvironmentalRange: Terrestrial
+ChromosomeCount: 78
+
+Sequence:
+ATCCGTAGTTAACGGC
+GGATACCTGATCGTTA
+CTTAGCCAATGGTTAC
+
+GeneticBehaviour:
+Stable Sexual Recombination

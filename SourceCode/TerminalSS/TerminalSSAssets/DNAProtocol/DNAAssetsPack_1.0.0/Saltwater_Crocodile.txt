@@ -1,0 +1,21 @@
+SpeciesName: Saltwater Crocodile
+ScientificName: Crocodylus porosus
+SpeciesCategory: Reptile
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Oviparous
+BodyPlan: Quadrupedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial / Aquatic
+Habitat: River / Estuary / Coastal
+EnvironmentalRange: Terrestrial / Aquatic
+ChromosomeCount: 32
+
+Sequence:
+ATCGGTACCTTAAGCG
+CGATACGGTTAACCTA
+TTAACGGCTAGCATCG
+
+GeneticBehaviour:
+Stable Sexual Recombination

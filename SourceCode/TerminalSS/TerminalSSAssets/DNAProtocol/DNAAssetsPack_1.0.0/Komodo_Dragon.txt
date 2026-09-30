@@ -1,0 +1,21 @@
+SpeciesName: Komodo Dragon
+ScientificName: Varanus komodoensis
+SpeciesCategory: Reptile
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Oviparous
+BodyPlan: Quadrupedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial
+Habitat: Tropical / Savanna
+EnvironmentalRange: Terrestrial
+ChromosomeCount: 40
+
+Sequence:
+ATCGGCTAACGTATCG
+CGTACCTTAGGCAATC
+TTAGCGGATACCTGCA
+
+GeneticBehaviour:
+Stable Sexual Recombination

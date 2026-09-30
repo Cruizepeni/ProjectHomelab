@@ -1,0 +1,21 @@
+SpeciesName: Chimpanzee
+ScientificName: Pan troglodytes
+SpeciesCategory: Animal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Viviparous
+BodyPlan: Bipedal / Quadrupedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial / Arboreal
+Habitat: Forest
+EnvironmentalRange: Terrestrial
+ChromosomeCount: 48
+
+Sequence:
+ATGCGTACCTTGGCTA
+CGTACCGTCAACGGTA
+GGCATTAGCGTCCGAT
+
+GeneticBehaviour:
+Stable Sexual Recombination

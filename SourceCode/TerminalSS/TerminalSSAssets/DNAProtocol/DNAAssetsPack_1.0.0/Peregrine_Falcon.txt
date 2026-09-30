@@ -1,0 +1,32 @@
+SpeciesName: Peregrine Falcon
+ScientificName: Falco peregrinus
+SpeciesCategory: Bird
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary / Air Sac
+Reproduction: Sexual / Oviparous
+BodyPlan: Bipedal / Winged
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial / Aerial
+Habitat: Cliff / Urban / Open Terrain
+EnvironmentalRange: Terrestrial / Aerial
+ChromosomeCount: Unknown
+
+Sequence:
+ATGCTTACCGGATCGA
+CGTAACGGTTCAGCTA
+TTCGATACCGTAGGCA
+
+GeneticBehaviour:
+Stable Sexual Recombination
+
+Art:
+          /\
+     ___/  \___
+  __/          \__
+ /   /\      /\   \
+<___/  \____/  \___>
+       / /\ \
+      /_/  \_\
+        ||
+       _||_

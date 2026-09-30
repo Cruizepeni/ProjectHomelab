@@ -1,0 +1,33 @@
+SpeciesName: Hive Parasite
+ScientificName: Unknown
+SpeciesCategory: Xenoform
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary / Cutaneous
+Reproduction: Parasitic Oviparous
+BodyPlan: Hexapodal / Variable
+StructuralSystem: Exoskeleton
+Locomotion: Terrestrial / Climbing
+Habitat: Host Dependent / Highly Variable
+EnvironmentalRange: Extreme / Terrestrial
+ChromosomeCount: Unknown
+
+Sequence:
+ATXCGTAACGGTZTAG
+CGTXAACGGATCZGTA
+ZTTAACCGXGATCGTA
+
+GeneticBehaviour:
+Assimilative
+Adaptive
+Highly Mutable
+
+Art:
+       /\  /\
+   ___/  \/  \___
+  /  _   /\   _  \
+ |  / \ (  ) / \  |
+  \ \_/ /||\ \_/ /
+   \___/ || \___/
+      /  ||  \
+     /___||___\

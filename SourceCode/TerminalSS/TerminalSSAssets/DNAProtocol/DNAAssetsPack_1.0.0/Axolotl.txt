@@ -1,0 +1,21 @@
+SpeciesName: Axolotl
+ScientificName: Ambystoma mexicanum
+SpeciesCategory: Amphibian
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Branchial / Cutaneous
+Reproduction: Sexual / Oviparous
+BodyPlan: Quadrupedal
+StructuralSystem: Endoskeleton
+Locomotion: Aquatic
+Habitat: Freshwater
+EnvironmentalRange: Aquatic
+ChromosomeCount: 28
+
+Sequence:
+ATCGTTAACGGCTACG
+CGGATACCTTAAGCTA
+TACCGTATGGCATTCA
+
+GeneticBehaviour:
+Adaptive

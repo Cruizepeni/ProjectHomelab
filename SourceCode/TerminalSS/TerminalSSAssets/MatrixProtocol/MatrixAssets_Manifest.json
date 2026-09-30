@@ -1,0 +1,43 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "Matrix Assets",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "folder": "TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0",
+      "files": [
+        {
+          "file": "Art_Eye.txt",
+          "path": "TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Art_Eye.txt",
+          "sha256": "75f3ddbbfa2204c2870d3dfe623bd4d843d2569d7e7135c0efa1739650670d2e",
+          "size_bytes": 284,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Art_Eye.txt"
+        },
+        {
+          "file": "Art_Matrix.txt",
+          "path": "TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Art_Matrix.txt",
+          "sha256": "9e75d6e1702b2e5bbb4f803a5c6e09f682fba093fbdbb16b128b655e64315b20",
+          "size_bytes": 202,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Art_Matrix.txt"
+        },
+        {
+          "file": "Art_Morpheus.txt",
+          "path": "TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Art_Morpheus.txt",
+          "sha256": "a769094851cfdb02d3821c8702e1b2a071f42fbe15eaa9f028b592a16b8a44c5",
+          "size_bytes": 285,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Art_Morpheus.txt"
+        },
+        {
+          "file": "Messages.txt",
+          "path": "TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Messages.txt",
+          "sha256": "17a15833f5cc426108cda7fae6754e09c948e684b430242646299c9c96ac87d2",
+          "size_bytes": 1034,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/MatrixProtocol/MatrixAssetsPack_1.0.0/Messages.txt"
+        }
+      ]
+    }
+  },
+  "protocol": "Matrix"
+}

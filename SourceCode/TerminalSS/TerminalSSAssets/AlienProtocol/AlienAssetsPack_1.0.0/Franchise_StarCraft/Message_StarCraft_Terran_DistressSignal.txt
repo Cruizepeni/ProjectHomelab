@@ -1,0 +1,17 @@
+Source: Terran Colonial Outpost
+Origin: Unknown
+Distance: Unknown
+Classification: Terran / Civilian
+Transmission Type: Emergency Broadcast
+Language: Terran Standard
+Decryption Completion: 82
+
+MAYDAY
+MAYDAY
+THIS IS COLONY CONTROL
+UNKNOWN BIOLOGICAL CONTACTS
+HAVE BREACHED THE OUTER PERIMETER
+SECURITY TEAMS ARE NOT RESPONDING
+THEY ARE COMING THROUGH THE—
+DO NOT LAND
+

@@ -1,0 +1,190 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "DNA Assets",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "folder": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0",
+      "files": [
+        {
+          "file": "Abyssal_Xenoform.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Abyssal_Xenoform.txt",
+          "sha256": "25f5377aed0d62e496b1c0b8077871cf1493676529870bb6ff52b324fffb42d9",
+          "size_bytes": 474,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Abyssal_Xenoform.txt"
+        },
+        {
+          "file": "Axolotl.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Axolotl.txt",
+          "sha256": "4fd24f8f007efe1494dd9fdbc19a7490becbcda31cdedbb0818eeedec7d5f2bf",
+          "size_bytes": 429,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Axolotl.txt"
+        },
+        {
+          "file": "Bottlenose_Dolphin.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Bottlenose_Dolphin.txt",
+          "sha256": "01457f8d6039bc9ea7b42710d36bb1d61f2d718ab96c07ae6f4e94eb9bf9a663",
+          "size_bytes": 621,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Bottlenose_Dolphin.txt"
+        },
+        {
+          "file": "Chimpanzee.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Chimpanzee.txt",
+          "sha256": "dac783624b91e508283dc6630949fc0901b8325f0bdb8bdf8c881e83543c2fea",
+          "size_bytes": 458,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Chimpanzee.txt"
+        },
+        {
+          "file": "Common_Octopus.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Common_Octopus.txt",
+          "sha256": "981677b76a6766adcacec1a575465bd93cbe2ddb222dd8d5b752287cb96253a6",
+          "size_bytes": 612,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Common_Octopus.txt"
+        },
+        {
+          "file": "Dog.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Dog.txt",
+          "sha256": "4562f1840b12f7d2a0e1d666f083b5fd411da44010dc3039df69704f6bc22674",
+          "size_bytes": 600,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Dog.txt"
+        },
+        {
+          "file": "Domestic_Cat.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Domestic_Cat.txt",
+          "sha256": "f7d5d5e847e64fed3b518998b8541d57a5e645d2313477d8949d3935583b40c6",
+          "size_bytes": 560,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Domestic_Cat.txt"
+        },
+        {
+          "file": "E._coli.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/E._coli.txt",
+          "sha256": "3ed7228920453d8e41706ee67524b1b0fa395026ff117c33d401f98da56b42b0",
+          "size_bytes": 640,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/E._coli.txt"
+        },
+        {
+          "file": "Evil_Lizard.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Evil_Lizard.txt",
+          "sha256": "214c1feae18ca4291724e29181f091682fee1fdba00490802ed9665268ef922d",
+          "size_bytes": 581,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Evil_Lizard.txt"
+        },
+        {
+          "file": "Gray_Wolf.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Gray_Wolf.txt",
+          "sha256": "521462e6e145433bc4d7062d12d72dbbf764a61b68fbd3d02f399e885e1c6ebb",
+          "size_bytes": 453,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Gray_Wolf.txt"
+        },
+        {
+          "file": "Great_White_Shark.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Great_White_Shark.txt",
+          "sha256": "a92bdeff75b0ae5f3db1d937e769cf859d3c1a3e6c7dc2b44adedf2d5ada7e85",
+          "size_bytes": 469,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Great_White_Shark.txt"
+        },
+        {
+          "file": "Hive_Parasite.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Hive_Parasite.txt",
+          "sha256": "c1490ce41674b4175ec406c2233907bc4582a96e6b5011122086c1eea2020bb8",
+          "size_bytes": 660,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Hive_Parasite.txt"
+        },
+        {
+          "file": "Human.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Human.txt",
+          "sha256": "8f8473f8f2d03befc3fc18f680d64c14c15ddbcc5b638dafb1519174e8bade4b",
+          "size_bytes": 610,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Human.txt"
+        },
+        {
+          "file": "Komodo_Dragon.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Komodo_Dragon.txt",
+          "sha256": "630b54cee2e0d5f82d4a2462925a3189dfcc51b88e7da1b5cddc74d6741572eb",
+          "size_bytes": 456,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Komodo_Dragon.txt"
+        },
+        {
+          "file": "Peacock_Mantis_Shrimp.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Peacock_Mantis_Shrimp.txt",
+          "sha256": "011ac2e0bc2a5f597c7cfb03f18d7f6dc1f6c78578b51cf67e01b5b948c8fbbb",
+          "size_bytes": 470,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Peacock_Mantis_Shrimp.txt"
+        },
+        {
+          "file": "Peregrine_Falcon.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Peregrine_Falcon.txt",
+          "sha256": "def84c37e0a75e65b0843f36867e359c56d8788f9124d5abe0e9a4540c5916e0",
+          "size_bytes": 648,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Peregrine_Falcon.txt"
+        },
+        {
+          "file": "Saltwater_Crocodile.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Saltwater_Crocodile.txt",
+          "sha256": "1a85f2404012cbf918afcc8e73ece6c43b760a057170427d25c6ea8285dc59fe",
+          "size_bytes": 488,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Saltwater_Crocodile.txt"
+        },
+        {
+          "file": "Silicon_Xenoform.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Silicon_Xenoform.txt",
+          "sha256": "e92ffb4e90e66a2b4e7711fffe8505f089fa975d22ddf2ede12f8d9c055353e0",
+          "size_bytes": 663,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Silicon_Xenoform.txt"
+        },
+        {
+          "file": "Tyrannosaurus_rex.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Tyrannosaurus_rex.txt",
+          "sha256": "21f97855f67fd8c5de8cb54151584b7c29a982d766ae3c0b9677cf70f41c37a1",
+          "size_bytes": 535,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Tyrannosaurus_rex.txt"
+        },
+        {
+          "file": "Venus_Flytrap.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Venus_Flytrap.txt",
+          "sha256": "21e6554da1537e09ce38ff184c8a2c674a94d2bdb9bf533395b07763c436fa5c",
+          "size_bytes": 616,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Venus_Flytrap.txt"
+        },
+        {
+          "file": "Water_Bear.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Water_Bear.txt",
+          "sha256": "a4ec29bfdc53330304f93ef7a70d32d4cc5834b3b880f610a690657e38bc657d",
+          "size_bytes": 495,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Water_Bear.txt"
+        },
+        {
+          "file": "Western_Gorilla.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Western_Gorilla.txt",
+          "sha256": "25ee5b3d3388c6cbe18b60105eb2272a7119cabe5f0ed206704623d97ed59056",
+          "size_bytes": 452,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Western_Gorilla.txt"
+        },
+        {
+          "file": "Western_Honey_Bee.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Western_Honey_Bee.txt",
+          "sha256": "cee525d6821b3e1f275626a235f6333cda08a0efeb02da29564d79fa7c542edd",
+          "size_bytes": 636,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Western_Honey_Bee.txt"
+        },
+        {
+          "file": "Zerg.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Zerg.txt",
+          "sha256": "3c8a9b8ee58d49f11d8c93b459d2cafd2fdae4684b9607e8f62054a95a62a468",
+          "size_bytes": 858,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Zerg.txt"
+        },
+        {
+          "file": "Zombie-Ant_Fungus.txt",
+          "path": "TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Zombie-Ant_Fungus.txt",
+          "sha256": "376f5ec3d6ffb3ffec97a1625797b54b5e1746d35587db1f0dbf3a31037717a8",
+          "size_bytes": 669,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssetsPack_1.0.0/Zombie-Ant_Fungus.txt"
+        }
+      ]
+    }
+  },
+  "protocol": "DNA"
+}

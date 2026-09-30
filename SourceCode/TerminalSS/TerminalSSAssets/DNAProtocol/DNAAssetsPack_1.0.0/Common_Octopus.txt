@@ -1,0 +1,31 @@
+SpeciesName: Common Octopus
+ScientificName: Octopus vulgaris
+SpeciesCategory: Animal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Branchial
+Reproduction: Sexual / Oviparous
+BodyPlan: Octopodal / Bilateral
+StructuralSystem: Hydrostatic / Muscular
+Locomotion: Aquatic
+Habitat: Marine / Benthic
+EnvironmentalRange: Aquatic
+ChromosomeCount: Unknown
+
+Sequence:
+ATCGTAACGGTACTGA
+CGGATTCATACGGTAC
+TTACCGGATGCAACTG
+
+GeneticBehaviour:
+Adaptive
+
+Art:
+        .-"""-.
+      .'  o o  '.
+     /     ^     \
+    |   \_____/   |
+     \           /
+    __\_________/__
+  _/  / / / \ \ \  \_
+ /___/_/_/   \_\_\___\

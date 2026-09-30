@@ -1,0 +1,9 @@
+Source: Dalek Command Signal
+Origin: Unknown
+Distance: Unknown
+Classification: Extraterrestrial / Hostile
+Transmission Type: Directive
+Language: Dalek / Translated
+Decryption Completion: 100
+
+OBEY!

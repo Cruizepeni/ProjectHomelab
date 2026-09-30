@@ -1,0 +1,9 @@
+Source: Terran Tactical Network
+Origin: Unknown
+Distance: Unknown
+Classification: Terran / Military
+Transmission Type: Tactical Warning
+Language: Terran Standard
+Decryption Completion: 100
+
+NUCLEAR LAUNCH DETECTED.

@@ -1,0 +1,32 @@
+SpeciesName: Evil Lizard
+ScientificName: Unknown
+SpeciesCategory: Xenoform
+GeneticMaterial: Unknown
+CellularType: Unknown
+Respiration: Unknown
+Reproduction: Unknown
+BodyPlan: Bipedal
+StructuralSystem: Unknown
+Locomotion: Terrestrial
+Habitat: Unknown
+EnvironmentalRange: Unknown
+ChromosomeCount: Unknown
+
+Sequence:
+ATXCGZATCGXXTAGC
+CGTZAXCGTTAGZXCA
+
+GeneticBehaviour:
+Unknown
+
+Art:
+        __..---..__
+      .'  _   _   '.
+     /   (o) (o)    \
+    |       ^        |
+    |    \_____/     |
+     \  .-.___.-.   /
+      '._/|   |\_.'
+        /_|___|_\
+         /   \
+        /_____\

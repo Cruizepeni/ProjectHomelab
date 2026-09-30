@@ -1,0 +1,22 @@
+PageSource: ARCANE CODEX
+Page: XII
+Language: Old Runic
+Origin: Unknown
+Classification: Ritual Text
+AnalysisCompletion: 100
+
+Message:
+The serpent consumes the beginning,
+The ending becomes the first step,
+The circle is never broken.
+
+Art:
+          __________
+      .-''          ``-.
+    .'                  `.
+   /      .--------.      \
+  |      /          \      |
+  |      \    <>    /      |
+   \      `--------'      /
+    `.                  .'
+      `-.____________.-'

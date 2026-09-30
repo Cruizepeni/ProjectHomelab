@@ -1,0 +1,33 @@
+SpeciesName: Silicon Xenoform
+ScientificName: Unknown
+SpeciesCategory: Xenoform
+GeneticMaterial: Silicon Nucleic Analog
+CellularType: Synthetic Cellular Matrix
+Respiration: No Conventional Respiration
+Reproduction: Fabricated Replication
+BodyPlan: Crystalline Radial
+StructuralSystem: Silicate Lattice
+Locomotion: Terrestrial
+Habitat: High Temperature Mineral Field
+EnvironmentalRange: Extreme / Terrestrial
+ChromosomeCount: N/A
+
+Sequence:
+S1L1C0NX3N0F0RM
+CRYSTALN0D3S1L1C
+X3N0LATT1C3S1GNA
+
+GeneticBehaviour:
+Genetically Isolated
+Incompatible
+
+Art:
+        /\
+       /  \
+      / /\ \
+     /_/  \_\
+     \ \  / /
+      \ \/ /
+       \  /
+       /\ \
+      /__\_\

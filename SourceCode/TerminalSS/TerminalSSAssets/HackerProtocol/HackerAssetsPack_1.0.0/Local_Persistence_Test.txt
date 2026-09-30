@@ -1,0 +1,11 @@
+Operation: Local Persistence Test
+Target: Engineering Terminal
+TargetAddress: LOCALHOST
+Location: Local
+Objective: Create Back Door
+Security: 48
+SuccessRate: 88
+FreezeRate: 2
+GlitchRate: 3
+HackBackChance: 0
+BlockAttempts: 1

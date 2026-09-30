@@ -1,0 +1,29 @@
+SpeciesName: Tyrannosaurus rex
+ScientificName: Tyrannosaurus rex
+SpeciesCategory: Dinosaur
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Unknown
+Reproduction: Sexual / Oviparous
+BodyPlan: Bipedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial
+Habitat: Terrestrial
+EnvironmentalRange: Temperate / Subtropical
+ChromosomeCount: Unknown
+
+Sequence:
+Unknown
+
+GeneticBehaviour:
+Unknown
+
+Art:
+                __
+               / _)
+      _.----._/ /
+     /         /
+  __/ (  | (  |
+ /__.-'|_|--|_|
+       / \
+      /   \

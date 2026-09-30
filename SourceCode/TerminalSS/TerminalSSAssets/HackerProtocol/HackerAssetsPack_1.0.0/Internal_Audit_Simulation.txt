@@ -1,0 +1,11 @@
+Operation: Internal Audit Simulation
+Target: Finance Workstation
+TargetAddress: FIN-WS-07
+Location: Internal Network
+Objective: Penetration Test
+Security: 84
+SuccessRate: 90
+FreezeRate: 2
+GlitchRate: 5
+HackBackChance: 12
+BlockAttempts: 3

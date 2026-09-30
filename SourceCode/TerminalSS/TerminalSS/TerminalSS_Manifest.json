@@ -1,0 +1,119 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "Application Source",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "folder": "TerminalSS/TerminalSS_1.0.0",
+      "entry_point": "TerminalSS.py",
+      "files": [
+        {
+          "file": "TerminalSS.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSS.py",
+          "sha256": "80125d7e0064cb7e70eb86ff6ba92a89a1a7bef9ae215139d4d5d76b8e1dc0e7",
+          "size_bytes": 28443,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSS.py"
+        },
+        {
+          "file": "TerminalSSAlienProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSAlienProtocol.py",
+          "sha256": "a789709491121bf07f983627b978c2a8a215b2f697b6e40899ced048a6f79c5f",
+          "size_bytes": 42373,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSAlienProtocol.py"
+        },
+        {
+          "file": "TerminalSSArcaneProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSArcaneProtocol.py",
+          "sha256": "1140ebe4d8d97fc9f5737ea7457f3f270e1da9d28047bf6695b1137c6693979f",
+          "size_bytes": 31097,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSArcaneProtocol.py"
+        },
+        {
+          "file": "TerminalSSAssetManager.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSAssetManager.py",
+          "sha256": "081e3308ce4be13c7a34b35e2f0d5d66314557e94e50aeba21fdaedd9272f165",
+          "size_bytes": 23619,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSAssetManager.py"
+        },
+        {
+          "file": "TerminalSSDNAProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSDNAProtocol.py",
+          "sha256": "8e39112ab1bebbaabc60fc6c2f5f567afeefa9da05a9507fc797d7ecbd37d635",
+          "size_bytes": 39991,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSDNAProtocol.py"
+        },
+        {
+          "file": "TerminalSSHackerProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSHackerProtocol.py",
+          "sha256": "60c5ff39c74847048be932450ff6da4088c4d0f1e3ac6f9de8dbb7e246c8af8f",
+          "size_bytes": 55000,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSHackerProtocol.py"
+        },
+        {
+          "file": "TerminalSSHackerSimulator.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSHackerSimulator.py",
+          "sha256": "3cc1a3638edcc6980249111ce95f5850de307009894b385881b45a439d92d580",
+          "size_bytes": 43343,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSHackerSimulator.py"
+        },
+        {
+          "file": "TerminalSSMatrixProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSMatrixProtocol.py",
+          "sha256": "b0cb15317ccb1fd5b5072006450f792da60aea56325ce1293f00d6d44533ebf3",
+          "size_bytes": 19037,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSMatrixProtocol.py"
+        },
+        {
+          "file": "TerminalSSProtocolText.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSProtocolText.py",
+          "sha256": "db690b78498bd4187e32e7fcf5006c9e6107132c8bc5d87a21cc29cc2cfe5155",
+          "size_bytes": 2394,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSProtocolText.py"
+        },
+        {
+          "file": "TerminalSSPythoFetchProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSPythoFetchProtocol.py",
+          "sha256": "80c17c778f5772b2b5b2268014891468cf26d2120ac141e28a0069f3058bbdb9",
+          "size_bytes": 2566,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSPythoFetchProtocol.py"
+        },
+        {
+          "file": "TerminalSSRuntime.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSRuntime.py",
+          "sha256": "3e1b0355d040594b551df6491f4d12890131011cc5554b429bc93287c706b2d5",
+          "size_bytes": 6361,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSRuntime.py"
+        },
+        {
+          "file": "TerminalSSSettings.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSSettings.py",
+          "sha256": "c05323b4069e1859649894d094a36311dae43eb180e67ed430753a936cbe45a3",
+          "size_bytes": 26500,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSSettings.py"
+        },
+        {
+          "file": "TerminalSSUI.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSUI.py",
+          "sha256": "7b1e4e72ff27790a03842efe51e149dfb548a624be978b35b6fc5232baea34ee",
+          "size_bytes": 16322,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSUI.py"
+        },
+        {
+          "file": "TerminalSSUpdateManager.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSUpdateManager.py",
+          "sha256": "12cec2ea689b031741a376391685a7b14e8c50ff90de9af5f3807e494571b34d",
+          "size_bytes": 21413,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSUpdateManager.py"
+        },
+        {
+          "file": "TerminalSS_Ubuntu_Run_Reference.txt",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSS_Ubuntu_Run_Reference.txt",
+          "sha256": "48de76dcc9d0ab15734c184ca2dbf13159184fedc1a0d5652d80ed5e2dd6dd44",
+          "size_bytes": 399,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSS_Ubuntu_Run_Reference.txt"
+        }
+      ]
+    }
+  }
+}

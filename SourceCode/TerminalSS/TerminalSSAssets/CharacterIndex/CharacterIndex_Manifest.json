@@ -1,0 +1,21 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "CharacterIndex",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "folder": "TerminalSSAssets/CharacterIndex/CharacterIndex_1.0.0",
+      "files": [
+        {
+          "file": "CharacterIndex_1.0.0.json",
+          "path": "TerminalSSAssets/CharacterIndex/CharacterIndex_1.0.0/CharacterIndex_1.0.0.json",
+          "sha256": "6a95b6a85745147fe5d0e77241e1cd6d200e13ce1a5cb1f85eedd6616799baa0",
+          "size_bytes": 19893,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/CharacterIndex/CharacterIndex_1.0.0/CharacterIndex_1.0.0.json"
+        }
+      ]
+    }
+  }
+}

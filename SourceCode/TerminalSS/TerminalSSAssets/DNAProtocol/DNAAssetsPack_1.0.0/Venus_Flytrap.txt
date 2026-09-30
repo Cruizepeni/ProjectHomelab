@@ -1,0 +1,32 @@
+SpeciesName: Venus Flytrap
+ScientificName: Dionaea muscipula
+SpeciesCategory: Plant
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Aerobic Cellular / Photosynthetic Gas Exchange
+Reproduction: Sexual / Seed
+BodyPlan: Rooted Rosette
+StructuralSystem: Cellulose Cell Wall
+Locomotion: Sessile
+Habitat: Wetland / Bog
+EnvironmentalRange: Terrestrial
+ChromosomeCount: 32
+
+Sequence:
+ATCGGCTTAACGTAGC
+CGTAACCGGATTCGTA
+TTAGCGATACCGGTCA
+
+GeneticBehaviour:
+Stable Sexual Recombination
+
+Art:
+        \ | /
+      .-\|/-.
+     /  / \  \
+    <  (   )  >
+     \  \_/  /
+      '.___.'
+        ||
+       _||_
+     _/ || \_

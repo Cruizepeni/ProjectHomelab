@@ -1,0 +1,31 @@
+SpeciesName: Domestic Cat
+ScientificName: Felis catus
+SpeciesCategory: Animal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Viviparous
+BodyPlan: Quadrupedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial
+Habitat: Domestic / Highly Variable
+EnvironmentalRange: Terrestrial
+ChromosomeCount: 38
+
+Sequence:
+ATGCTAACCGTATCGA
+CGATTCGGAATCGTAC
+TACCGGATCTAACGGT
+
+GeneticBehaviour:
+Stable Sexual Recombination
+
+Art:
+      /\_/\
+     ( o.o )
+      > ^ <
+     /     \
+    /       \
+   (___) (___)
+      | |
+      |_|

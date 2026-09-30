@@ -1,0 +1,9 @@
+Source: Protoss Command Network
+Origin: Unknown
+Distance: Unknown
+Classification: Protoss / Automated
+Transmission Type: Infrastructure Warning
+Language: Khalani / Translated
+Decryption Completion: 100
+
+YOU MUST CONSTRUCT ADDITIONAL PYLONS.

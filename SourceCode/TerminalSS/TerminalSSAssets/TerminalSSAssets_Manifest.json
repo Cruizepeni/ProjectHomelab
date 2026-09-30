@@ -1,0 +1,61 @@
+{
+  "schema": 1,
+  "application": "TerminalSS",
+  "component": "TerminalSS Assets Source",
+  "assets": {
+    "CharacterIndex": {
+      "manifest": {
+        "file": "CharacterIndex_Manifest.json",
+        "path": "TerminalSSAssets/CharacterIndex/CharacterIndex_Manifest.json",
+        "sha256": "f8a17c6bd542c74b6ce2c8f818511dd46e0897b70f45a6bf8cee7d98be8887c9",
+        "size_bytes": 767,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/CharacterIndex/CharacterIndex_Manifest.json"
+      }
+    },
+    "MatrixProtocol": {
+      "manifest": {
+        "file": "MatrixAssets_Manifest.json",
+        "path": "TerminalSSAssets/MatrixProtocol/MatrixAssets_Manifest.json",
+        "sha256": "f75cacd35b91b15548a6f77d8026b1168f20cde345de2c4ea329e3f94d400037",
+        "size_bytes": 2103,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/MatrixProtocol/MatrixAssets_Manifest.json"
+      }
+    },
+    "AlienProtocol": {
+      "manifest": {
+        "file": "AlienAssets_Manifest.json",
+        "path": "TerminalSSAssets/AlienProtocol/AlienAssets_Manifest.json",
+        "sha256": "c5577f3b898048b04c12f5274a2db09b95110f1507170ac21b98c05b78b4efcb",
+        "size_bytes": 15359,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/AlienProtocol/AlienAssets_Manifest.json"
+      }
+    },
+    "DNAProtocol": {
+      "manifest": {
+        "file": "DNAAssets_Manifest.json",
+        "path": "TerminalSSAssets/DNAProtocol/DNAAssets_Manifest.json",
+        "sha256": "414edac3521ad97a3acfaae7f63ad983be6f72b0d9af28b2eace110633fa013a",
+        "size_bytes": 11459,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/DNAProtocol/DNAAssets_Manifest.json"
+      }
+    },
+    "HackerProtocol": {
+      "manifest": {
+        "file": "HackerAssets_Manifest.json",
+        "path": "TerminalSSAssets/HackerProtocol/HackerAssets_Manifest.json",
+        "sha256": "b18ad8d4e68da32141432d69c35dd2b7beb998eff0f009a47632e0bebcd80814",
+        "size_bytes": 1790,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/HackerProtocol/HackerAssets_Manifest.json"
+      }
+    },
+    "ArcaneProtocol": {
+      "manifest": {
+        "file": "ArcaneAssets_Manifest.json",
+        "path": "TerminalSSAssets/ArcaneProtocol/ArcaneAssets_Manifest.json",
+        "sha256": "40425e7123bf4a2b082a94dc69984f3a1d96efbc3ca2b00d5e155ffbbb0a62bb",
+        "size_bytes": 1694,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSSAssets/ArcaneProtocol/ArcaneAssets_Manifest.json"
+      }
+    }
+  }
+}

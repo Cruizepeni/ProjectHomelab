@@ -1,0 +1,45 @@
+SpeciesName: Zerg
+ScientificName: Unknown
+SpeciesCategory: Xenoform
+GeneticMaterial: Unknown
+CellularType: Unknown
+Respiration: Unknown
+Reproduction: Biological Spawning
+BodyPlan: Highly Variable
+StructuralSystem: Highly Variable
+Locomotion: Strain Dependent
+Habitat: Highly Variable
+EnvironmentalRange: Extreme
+ChromosomeCount: Unknown
+
+Sequence:
+XGCTAAXCGTACZGTA
+CGTXACGGZTTAAGCX
+ZTAGCXXATGCCGTZA
+
+GeneticBehaviour:
+Assimilative
+Adaptive
+Highly Mutable
+
+Art:
+          /\    /\
+      ___/  \__/  \___
+     /   \   /\   /   \
+    / /\  \_/  \_/ /\  \
+   | |  |   ()   |  | |
+    \ \/   /||\   \/ /
+     \____/ || \____/
+        /   ||   \
+       /___/  \___\
+
+Art:
+        __/\____/\__
+     __/  /\  /\  \__
+    /  \_/  \/  \_/  \
+   |  /  \  /\  /  \  |
+   | <    \/  \/    > |
+    \ \   /\  /\   / /
+     \_\_/  \/  \_/_/
+       /\    /\
+      /  \__/  \

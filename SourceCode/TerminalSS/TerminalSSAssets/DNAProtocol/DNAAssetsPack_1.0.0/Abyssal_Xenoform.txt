@@ -1,0 +1,22 @@
+SpeciesName: Abyssal Xenoform
+ScientificName: Unknown
+SpeciesCategory: Xenoform
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Branchial
+Reproduction: Sexual / Oviparous
+BodyPlan: Radial / Tentacular
+StructuralSystem: Hydrostatic / Cartilaginous
+Locomotion: Aquatic
+Habitat: Deep Ocean / Hydrothermal
+EnvironmentalRange: Extreme / Aquatic
+ChromosomeCount: Unknown
+
+Sequence:
+ATCGGZTAACCGXTAG
+CGTAXCGGTTACZGTA
+ZTACCGATXGGCATTA
+
+GeneticBehaviour:
+Adaptive
+Mutable

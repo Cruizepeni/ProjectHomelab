@@ -1,0 +1,9 @@
+Source: Cyberman Unit
+Origin: Unknown
+Distance: Unknown
+Classification: Cybernetic Humanoid
+Transmission Type: Command
+Language: Cyberman / Translated
+Decryption Completion: 100
+
+DELETE!

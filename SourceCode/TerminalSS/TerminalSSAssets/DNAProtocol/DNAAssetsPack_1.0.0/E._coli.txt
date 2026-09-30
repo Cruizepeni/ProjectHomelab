@@ -1,0 +1,32 @@
+SpeciesName: E. coli
+ScientificName: Escherichia coli
+SpeciesCategory: Bacterium
+GeneticMaterial: DNA
+CellularType: Prokaryotic
+Respiration: Facultative Anaerobic
+Reproduction: Binary Fission
+BodyPlan: Unicellular
+StructuralSystem: Cell Wall
+Locomotion: Flagellar
+Habitat: Intestinal / Environmental
+EnvironmentalRange: Terrestrial / Aquatic
+ChromosomeCount: 1 Circular
+
+Sequence:
+ATGCGTAACCGTTAGC
+CGATTCGGTACGATTA
+TTAACGCGGATCTACG
+
+GeneticBehaviour:
+Highly Mutable
+
+Art:
+      .-~~~~~~~~-.
+    .'  o  o  o  '.
+   / o   o   o   o \
+  |   o   o   o     |
+   \ o   o   o   o /
+    '._o__o__o__.'
+       \\  |  //
+        \\ | //
+         \|/

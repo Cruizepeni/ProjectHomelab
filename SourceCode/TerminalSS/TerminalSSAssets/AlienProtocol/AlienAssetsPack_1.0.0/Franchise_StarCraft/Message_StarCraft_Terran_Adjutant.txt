@@ -1,0 +1,14 @@
+Source: Terran Adjutant
+Origin: Unknown
+Distance: Unknown
+Classification: Terran / Artificial Intelligence
+Transmission Type: Automated Status Report
+Language: Terran Standard
+Decryption Completion: 100
+
+WARNING
+MULTIPLE HOSTILE CONTACTS DETECTED
+ZERG BIOSIGNATURES CONFIRMED
+PROTOSS ENERGY SIGNATURES ALSO PRESENT
+SURVIVAL PROBABILITY:
+INSUFFICIENT DATA

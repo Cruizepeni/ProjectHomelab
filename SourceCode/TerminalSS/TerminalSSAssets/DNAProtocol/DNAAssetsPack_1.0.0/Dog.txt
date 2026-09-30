@@ -1,0 +1,32 @@
+SpeciesName: Dog
+ScientificName: Canis lupus familiaris
+SpeciesCategory: Animal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Viviparous
+BodyPlan: Quadrupedal
+StructuralSystem: Endoskeleton
+Locomotion: Terrestrial
+Habitat: Domestic / Highly Variable
+EnvironmentalRange: Terrestrial
+ChromosomeCount: 78
+
+Sequence:
+ATCCGTAGCTAACGTA
+GGCTAACCTGATCGTA
+CTTAGGCAATCGTTAC
+
+GeneticBehaviour:
+Stable Sexual Recombination
+
+Art:
+       / \__
+      (    @\___
+      /         O
+     /   (_____/
+    /_____/   U
+       /|  |\
+      / |  | \
+        /  \
+       /____\

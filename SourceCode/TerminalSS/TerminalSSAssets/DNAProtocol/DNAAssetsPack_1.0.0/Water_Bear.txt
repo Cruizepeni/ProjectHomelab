@@ -1,0 +1,21 @@
+SpeciesName: Water Bear
+ScientificName: Hypsibius exemplaris
+SpeciesCategory: Microanimal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Cutaneous Diffusion
+Reproduction: Sexual / Oviparous
+BodyPlan: Octopodal
+StructuralSystem: Cuticle / Hydrostatic
+Locomotion: Terrestrial / Aquatic
+Habitat: Moss / Freshwater Film
+EnvironmentalRange: Extreme / Terrestrial / Aquatic
+ChromosomeCount: Unknown
+
+Sequence:
+ATCGGTAACCTTAGCG
+CGTACGATTAACGGCT
+TTAACCGGATGCTACG
+
+GeneticBehaviour:
+Adaptive

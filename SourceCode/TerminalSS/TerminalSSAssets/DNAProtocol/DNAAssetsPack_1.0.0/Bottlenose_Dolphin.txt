@@ -1,0 +1,31 @@
+SpeciesName: Bottlenose Dolphin
+ScientificName: Tursiops truncatus
+SpeciesCategory: Animal
+GeneticMaterial: DNA
+CellularType: Eukaryotic
+Respiration: Pulmonary
+Reproduction: Sexual / Viviparous
+BodyPlan: Fusiform
+StructuralSystem: Endoskeleton
+Locomotion: Aquatic
+Habitat: Coastal / Oceanic
+EnvironmentalRange: Aquatic
+ChromosomeCount: 44
+
+Sequence:
+ATGTGTACCTAGGCGA
+CGTACCAATAACGGTC
+GGCATTAACTTCCGAT
+
+GeneticBehaviour:
+Stable Sexual Recombination
+
+Art:
+              __
+       _____/  \___
+   ___/            \__
+ _/      _             \
+<_______/ \____     ___/
+              \___/
+               /\
+              /  \
