@@ -5,11 +5,12 @@ import json
 import os
 import platform
 import shutil
+import stat
 import sys
 import tempfile
 import urllib.request
 import zipfile
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from typing import Any
 
 
@@ -23,8 +24,26 @@ class TerminalSSAssetManager:
         "Arcane": ("ArcaneProtocol", "ArcaneAssetsPack"),
     }
     CHARACTER_INDEX_PREFIX = "CharacterIndex"
-    PYTHOFETCH_SOURCE_MANIFEST_URL = "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetch/PythoFetch_Manifest.json"
-    PYTHOFETCH_RELEASE_MANIFEST_URL = "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/PythoFetch/PythoFetch_Release_Manifest.json"
+    TERMINALSS_SOURCE_MANIFEST_URL = (
+        "https://raw.githubusercontent.com/"
+        "Cruizepeni/ProjectHomelab/main/"
+        "SourceCode/TerminalSS/TerminalSS_Source_Manifest.json"
+    )
+    TERMINALSS_RESOURCES_MANIFEST_URL = (
+        "https://raw.githubusercontent.com/"
+        "Cruizepeni/ProjectHomelab/main/"
+        "Resources/FirstParty/TerminalSS/TerminalSS_Resources_Manifest.json"
+    )
+    PYTHOFETCH_SOURCE_MANIFEST_URL = (
+        "https://raw.githubusercontent.com/"
+        "Cruizepeni/ProjectHomelab/main/"
+        "SourceCode/PythoFetch/PythoFetch/PythoFetch_Manifest.json"
+    )
+    PYTHOFETCH_RELEASE_MANIFEST_URL = (
+        "https://raw.githubusercontent.com/"
+        "Cruizepeni/ProjectHomelab/main/"
+        "Releases/PythoFetch/PythoFetch_Release_Manifest.json"
+    )
 
     def __init__(self, project_root: str | Path, runtime_directory: str | Path):
         self.runtime_directory = Path(runtime_directory).resolve()
@@ -39,6 +58,12 @@ class TerminalSSAssetManager:
         self.source_assets_root = self.source_feature_root / "TerminalSSAssets" if self.source_feature_root else None
         self.pythofetch_runtime = self._discover_cached_pythofetch()
         self.pythofetch_version: str | None = None
+        self._source_router_cache: tuple[str, dict[str, Any]] | None = None
+        self._source_router_error: Exception | None = None
+        self._source_manifest_cache: dict[str, tuple[str, dict[str, Any]]] = {}
+        self._release_router_cache: dict[str, Any] | None = None
+        self._release_router_error: Exception | None = None
+        self._release_manifest_cache: dict[str, dict[str, Any]] = {}
 
     @staticmethod
     def _read_json(path: Path) -> dict[str, Any]:
@@ -49,13 +74,18 @@ class TerminalSSAssetManager:
         return data
 
     @staticmethod
-    def _fetch_json(url: str) -> dict[str, Any]:
-        request = urllib.request.Request(url, headers={"User-Agent": "TerminalSS/1.0.0"})
-        with urllib.request.urlopen(request, timeout=20) as response:
-            data = json.loads(response.read().decode("utf-8"))
+    def _decode_json(payload: bytes, label: str) -> dict[str, Any]:
+        try:
+            data = json.loads(payload.decode("utf-8"))
+        except Exception as exc:
+            raise ValueError(f"{label} is not valid JSON.") from exc
         if not isinstance(data, dict):
-            raise ValueError(f"Remote JSON root must be an object: {url}")
+            raise ValueError(f"{label} has an invalid root structure.")
         return data
+
+    @classmethod
+    def _fetch_json(cls, url: str, timeout: int = 20) -> dict[str, Any]:
+        return cls._decode_json(cls._fetch_bytes(url, timeout), url)
 
     @staticmethod
     def _sha256(path: Path) -> str:
@@ -69,28 +99,24 @@ class TerminalSSAssetManager:
         return digest.hexdigest()
 
     @staticmethod
-    def _safe_extract(archive: Path, destination: Path) -> None:
-        destination = destination.resolve()
-        with zipfile.ZipFile(archive, "r") as bundle:
-            for member in bundle.infolist():
-                target = (destination / member.filename).resolve()
-                try:
-                    target.relative_to(destination)
-                except ValueError as exc:
-                    raise ValueError("Asset archive contains an unsafe path.") from exc
-            bundle.extractall(destination)
+    def _sha256_bytes(payload: bytes) -> str:
+        return hashlib.sha256(payload).hexdigest()
 
     @staticmethod
-    def _version_key(value: str) -> tuple[int, ...]:
-        try:
-            return tuple(int(part) for part in str(value).split("."))
-        except Exception:
-            return (0,)
+    def _version_key(value: str) -> tuple[int, int, int]:
+        parts = str(value or "").strip().split(".")
+        if len(parts) != 3 or not all(part.isdigit() for part in parts):
+            raise ValueError(f"Invalid version: {value}")
+        return tuple(int(part) for part in parts)
 
     @classmethod
     def _compatibility_family(cls) -> str:
-        parts = cls.APP_VERSION.split(".")
-        return ".".join(parts[:2]) if len(parts) >= 2 else cls.APP_VERSION
+        key = cls._version_key(cls.APP_VERSION)
+        return f"{key[0]}.{key[1]}"
+
+    @classmethod
+    def _generation(cls) -> int:
+        return cls._version_key(cls.APP_VERSION)[0]
 
     @staticmethod
     def _version_from_folder(name: str, prefix: str) -> str | None:
@@ -98,21 +124,31 @@ class TerminalSSAssetManager:
         if not name.startswith(marker):
             return None
         value = name[len(marker):]
-        parts = value.split(".")
-        if len(parts) != 3 or not all(part.isdigit() for part in parts):
+        try:
+            TerminalSSAssetManager._version_key(value)
+        except Exception:
             return None
         return value
 
     @classmethod
     def _compatible_version(cls, version: str) -> bool:
-        return ".".join(version.split(".")[:2]) == cls._compatibility_family()
+        try:
+            key = cls._version_key(version)
+        except Exception:
+            return False
+        return f"{key[0]}.{key[1]}" == cls._compatibility_family()
+
+    @classmethod
+    def _compatible_character_index(cls, version: str) -> bool:
+        try:
+            return cls._version_key(version)[0] == cls._generation()
+        except Exception:
+            return False
 
     def _find_source_feature_root(self) -> Path | None:
         current = self.runtime_directory
         for candidate in (current, *current.parents):
             if (candidate / "TerminalSS_Source_Manifest.json").is_file():
-                return candidate
-            if (candidate / "TerminalSSAssets").is_dir() and (candidate / "TerminalSS").is_dir():
                 return candidate
         return None
 
@@ -129,11 +165,377 @@ class TerminalSSAssetManager:
                 result.append((version, path))
         return result
 
-    def _latest_compatible_pack(self, root: Path, prefix: str) -> tuple[str, Path] | None:
-        candidates = [item for item in self._pack_candidates(root, prefix) if self._compatible_version(item[0])]
+    def _latest_compatible_pack(self, root: Path, prefix: str, character_index: bool = False) -> tuple[str, Path] | None:
+        validator = self._compatible_character_index if character_index else self._compatible_version
+        candidates = [item for item in self._pack_candidates(root, prefix) if validator(item[0])]
         if not candidates:
             return None
         return max(candidates, key=lambda item: self._version_key(item[0]))
+
+    @staticmethod
+    def _fetch_bytes(url: str, timeout: int = 60) -> bytes:
+        request = urllib.request.Request(url, headers={"User-Agent": "TerminalSS/1.0.0"})
+        with urllib.request.urlopen(request, timeout=timeout) as response:
+            return response.read()
+
+    @staticmethod
+    def _required_reference_fields(reference: dict[str, Any], label: str) -> tuple[str, str, int]:
+        url = str(reference.get("download_url") or "").strip()
+        checksum = str(reference.get("sha256") or "").strip().lower()
+        try:
+            size = int(reference.get("size_bytes"))
+        except Exception as exc:
+            raise ValueError(f"{label} has an invalid size.") from exc
+        if not url or not checksum or size <= 0:
+            raise ValueError(f"{label} reference is incomplete.")
+        return url, checksum, size
+
+    @classmethod
+    def _fetch_verified_json_reference(cls, reference: dict[str, Any], label: str) -> dict[str, Any]:
+        url, checksum, size = cls._required_reference_fields(reference, label)
+        payload = cls._fetch_bytes(url, 30)
+        if len(payload) != size:
+            raise ValueError(f"{label} size verification failed.")
+        if cls._sha256_bytes(payload).lower() != checksum:
+            raise ValueError(f"{label} SHA-256 verification failed.")
+        return cls._decode_json(payload, label)
+
+    def _load_local_json_reference(self, reference: dict[str, Any], label: str) -> dict[str, Any]:
+        if self.source_feature_root is None:
+            raise FileNotFoundError("TerminalSS source root is unavailable.")
+        relative = str(reference.get("path") or "").replace("\\", "/").strip()
+        if not relative:
+            raise ValueError(f"{label} has no local path.")
+        parts = PurePosixPath(relative).parts
+        if not parts or any(part in ("", ".", "..") for part in parts):
+            raise ValueError(f"{label} has an unsafe local path.")
+        path = self.source_feature_root.joinpath(*parts)
+        _, checksum, size = self._required_reference_fields(reference, label)
+        if not self._verified_file(path, checksum, size):
+            raise ValueError(f"{label} local file failed verification.")
+        return self._read_json(path)
+
+    @staticmethod
+    def _manifest_reference(document: dict[str, Any], section: str, name: str, label: str) -> dict[str, Any]:
+        entries = document.get(section)
+        if not isinstance(entries, dict):
+            raise ValueError(f"{label} does not contain {section}.")
+        entry = entries.get(name)
+        if not isinstance(entry, dict):
+            raise ValueError(f"{label} does not contain {name}.")
+        reference = entry.get("manifest")
+        if not isinstance(reference, dict):
+            raise ValueError(f"{label} has an invalid manifest reference for {name}.")
+        return reference
+
+    def _source_assets_router(self) -> tuple[str, dict[str, Any]]:
+        if self._source_router_cache is not None:
+            return self._source_router_cache
+        if self._source_router_error is not None:
+            raise RuntimeError(str(self._source_router_error)) from self._source_router_error
+        if self.source_feature_root is not None:
+            try:
+                root = self._read_json(self.source_feature_root / "TerminalSS_Source_Manifest.json")
+                reference = self._manifest_reference(root, "components", "TerminalSSAssets", "TerminalSS source")
+                result = ("local", self._load_local_json_reference(reference, "TerminalSSAssets source"))
+                self._source_router_cache = result
+                return result
+            except Exception:
+                pass
+        try:
+            root = self._fetch_json(self.TERMINALSS_SOURCE_MANIFEST_URL)
+            reference = self._manifest_reference(root, "components", "TerminalSSAssets", "TerminalSS source")
+            result = ("remote", self._fetch_verified_json_reference(reference, "TerminalSSAssets source"))
+            self._source_router_cache = result
+            return result
+        except Exception as exc:
+            self._source_router_error = exc
+            raise
+
+    def _source_asset_manifest(self, name: str) -> tuple[str, dict[str, Any]]:
+        cached = self._source_manifest_cache.get(name)
+        if cached is not None:
+            return cached
+        origin, router = self._source_assets_router()
+        reference = self._manifest_reference(router, "assets", name, "TerminalSSAssets source")
+        if origin == "local":
+            try:
+                result = (origin, self._load_local_json_reference(reference, f"{name} source"))
+            except Exception:
+                result = ("remote", self._fetch_verified_json_reference(reference, f"{name} source"))
+        else:
+            result = (origin, self._fetch_verified_json_reference(reference, f"{name} source"))
+        self._source_manifest_cache[name] = result
+        return result
+
+    def _release_assets_router(self) -> dict[str, Any]:
+        if self._release_router_cache is not None:
+            return self._release_router_cache
+        if self._release_router_error is not None:
+            raise RuntimeError(str(self._release_router_error)) from self._release_router_error
+        try:
+            root = self._fetch_json(self.TERMINALSS_RESOURCES_MANIFEST_URL)
+            reference = self._manifest_reference(root, "components", "TerminalSSAssets", "TerminalSS resources")
+            router = self._fetch_verified_json_reference(reference, "TerminalSSAssets releases")
+            self._release_router_cache = router
+            return router
+        except Exception as exc:
+            self._release_router_error = exc
+            raise
+
+    def _release_asset_manifest(self, name: str) -> dict[str, Any]:
+        cached = self._release_manifest_cache.get(name)
+        if cached is not None:
+            return cached
+        router = self._release_assets_router()
+        reference = self._manifest_reference(router, "assets", name, "TerminalSSAssets releases")
+        manifest = self._fetch_verified_json_reference(reference, f"{name} releases")
+        self._release_manifest_cache[name] = manifest
+        return manifest
+
+    def _select_manifest_version(self, manifest: dict[str, Any], character_index: bool = False) -> tuple[str, dict[str, Any]]:
+        versions = manifest.get("versions")
+        if not isinstance(versions, dict):
+            raise ValueError("Asset manifest contains an invalid versions object.")
+        candidates = []
+        for version, entry in versions.items():
+            if not isinstance(entry, dict):
+                continue
+            try:
+                key = self._version_key(str(version))
+            except Exception:
+                continue
+            if character_index:
+                if key[0] != self._generation():
+                    continue
+            else:
+                family = f"{key[0]}.{key[1]}"
+                declared = str(entry.get("compatibility_family") or "").strip()
+                if family != self._compatibility_family() or declared != self._compatibility_family():
+                    continue
+            candidates.append((key, str(version), entry))
+        if not candidates:
+            kind = "CharacterIndex" if character_index else f"TerminalSS {self._compatibility_family()}"
+            raise FileNotFoundError(f"No compatible {kind} asset release was found.")
+        candidates.sort(key=lambda item: item[0], reverse=True)
+        _, version, entry = candidates[0]
+        return version, entry
+
+    @staticmethod
+    def _entry_relative_file(entry: dict[str, Any], record: dict[str, Any], source_manifest: bool) -> Path:
+        raw = str(record.get("path") or "").replace("\\", "/").strip()
+        if not raw:
+            raise ValueError("Asset manifest file record has no path.")
+        path = PurePosixPath(raw)
+        if path.is_absolute() or any(part in ("", ".", "..") for part in path.parts):
+            raise ValueError("Asset manifest contains an unsafe file path.")
+        if source_manifest:
+            folder_raw = str(entry.get("folder") or "").replace("\\", "/").strip()
+            folder = PurePosixPath(folder_raw)
+            try:
+                path = path.relative_to(folder)
+            except Exception as exc:
+                raise ValueError("Source asset file is outside its declared pack folder.") from exc
+        if not path.parts:
+            raise ValueError("Asset manifest contains an empty relative file path.")
+        if any(part.casefold() == "custom" for part in path.parts):
+            raise ValueError("Official asset manifests cannot contain Custom content.")
+        return Path(*path.parts)
+
+    def _verify_folder_from_entry(self, folder: Path, entry: dict[str, Any], source_manifest: bool) -> bool:
+        if not folder.is_dir():
+            return False
+        records = entry.get("files")
+        if not isinstance(records, list) or not records:
+            return False
+        expected: set[Path] = set()
+        try:
+            for record in records:
+                if not isinstance(record, dict):
+                    return False
+                relative = self._entry_relative_file(entry, record, source_manifest)
+                expected.add(relative)
+                target = folder / relative
+                if not self._verified_file(target, record.get("sha256"), record.get("size_bytes")):
+                    return False
+        except Exception:
+            return False
+        actual = {
+            path.relative_to(folder)
+            for path in folder.rglob("*")
+            if path.is_file()
+        }
+        if actual != expected:
+            return False
+        for path in folder.rglob("*"):
+            if any(part.casefold() == "custom" for part in path.relative_to(folder).parts):
+                return False
+        return True
+
+    @staticmethod
+    def _safe_archive_member(value: str) -> PurePosixPath:
+        normalized = str(value).replace("\\", "/")
+        while normalized.startswith("./"):
+            normalized = normalized[2:]
+        path = PurePosixPath(normalized)
+        if not normalized or path.is_absolute() or "\x00" in normalized:
+            raise ValueError("Asset archive contains an unsafe path.")
+        if any(part in ("", ".", "..") for part in path.parts):
+            raise ValueError("Asset archive contains an unsafe path.")
+        if path.parts and len(path.parts[0]) >= 2 and path.parts[0][1] == ":":
+            raise ValueError("Asset archive contains an unsafe path.")
+        if any(part.casefold() == "custom" for part in path.parts):
+            raise ValueError("Official asset archives cannot contain Custom content.")
+        return path
+
+    @classmethod
+    def _safe_extract(cls, archive: Path, destination: Path) -> None:
+        destination.mkdir(parents=True, exist_ok=True)
+        with zipfile.ZipFile(archive, "r") as bundle:
+            for member in bundle.infolist():
+                cls._safe_archive_member(member.filename)
+                mode = (member.external_attr >> 16) & 0xFFFF
+                if mode and stat.S_ISLNK(mode):
+                    raise ValueError("Asset archive contains a symbolic link.")
+            bundle.extractall(destination)
+
+    @staticmethod
+    def _verified_size(path: Path, expected_size: Any) -> bool:
+        if expected_size in (None, ""):
+            return True
+        try:
+            return path.stat().st_size == int(expected_size)
+        except Exception:
+            return False
+
+    def _verified_file(self, path: Path, checksum: Any, size: Any = None) -> bool:
+        if not path.is_file() or not self._verified_size(path, size):
+            return False
+        expected = str(checksum or "").strip().lower()
+        if not expected:
+            return True
+        return self._sha256(path).lower() == expected
+
+    def _download_verified_file(self, record: dict[str, Any], destination: Path) -> Path:
+        url = str(record.get("download_url") or "").strip()
+        checksum = str(record.get("sha256") or "").strip().lower()
+        try:
+            size = int(record.get("size_bytes"))
+        except Exception as exc:
+            raise ValueError("Download record contains an invalid size.") from exc
+        if not url or not checksum or size <= 0:
+            raise ValueError("Download record is incomplete.")
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        temporary = destination.with_name(destination.name + ".download")
+        if temporary.exists():
+            temporary.unlink()
+        try:
+            request = urllib.request.Request(url, headers={"User-Agent": "TerminalSS/1.0.0"})
+            with urllib.request.urlopen(request, timeout=120) as response, temporary.open("wb") as handle:
+                shutil.copyfileobj(response, handle)
+            if not self._verified_file(temporary, checksum, size):
+                raise ValueError(f"Downloaded file failed verification: {destination.name}")
+            os.replace(temporary, destination)
+        finally:
+            if temporary.exists():
+                temporary.unlink()
+        return destination
+
+    def _install_staged_folder(self, staged: Path, destination: Path) -> None:
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        backup = destination.with_name(destination.name + ".replace-backup")
+        if backup.exists():
+            shutil.rmtree(backup)
+        moved_old = False
+        try:
+            if destination.exists():
+                destination.rename(backup)
+                moved_old = True
+            shutil.move(str(staged), str(destination))
+            if backup.exists():
+                shutil.rmtree(backup)
+        except Exception:
+            if destination.exists():
+                shutil.rmtree(destination)
+            if moved_old and backup.exists():
+                backup.rename(destination)
+            raise
+
+    def _prune_managed_versions(self, root: Path, prefix: str, keep_version: str, character_index: bool = False) -> None:
+        validator = self._compatible_character_index if character_index else self._compatible_version
+        for version, path in self._pack_candidates(root, prefix):
+            if version == keep_version or not validator(version):
+                continue
+            shutil.rmtree(path)
+
+    def _provision_source_entry(self, version: str, entry: dict[str, Any], destination_root: Path, prefix: str, origin: str) -> Path:
+        folder_name = Path(str(entry.get("folder") or "")).name
+        expected_name = f"{prefix}_{version}"
+        if folder_name != expected_name:
+            raise ValueError(f"Source asset manifest folder does not match {expected_name}.")
+        self.cache_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=self.cache_root) as temp_name:
+            temp = Path(temp_name)
+            staged = temp / folder_name
+            staged.mkdir(parents=True, exist_ok=True)
+            records = entry.get("files")
+            if not isinstance(records, list) or not records:
+                raise ValueError("Source asset manifest contains no files.")
+            for record in records:
+                if not isinstance(record, dict):
+                    raise ValueError("Source asset manifest contains an invalid file record.")
+                relative = self._entry_relative_file(entry, record, True)
+                target = staged / relative
+                local_source = None
+                if origin == "local" and self.source_feature_root is not None:
+                    raw_path = str(record.get("path") or "").replace("\\", "/")
+                    local_source = self.source_feature_root.joinpath(*PurePosixPath(raw_path).parts)
+                if local_source is not None and self._verified_file(local_source, record.get("sha256"), record.get("size_bytes")):
+                    target.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(local_source, target)
+                else:
+                    self._download_verified_file(record, target)
+            if not self._verify_folder_from_entry(staged, entry, True):
+                raise ValueError(f"Staged {folder_name} failed asset verification.")
+            destination = destination_root / folder_name
+            self._install_staged_folder(staged, destination)
+        return destination
+
+    def _provision_release_entry(self, version: str, entry: dict[str, Any], destination_root: Path, prefix: str) -> Path:
+        folder_name = str(entry.get("folder") or "").strip()
+        expected_name = f"{prefix}_{version}"
+        if folder_name != expected_name or Path(folder_name).name != folder_name:
+            raise ValueError(f"Release asset manifest folder does not match {expected_name}.")
+        package = entry.get("package")
+        if not isinstance(package, dict):
+            raise ValueError("Release asset manifest does not contain a package record.")
+        package_name = str(package.get("file") or "").strip()
+        if not package_name or Path(package_name).name != package_name or not package_name.casefold().endswith(".zip"):
+            raise ValueError("Release asset package filename is invalid.")
+        self.cache_root.mkdir(parents=True, exist_ok=True)
+        with tempfile.TemporaryDirectory(dir=self.cache_root) as temp_name:
+            temp = Path(temp_name)
+            archive = self._download_verified_file(package, temp / package_name)
+            extract = temp / "extract"
+            self._safe_extract(archive, extract)
+            staged = extract / folder_name
+            if not staged.is_dir():
+                raise ValueError(f"Asset package does not contain {folder_name}.")
+            outside = []
+            for path in extract.rglob("*"):
+                if not path.is_file():
+                    continue
+                try:
+                    path.relative_to(staged)
+                except ValueError:
+                    outside.append(path)
+            if outside:
+                raise ValueError("Asset package contains files outside its declared pack folder.")
+            if not self._verify_folder_from_entry(staged, entry, False):
+                raise ValueError(f"Extracted {folder_name} failed asset verification.")
+            destination = destination_root / folder_name
+            self._install_staged_folder(staged, destination)
+        return destination
 
     def protocol_root(self, protocol: str) -> Path:
         spec = self.PROTOCOLS.get(protocol)
@@ -168,49 +570,63 @@ class TerminalSSAssetManager:
             return None
         return self._latest_compatible_pack(self.source_assets_root / spec[0], spec[1])
 
-    def _copy_pack(self, source: Path, destination: Path, replace: bool) -> None:
-        if replace and destination.exists():
-            shutil.rmtree(destination)
-        if not destination.exists():
-            shutil.copytree(source, destination)
-
-    def install_protocol(self, protocol: str, replace: bool = False) -> str:
+    def _resolve_protocol_target(self, protocol: str) -> tuple[str, dict[str, Any], str]:
         spec = self.PROTOCOLS.get(protocol)
         if spec is None:
             raise KeyError(f"TerminalSS has no managed asset protocol named {protocol}.")
-        protocol_root = self.protocol_root(protocol)
-        protocol_root.mkdir(parents=True, exist_ok=True)
-        self._ensure_custom_layout(protocol)
+        asset_name = spec[0]
         if self.source_mode:
-            source_record = self.source_protocol_pack(protocol)
-            if source_record is None:
-                raise FileNotFoundError(f"No compatible local source asset pack was found for {protocol}.")
-            version, source = source_record
-            destination = protocol_root / source.name
-            self._copy_pack(source, destination, replace)
-            return version
+            origin, manifest = self._source_asset_manifest(asset_name)
+            version, entry = self._select_manifest_version(manifest, False)
+            return version, entry, origin
+        manifest = self._release_asset_manifest(asset_name)
+        version, entry = self._select_manifest_version(manifest, False)
+        return version, entry, "release"
+
+    def _install_resolved_protocol(self, protocol: str, version: str, entry: dict[str, Any], origin: str) -> str:
+        spec = self.PROTOCOLS[protocol]
+        root = self.protocol_root(protocol)
+        root.mkdir(parents=True, exist_ok=True)
+        self._ensure_custom_layout(protocol)
+        if origin in ("local", "remote"):
+            self._provision_source_entry(version, entry, root, spec[1], origin)
+        else:
+            self._provision_release_entry(version, entry, root, spec[1])
+        self._prune_managed_versions(root, spec[1], version, False)
+        return version
+
+    def install_protocol(self, protocol: str, replace: bool = False) -> str:
+        version, entry, origin = self._resolve_protocol_target(protocol)
         installed = self.active_protocol_pack(protocol)
-        if installed is not None:
-            return installed[0]
-        raise FileNotFoundError(f"No installed {protocol} asset pack is available. Release-manifest provisioning has not been configured yet.")
+        if installed is not None and installed[0] == version and not replace:
+            source_manifest = origin in ("local", "remote")
+            if self._verify_folder_from_entry(installed[1], entry, source_manifest):
+                return installed[0]
+        return self._install_resolved_protocol(protocol, version, entry, origin)
 
     def ensure_protocol(self, protocol: str) -> str | None:
         if protocol not in self.PROTOCOLS:
             return None
-        self.protocol_root(protocol).mkdir(parents=True, exist_ok=True)
+        root = self.protocol_root(protocol)
+        root.mkdir(parents=True, exist_ok=True)
         self._ensure_custom_layout(protocol)
         installed = self.active_protocol_pack(protocol)
-        if self.source_mode:
-            source_record = self.source_protocol_pack(protocol)
-            if source_record is not None:
-                source_version, source_path = source_record
-                if installed is None or self._version_key(source_version) > self._version_key(installed[0]):
-                    destination = self.protocol_root(protocol) / source_path.name
-                    self._copy_pack(source_path, destination, False)
-                    return source_version
+        try:
+            version, entry, origin = self._resolve_protocol_target(protocol)
+        except Exception:
+            if installed is not None:
+                return installed[0]
+            raise
         if installed is not None:
-            return installed[0]
-        return self.install_protocol(protocol, replace=False)
+            installed_key = self._version_key(installed[0])
+            target_key = self._version_key(version)
+            if installed_key > target_key:
+                return installed[0]
+            if installed_key == target_key:
+                source_manifest = origin in ("local", "remote")
+                if self._verify_folder_from_entry(installed[1], entry, source_manifest):
+                    return installed[0]
+        return self._install_resolved_protocol(protocol, version, entry, origin)
 
     def protocol_asset_roots(self, protocol: str) -> list[Path]:
         self.ensure_protocol(protocol)
@@ -218,8 +634,7 @@ class TerminalSSAssetManager:
         active = self.active_protocol_pack(protocol)
         if active is not None:
             result.append(active[1])
-        custom = self._ensure_custom_layout(protocol)
-        result.append(custom)
+        result.append(self._ensure_custom_layout(protocol))
         return result
 
     def protocol_text_files(self, protocol: str) -> list[Path]:
@@ -234,9 +649,8 @@ class TerminalSSAssetManager:
         return files
 
     def repair_protocol(self, protocol: str) -> str:
-        if self.source_mode:
-            return self.install_protocol(protocol, replace=True)
-        raise FileNotFoundError("Release-manifest asset repair has not been configured yet.")
+        version, entry, origin = self._resolve_protocol_target(protocol)
+        return self._install_resolved_protocol(protocol, version, entry, origin)
 
     def rebuild_protocol(self, protocol: str) -> str:
         return self.repair_protocol(protocol)
@@ -250,23 +664,53 @@ class TerminalSSAssetManager:
     def source_character_index(self) -> tuple[str, Path] | None:
         if self.source_assets_root is None:
             return None
-        return self._latest_compatible_pack(self.source_assets_root / "CharacterIndex", self.CHARACTER_INDEX_PREFIX)
+        return self._latest_compatible_pack(self.source_assets_root / "CharacterIndex", self.CHARACTER_INDEX_PREFIX, True)
 
     def active_character_index(self) -> tuple[str, Path] | None:
-        return self._latest_compatible_pack(self.character_index_root(), self.CHARACTER_INDEX_PREFIX)
+        return self._latest_compatible_pack(self.character_index_root(), self.CHARACTER_INDEX_PREFIX, True)
+
+    def _resolve_character_index_target(self) -> tuple[str, dict[str, Any], str]:
+        if self.source_mode:
+            origin, manifest = self._source_asset_manifest("CharacterIndex")
+            version, entry = self._select_manifest_version(manifest, True)
+            return version, entry, origin
+        manifest = self._release_asset_manifest("CharacterIndex")
+        version, entry = self._select_manifest_version(manifest, True)
+        return version, entry, "release"
+
+    def _install_character_index(self, version: str, entry: dict[str, Any], origin: str) -> str:
+        root = self.character_index_root()
+        root.mkdir(parents=True, exist_ok=True)
+        if origin in ("local", "remote"):
+            self._provision_source_entry(version, entry, root, self.CHARACTER_INDEX_PREFIX, origin)
+        else:
+            self._provision_release_entry(version, entry, root, self.CHARACTER_INDEX_PREFIX)
+        self._prune_managed_versions(root, self.CHARACTER_INDEX_PREFIX, version, True)
+        return version
 
     def ensure_shared_assets(self) -> None:
         self.assets_root.mkdir(parents=True, exist_ok=True)
         installed = self.active_character_index()
-        if self.source_mode:
-            source = self.source_character_index()
-            if source is not None and (installed is None or self._version_key(source[0]) > self._version_key(installed[0])):
-                destination = self.character_index_root() / source[1].name
-                destination.parent.mkdir(parents=True, exist_ok=True)
-                self._copy_pack(source[1], destination, False)
-                installed = (source[0], destination)
-        if installed is None and not self.source_mode:
-            raise FileNotFoundError("CharacterIndex is not installed. Release-manifest provisioning has not been configured yet.")
+        try:
+            version, entry, origin = self._resolve_character_index_target()
+        except Exception:
+            if installed is not None:
+                return
+            raise
+        if installed is not None:
+            installed_key = self._version_key(installed[0])
+            target_key = self._version_key(version)
+            if installed_key > target_key:
+                return
+            if installed_key == target_key:
+                source_manifest = origin in ("local", "remote")
+                if self._verify_folder_from_entry(installed[1], entry, source_manifest):
+                    return
+        self._install_character_index(version, entry, origin)
+
+    def repair_character_index(self) -> str:
+        version, entry, origin = self._resolve_character_index_target()
+        return self._install_character_index(version, entry, origin)
 
     def character_set(self, name: str, fallback: str = "") -> tuple[str, ...]:
         self.ensure_shared_assets()
@@ -299,49 +743,6 @@ class TerminalSSAssetManager:
                 seen.add(token)
                 unique.append(token)
         return tuple(unique) or tuple(fallback)
-
-    @staticmethod
-    def _verified_size(path: Path, expected_size: Any) -> bool:
-        if expected_size in (None, ""):
-            return True
-        try:
-            return path.stat().st_size == int(expected_size)
-        except Exception:
-            return False
-
-    def _verified_file(self, path: Path, checksum: Any, size: Any = None) -> bool:
-        if not path.is_file() or not self._verified_size(path, size):
-            return False
-        expected = str(checksum or "").strip().lower()
-        if not expected:
-            return True
-        return self._sha256(path).lower() == expected
-
-    @staticmethod
-    def _fetch_bytes(url: str, timeout: int = 60) -> bytes:
-        request = urllib.request.Request(url, headers={"User-Agent": "TerminalSS/1.0.0"})
-        with urllib.request.urlopen(request, timeout=timeout) as response:
-            return response.read()
-
-    def _download_verified_file(self, record: dict[str, Any], destination: Path) -> Path:
-        url = record.get("download_url")
-        if not isinstance(url, str) or not url:
-            raise ValueError("Download record has no URL.")
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        temporary = destination.with_name(destination.name + ".download")
-        if temporary.exists():
-            temporary.unlink()
-        try:
-            request = urllib.request.Request(url, headers={"User-Agent": "TerminalSS/1.0.0"})
-            with urllib.request.urlopen(request, timeout=60) as response, temporary.open("wb") as handle:
-                shutil.copyfileobj(response, handle)
-            if not self._verified_file(temporary, record.get("sha256"), record.get("size_bytes")):
-                raise ValueError(f"Downloaded file failed verification: {destination.name}")
-            os.replace(temporary, destination)
-        finally:
-            if temporary.exists():
-                temporary.unlink()
-        return destination
 
     @staticmethod
     def _normalized_platform() -> str:

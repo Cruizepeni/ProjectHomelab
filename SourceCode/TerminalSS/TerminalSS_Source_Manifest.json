@@ -6,7 +6,7 @@
       "manifest": {
         "file": "TerminalSS_Manifest.json",
         "path": "TerminalSS/TerminalSS_Manifest.json",
-        "sha256": "8192390270f964440cc906c1557f777929e4716f47b029fb3bc8369836e068f0",
+        "sha256": "211c45fac5d380112ce9ab1c5c7f8ff7974c56a78b346debabb990ca70cf1fc1",
         "size_bytes": 6711,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_Manifest.json"
       }
