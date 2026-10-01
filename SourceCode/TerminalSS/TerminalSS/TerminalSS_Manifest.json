@@ -11,8 +11,8 @@
         {
           "file": "TerminalSS.py",
           "path": "TerminalSS/TerminalSS_1.0.0/TerminalSS.py",
-          "sha256": "80125d7e0064cb7e70eb86ff6ba92a89a1a7bef9ae215139d4d5d76b8e1dc0e7",
-          "size_bytes": 28443,
+          "sha256": "8c5e526a8c82ef63c6cf86b0a53e9756164296f6064939f18bac7cb0a67c2206",
+          "size_bytes": 28866,
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSS.py"
         },
         {
@@ -37,11 +37,25 @@
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSAssetManager.py"
         },
         {
+          "file": "TerminalSSCockpitProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSCockpitProtocol.py",
+          "sha256": "cdea4b5eb50b85c707b32ab8c717a5a9117bf49f85c964494dc09bc44a31329a",
+          "size_bytes": 18736,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSCockpitProtocol.py"
+        },
+        {
           "file": "TerminalSSDNAProtocol.py",
           "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSDNAProtocol.py",
           "sha256": "bc77152aa982d6dc99283d39dc88f643bd8496ca1bfa2195193ef8232e44d907",
           "size_bytes": 41719,
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSDNAProtocol.py"
+        },
+        {
+          "file": "TerminalSSGameAI.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSGameAI.py",
+          "sha256": "bcd71742182c1f52c532052a2d60642d1952641468c2f5d36ecb34c593e9daeb",
+          "size_bytes": 6096,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSGameAI.py"
         },
         {
           "file": "TerminalSSHackerProtocol.py",
@@ -58,11 +72,25 @@
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSHackerSimulator.py"
         },
         {
+          "file": "TerminalSSInvadersProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSInvadersProtocol.py",
+          "sha256": "2b409b22bb026d8b6026e95d178f279a54f59fdaacbd625f0cefbdcdcda90abc",
+          "size_bytes": 20462,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSInvadersProtocol.py"
+        },
+        {
           "file": "TerminalSSMatrixProtocol.py",
           "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSMatrixProtocol.py",
           "sha256": "b0cb15317ccb1fd5b5072006450f792da60aea56325ce1293f00d6d44533ebf3",
           "size_bytes": 19037,
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSMatrixProtocol.py"
+        },
+        {
+          "file": "TerminalSSPongProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSPongProtocol.py",
+          "sha256": "016cb7fd334940dc913916f830a7367835f17bb774abe2af2b1599ba6d9821d7",
+          "size_bytes": 16747,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSPongProtocol.py"
         },
         {
           "file": "TerminalSSPythoFetchProtocol.py",
@@ -86,10 +114,17 @@
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSSettings.py"
         },
         {
+          "file": "TerminalSSSnakeProtocol.py",
+          "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSSnakeProtocol.py",
+          "sha256": "71bd6b45b990284d3d1618e5911b41cb1c6aa866591eaf2089f56adfde0d5cda",
+          "size_bytes": 10053,
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSSnakeProtocol.py"
+        },
+        {
           "file": "TerminalSSUI.py",
           "path": "TerminalSS/TerminalSS_1.0.0/TerminalSSUI.py",
-          "sha256": "7b1e4e72ff27790a03842efe51e149dfb548a624be978b35b6fc5232baea34ee",
-          "size_bytes": 16322,
+          "sha256": "e8f61b1b092ea521e5291940c017aa0a099472103a3baeaa31685cda2fe2b048",
+          "size_bytes": 16519,
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/TerminalSS/TerminalSS/TerminalSS_1.0.0/TerminalSSUI.py"
         },
         {

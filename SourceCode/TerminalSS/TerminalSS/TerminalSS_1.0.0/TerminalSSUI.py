@@ -391,14 +391,14 @@ class TerminalSSUI:
             for x in range(start, min(canvas.width, start + length)):
                 canvas.put(x, y, rng.choice(usable), rng.choice((1, 2, 3)))
 
-    def help_canvas(self, width: int, height: int, protocol_name: str, protocol_keys: dict[str, str] | None = None) -> TerminalCanvas:
+    def help_canvas(self, width: int, height: int, protocol_name: str, protocol_keys: dict[str, str] | None = None, protocol_lines: list[str] | None = None) -> TerminalCanvas:
         canvas = self.canvas(width, height)
         lines = [
             f"CURRENT PROTOCOL: {protocol_name}",
             "",
             "ESC / CTRL+C  Exit",
-            "SPACE         Pause / Resume",
-            "0             Current Protocol Settings",
+            "SPACE         Pause / Resume when unused by protocol",
+            "TAB           Current Protocol Settings",
         ]
         if protocol_keys:
             for key, name in sorted(protocol_keys.items(), key=lambda item: item[0]):
@@ -406,7 +406,7 @@ class TerminalSSUI:
         lines.extend([
             "?             Help / Return",
             "LEFT / RIGHT  Previous / Next fixed colour",
-            "A-Z           Direct fixed colour selection",
+            "A-Z           Fixed colour when not a protocol control",
             "[             Toggle RGB",
             "]             Toggle Custom Color Shift",
         ])
@@ -418,5 +418,8 @@ class TerminalSSUI:
                 "UP / DOWN     Faster / Slower rain",
                 "BACKSPACE     Reverse rain direction",
             ])
+        elif protocol_lines:
+            lines.append("")
+            lines.extend(str(line) for line in protocol_lines)
         canvas.overlay_center_box("TERMINALSS", lines, min(76, width - 2))
         return canvas

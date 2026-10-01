@@ -544,7 +544,7 @@ def run_visualizer(settings_manager: TerminalSSSettings, asset_manager: Terminal
                 if key in {"ESC", "CTRL_C"}:
                     action = "exit"
                     break
-                if key == "0":
+                if key == "TAB":
                     keyboard.suspend()
                     write_terminal(SHOW_CURSOR + CLEAR_SCREEN + CURSOR_HOME)
                     try:
@@ -586,25 +586,31 @@ def run_visualizer(settings_manager: TerminalSSSettings, asset_manager: Terminal
                 if external_active:
                     time.sleep(FRAME_TIME)
                     continue
+                protocol_handled = False
+                if key is not None and not help_visible:
+                    handler = getattr(protocols[current_name], "handle_runtime_key", None)
+                    if callable(handler):
+                        protocol_handled = bool(handler(key, runtime_settings))
                 if key == "?":
                     help_visible = not help_visible
-                if key == " ":
-                    paused = not paused
-                if key == "LEFT":
-                    set_fixed_colour(runtime_settings, cycle_colour(str(runtime_settings.get("Color", "Matrix Green")), -1))
-                elif key == "RIGHT":
-                    set_fixed_colour(runtime_settings, cycle_colour(str(runtime_settings.get("Color", "Matrix Green")), 1))
-                elif isinstance(key, str) and len(key) == 1 and key.casefold() in COLOUR_KEYS:
-                    set_fixed_colour(runtime_settings, COLOUR_KEYS[key.casefold()])
-                elif key == "[":
-                    toggle_rgb(runtime_settings)
-                elif key == "]":
-                    toggle_custom_shift(runtime_settings)
-                elif key is not None and not help_visible and current_name == "Matrix":
-                    protocols[current_name].handle_runtime_key(key, runtime_settings)
+                elif not protocol_handled:
+                    if key == " ":
+                        paused = not paused
+                    if key == "LEFT":
+                        set_fixed_colour(runtime_settings, cycle_colour(str(runtime_settings.get("Color", "Matrix Green")), -1))
+                    elif key == "RIGHT":
+                        set_fixed_colour(runtime_settings, cycle_colour(str(runtime_settings.get("Color", "Matrix Green")), 1))
+                    elif isinstance(key, str) and len(key) == 1 and key.casefold() in COLOUR_KEYS:
+                        set_fixed_colour(runtime_settings, COLOUR_KEYS[key.casefold()])
+                    elif key == "[":
+                        toggle_rgb(runtime_settings)
+                    elif key == "]":
+                        toggle_custom_shift(runtime_settings)
                 width, height = terminal_size()
                 if help_visible:
-                    canvas = ui.help_canvas(width, height, current_name, PROTOCOL_KEYS)
+                    help_provider = getattr(protocols[current_name], "help_lines", None)
+                    protocol_help = help_provider() if callable(help_provider) else None
+                    canvas = ui.help_canvas(width, height, current_name, PROTOCOL_KEYS, protocol_help)
                 elif paused:
                     if last_canvas is None or last_canvas.width != width or last_canvas.height != height:
                         last_canvas = protocols[current_name].render(width, height, runtime_settings, frame_started)
