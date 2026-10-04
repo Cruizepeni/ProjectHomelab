@@ -3,7 +3,7 @@
   "resource_id": "deno",
   "name": "Deno",
   "latest": "2.9.6",
-  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/Deno",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Deno",
   "versions": {
     "2.9.6": {
       "manifest": "2.9.6/Deno_2.9.6_Manifest.json",

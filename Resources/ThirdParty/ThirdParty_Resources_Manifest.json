@@ -3,5 +3,55 @@
   "name": "ProjectHomelab Third-Party Resources",
   "folder": "Resources/ThirdParty",
   "purpose": "Router manifest for ProjectHomelab third-party resources.",
-  "resources": {}
+  "resources": {
+    "7Zip": {
+      "manifest": {
+        "file": "7Zip_Manifest.json",
+        "path": "Resources/ThirdParty/7Zip/7Zip_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/7Zip/7Zip_Manifest.json"
+      }
+    },
+    "Calibre": {
+      "manifest": {
+        "file": "Calibre_Manifest.json",
+        "path": "Resources/ThirdParty/Calibre/Calibre_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Calibre/Calibre_Manifest.json"
+      }
+    },
+    "Deno": {
+      "manifest": {
+        "file": "Deno_Manifest.json",
+        "path": "Resources/ThirdParty/Deno/Deno_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Deno/Deno_Manifest.json"
+      }
+    },
+    "Ffmpeg": {
+      "manifest": {
+        "file": "Ffmpeg_Manifest.json",
+        "path": "Resources/ThirdParty/Ffmpeg/Ffmpeg_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Ffmpeg/Ffmpeg_Manifest.json"
+      }
+    },
+    "Neofetch": {
+      "manifest": {
+        "file": "Neofetch_Manifest.json",
+        "path": "Resources/ThirdParty/Neofetch/Neofetch_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/Neofetch_Manifest.json"
+      }
+    },
+    "SmartMonTools": {
+      "manifest": {
+        "file": "SmartMonTools_Manifest.json",
+        "path": "Resources/ThirdParty/SmartMonTools/SmartMonTools_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/SmartMonTools/SmartMonTools_Manifest.json"
+      }
+    },
+    "Yt-dlp": {
+      "manifest": {
+        "file": "Yt-dlp_Manifest.json",
+        "path": "Resources/ThirdParty/Yt-dlp/Yt-dlp_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Yt-dlp/Yt-dlp_Manifest.json"
+      }
+    }
+  }
 }

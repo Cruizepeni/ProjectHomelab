@@ -3,7 +3,7 @@
   "resource_id": "smartmontools",
   "name": "SmartMonTools",
   "latest": "7.5",
-  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/SmartMonTools",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/SmartMonTools",
   "versions": {
     "7.5": {
       "manifest": "7.5/SmartMonTools_7.5_Manifest.json",

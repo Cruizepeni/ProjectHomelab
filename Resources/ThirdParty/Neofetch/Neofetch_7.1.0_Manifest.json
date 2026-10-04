@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "resource_id": "neofetch",
+  "name": "Neofetch",
+  "version": "7.1.0",
+  "resource_type": "source_snapshot",
+  "checksum_file": "Neofetch_7.1.0_Checksums.txt",
+  "files": [
+    {
+      "file": "ISSUE_TEMPLATE.md",
+      "path": ".github/ISSUE_TEMPLATE.md",
+      "sha256": "b57e6be7c05bb66bcc8553017bbfdba75f4da4172128fc8a7d7ab451ef6e7315",
+      "size_bytes": 375,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/.github/ISSUE_TEMPLATE.md"
+    },
+    {
+      "file": "PULL_REQUEST_TEMPLATE.md",
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "sha256": "4ec3f3c1065d4be26bc235ffcd8af03876a57bcc424cb4917a1a5bee063ace3f",
+      "size_bytes": 103,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/.github/PULL_REQUEST_TEMPLATE.md"
+    },
+    {
+      "file": ".travis.yml",
+      "path": ".travis.yml",
+      "sha256": "ff7c3e2907a9418024d4fcee301c1374a877267647c77cb15aeeecd03c1f682b",
+      "size_bytes": 486,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/.travis.yml"
+    },
+    {
+      "file": "CONTRIBUTING.md",
+      "path": "CONTRIBUTING.md",
+      "sha256": "8ad2952b932b82d26f2d97676cd74a037ba085a6ceed12fe37c1c598b63a9f6c",
+      "size_bytes": 4028,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/CONTRIBUTING.md"
+    },
+    {
+      "file": "LICENSE.md",
+      "path": "LICENSE.md",
+      "sha256": "392a7ac28e07bc7911b4c1c0c8e4713e5b733e54b1b275a1cdef8ad2075b3579",
+      "size_bytes": 1104,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/LICENSE.md"
+    },
+    {
+      "file": "Makefile",
+      "path": "Makefile",
+      "sha256": "d48bb1e7f3509f3fa4764f2a132e8ac160d114379de799ce50065326e86dee44",
+      "size_bytes": 434,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/Makefile"
+    },
+    {
+      "file": "neofetch",
+      "path": "neofetch",
+      "sha256": "e32e43a874197510ee849d244c28f611e2bbccf37d151d0f2fe5b616f22ff6bd",
+      "size_bytes": 388528,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/neofetch"
+    },
+    {
+      "file": "neofetch.1",
+      "path": "neofetch.1",
+      "sha256": "f8e433d6b4a294b86bf94de3eb1620b1476310f7e2c94fa2ff827045f6a93924",
+      "size_bytes": 12880,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/neofetch.1"
+    },
+    {
+      "file": "README.md",
+      "path": "README.md",
+      "sha256": "8bee61857a576c5b28f89b84bc03f1d11ee9d2ff4dc4bb0759fc1df9c620f9fe",
+      "size_bytes": 2062,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch/README.md"
+    }
+  ],
+  "entry_point": "neofetch"
+}

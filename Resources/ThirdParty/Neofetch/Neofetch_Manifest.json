@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "resource_id": "neofetch",
+  "name": "Neofetch",
+  "latest": "7.1.0",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Neofetch",
+  "resource_type": "source_snapshot",
+  "versions": {
+    "7.1.0": {
+      "manifest": "Neofetch_7.1.0_Manifest.json",
+      "status": "reference"
+    }
+  }
+}

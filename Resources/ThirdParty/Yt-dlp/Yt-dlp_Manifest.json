@@ -3,7 +3,7 @@
   "resource_id": "yt-dlp",
   "name": "yt-dlp",
   "latest": "2026.08.19",
-  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/Yt-dlp",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Yt-dlp",
   "versions": {
     "2026.08.19": {
       "manifest": "2026.08.19/Yt-dlp_2026.08.19_Manifest.json",
