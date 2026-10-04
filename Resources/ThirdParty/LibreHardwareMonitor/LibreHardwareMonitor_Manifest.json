@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "resource_id": "librehardwaremonitor",
+  "name": "LibreHardwareMonitor",
+  "latest": "0.9.6",
+  "raw_base_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/LibreHardwareMonitor",
+  "versions": {
+    "0.9.6": {
+      "manifest": "0.9.6/LibreHardwareMonitor_0.9.6_Manifest.json",
+      "status": "supported"
+    }
+  }
+}

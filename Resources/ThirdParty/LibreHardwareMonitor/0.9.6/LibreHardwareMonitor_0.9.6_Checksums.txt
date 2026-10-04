@@ -1,0 +1,4 @@
+# LibreHardwareMonitor 0.9.6
+# SHA-256
+
+29739c4959b01b348fddad87664066634bcfd4f46e9bf41e4e916c318bcfdb99  Windows/x86_64/LibreHardwareMonitor.NET.10.zip

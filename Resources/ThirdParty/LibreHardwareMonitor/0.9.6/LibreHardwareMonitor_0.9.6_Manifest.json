@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "resource_id": "librehardwaremonitor",
+  "name": "LibreHardwareMonitor",
+  "version": "0.9.6",
+  "checksum_file": "LibreHardwareMonitor_0.9.6_Checksums.txt",
+  "targets": {
+    "windows-x86_64": {
+      "os": "Windows",
+      "architecture": "x86_64",
+      "source": "Official LibreHardwareMonitor GitHub Release",
+      "artifact_type": "archive",
+      "install": {
+        "method": "extract"
+      },
+      "provides": [
+        "LibreHardwareMonitor.exe",
+        "LibreHardwareMonitorLib.dll",
+        "LibreHardwareMonitor.runtimeconfig.json"
+      ],
+      "artifact": "Windows/x86_64/LibreHardwareMonitor.NET.10.zip",
+      "sha256": "29739c4959b01b348fddad87664066634bcfd4f46e9bf41e4e916c318bcfdb99",
+      "size_bytes": 8889121,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/LibreHardwareMonitor/0.9.6/Windows/x86_64/LibreHardwareMonitor.NET.10.zip"
+    }
+  }
+}

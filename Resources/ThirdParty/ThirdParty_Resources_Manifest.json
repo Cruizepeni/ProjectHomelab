@@ -32,6 +32,13 @@
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/Ffmpeg/Ffmpeg_Manifest.json"
       }
     },
+    "LibreHardwareMonitor": {
+      "manifest": {
+        "file": "LibreHardwareMonitor_Manifest.json",
+        "path": "Resources/ThirdParty/LibreHardwareMonitor/LibreHardwareMonitor_Manifest.json",
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/ThirdParty/LibreHardwareMonitor/LibreHardwareMonitor_Manifest.json"
+      }
+    },
     "Neofetch": {
       "manifest": {
         "file": "Neofetch_Manifest.json",
