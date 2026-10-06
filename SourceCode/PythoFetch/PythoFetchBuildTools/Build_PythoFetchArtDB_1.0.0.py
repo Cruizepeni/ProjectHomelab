@@ -48,6 +48,15 @@ DATABASE_DOWNLOAD_BASE_URL = (
     "SourceCode/PythoFetch/"
     "PythoFetchArtAssets/ArtAssetsDB"
 )
+DATABASE_REPOSITORY_BASE_URL = (
+    "https://github.com/"
+    "Cruizepeni/ProjectHomelab/blob/main/"
+    "SourceCode/PythoFetch/"
+    "PythoFetchArtAssets/ArtAssetsDB"
+)
+DATABASE_RELATIVE_ROOT = (
+    "PythoFetchArtAssets/ArtAssetsDB"
+)
 
 CATALOGUE_FILE = NEOFETCH_CATALOGUE
 LICENSE_FILE = NEOFETCH_DIR / "NeoFetch_LICENSE.md"
@@ -1101,6 +1110,22 @@ def normalize_list(value):
     return [value]
 
 
+def database_relative_path(filename):
+    return (
+        DATABASE_RELATIVE_ROOT
+        + "/"
+        + str(filename)
+    )
+
+
+def database_url(filename):
+    return (
+        DATABASE_REPOSITORY_BASE_URL
+        + "/"
+        + str(filename)
+    )
+
+
 def database_download_url(filename):
     return (
         DATABASE_DOWNLOAD_BASE_URL
@@ -1932,7 +1957,7 @@ def insert_metadata(
         "schema_version":
             str(SCHEMA_VERSION),
         "compiler_version":
-            MANAGER_VERSION,
+            BUILD_TOOL_VERSION,
         "created_utc":
             utc_now(),
         "entry_count":
@@ -2227,7 +2252,7 @@ def load_manifest():
     return manifest
 
 
-def normalize_manifest_download_urls(
+def normalize_manifest_entries(
     manifest,
 ):
     changed = False
@@ -2253,20 +2278,33 @@ def normalize_manifest_download_urls(
                 f"name for version {version}."
             )
 
+        expected_path = (
+            database_relative_path(
+                filename
+            )
+        )
         expected_url = (
+            database_url(
+                filename
+            )
+        )
+        expected_download_url = (
             database_download_url(
                 filename
             )
         )
 
-        if (
-            entry.get("download_url")
-            != expected_url
-        ):
-            entry[
-                "download_url"
-            ] = expected_url
-            changed = True
+        expected = {
+            "path": expected_path,
+            "url": expected_url,
+            "download_url":
+                expected_download_url,
+        }
+
+        for key, value in expected.items():
+            if entry.get(key) != value:
+                entry[key] = value
+                changed = True
 
     return changed
 
@@ -2323,7 +2361,7 @@ def resolve_database_version(
         print()
 
         version = input(
-            "Version for new database "
+            "Version to build "
             "(x.x.x): "
         ).strip()
 
@@ -2335,41 +2373,41 @@ def resolve_database_version(
             "x.x.x format."
         )
 
-    if latest:
-        if (
-            version_key(version)
-            <= version_key(latest)
-        ):
-            raise RuntimeError(
-                "New database version must "
-                "be greater than the "
-                "current latest version.\n"
-                f"Latest : {latest}\n"
-                f"New    : {version}"
-            )
-
-    target = DATABASE_DIR / (
-        f"PythoFetchArt_{version}.db"
+    existing_versions = set(
+        database_versions_on_disk()
     )
 
-    if target.exists():
-        raise RuntimeError(
-            "Database version already "
-            "exists:\n"
-            f"{target}"
-        )
-
-    if (
-        version
-        in manifest.get(
+    existing_versions.update(
+        existing_version
+        for existing_version in
+        manifest.get(
             "versions",
             {}
         )
+        if VERSION_PATTERN.fullmatch(
+            existing_version
+        )
+    )
+
+    if version in existing_versions:
+        print(
+            "Rebuilding DB version : "
+            + version
+        )
+        print()
+        return version
+
+    if (
+        latest
+        and version_key(version)
+        <= version_key(latest)
     ):
         raise RuntimeError(
-            "Database version is already "
-            "listed in the manifest:\n"
-            f"{version}"
+            "A new database version must "
+            "be greater than the "
+            "current latest version.\n"
+            f"Latest : {latest}\n"
+            f"New    : {version}"
         )
 
     return version
@@ -2450,6 +2488,16 @@ def build_manifest_entry(
 ):
     return {
         "file": database_path.name,
+        "path": (
+            database_relative_path(
+                database_path.name
+            )
+        ),
+        "url": (
+            database_url(
+                database_path.name
+            )
+        ),
         "download_url": (
             database_download_url(
                 database_path.name
@@ -2466,7 +2514,7 @@ def build_manifest_entry(
             SCHEMA_VERSION
         ),
         "compiler_version": (
-            MANAGER_VERSION
+            BUILD_TOOL_VERSION
         ),
         "artwork_count": len(entries),
         "added_pythofetch_artworks":
@@ -2556,12 +2604,33 @@ def promote_database(
         f"{database_version}.db"
     )
 
+    backup = target.with_name(
+        target.name + ".previous"
+    )
+
+    if backup.exists():
+        raise RuntimeError(
+            "Database rebuild backup already "
+            "exists:\n"
+            f"{backup}"
+        )
+
     checksum = sha256_file(
         STAGING_DB
     )
 
     manifest_entry = {
         "file": target.name,
+        "path": (
+            database_relative_path(
+                target.name
+            )
+        ),
+        "url": (
+            database_url(
+                target.name
+            )
+        ),
         "download_url": (
             database_download_url(
                 target.name
@@ -2576,7 +2645,7 @@ def promote_database(
             SCHEMA_VERSION
         ),
         "compiler_version": (
-            MANAGER_VERSION
+            BUILD_TOOL_VERSION
         ),
         "artwork_count": len(entries),
         "added_pythofetch_artworks":
@@ -2593,8 +2662,24 @@ def promote_database(
         ),
     }
 
-    normalize_manifest_download_urls(
+    normalize_manifest_entries(
         manifest
+    )
+
+    updated_versions = dict(
+        manifest.get(
+            "versions",
+            {}
+        )
+    )
+
+    updated_versions[
+        database_version
+    ] = manifest_entry
+
+    latest_version = max(
+        updated_versions,
+        key=version_key,
     )
 
     updated_manifest = {
@@ -2603,29 +2688,27 @@ def promote_database(
         ),
         "database": "PythoFetchArt",
         "latest_version": (
-            database_version
+            latest_version
         ),
-        "versions": dict(
-            manifest.get(
-                "versions",
-                {}
-            )
-        ),
+        "versions": updated_versions,
     }
-
-    updated_manifest[
-        "versions"
-    ][
-        database_version
-    ] = manifest_entry
 
     write_manifest_temp(
         updated_manifest
     )
 
+    backed_up = False
     promoted = False
+    committed = False
 
     try:
+        if target.exists():
+            os.replace(
+                target,
+                backup,
+            )
+            backed_up = True
+
         os.replace(
             STAGING_DB,
             target,
@@ -2638,9 +2721,24 @@ def promote_database(
             MANIFEST_FILE,
         )
 
+        committed = True
+
+        if backup.exists():
+            try:
+                backup.unlink()
+            except Exception:
+                pass
+
     except Exception:
-        if promoted and target.exists():
-            target.unlink()
+        if not committed:
+            if promoted and target.exists():
+                target.unlink()
+
+            if backed_up and backup.exists():
+                os.replace(
+                    backup,
+                    target,
+                )
 
         raise
 
@@ -2793,7 +2891,7 @@ def main():
         manifest = load_manifest()
 
         changed = (
-            normalize_manifest_download_urls(
+            normalize_manifest_entries(
                 manifest
             )
         )
@@ -2804,13 +2902,12 @@ def main():
             )
 
             print(
-                "Manifest download URLs "
-                "updated."
+                "Manifest records updated."
             )
         else:
             print(
-                "Manifest download URLs "
-                "are already current."
+                "Manifest records are "
+                "already current."
             )
 
         print(
@@ -2869,7 +2966,7 @@ def main():
 
     manifest = load_manifest()
 
-    normalize_manifest_download_urls(
+    normalize_manifest_entries(
         manifest
     )
 

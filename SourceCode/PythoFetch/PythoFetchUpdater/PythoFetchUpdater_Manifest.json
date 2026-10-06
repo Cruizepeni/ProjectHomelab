@@ -7,9 +7,10 @@
     "1.0.0": {
       "source": {
         "file": "PythoFetchUpdater_1.0.0.py",
-        "path": "SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0/PythoFetchUpdater_1.0.0.py",
-        "sha256": "d3b2e01a6ed93a72de6da03b55c08f57d51d33ba82f451d26ad89922358169e9",
-        "size_bytes": 22499,
+        "path": "PythoFetchUpdater/PythoFetchUpdater_1.0.0/PythoFetchUpdater_1.0.0.py",
+        "url": "https://github.com/Cruizepeni/ProjectHomelab/blob/main/SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0/PythoFetchUpdater_1.0.0.py",
+        "sha256": "269840c634ae6b251da8fae3b8b27c264db4aa69dd7592812bf683d28a914a34",
+        "size_bytes": 22756,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_1.0.0/PythoFetchUpdater_1.0.0.py"
       }
     }

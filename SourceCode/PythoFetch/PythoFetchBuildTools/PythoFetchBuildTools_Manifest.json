@@ -9,13 +9,25 @@
   },
   "platform_tools": {
     "PythoFetch": {
+      "Linux_arm64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_PythoFetch_Linux_arm64_1.0.0.py",
+            "sha256": "ffb943741f117e911808b485ebd866cc01e83539a144bcce785f62b9d61df1ea",
+            "size_bytes": 29279,
+            "platform": "Linux",
+            "architecture": "arm64"
+          }
+        }
+      },
       "Linux_x86_64": {
         "latest_version": "1.0.0",
         "versions": {
           "1.0.0": {
             "file": "Build_PythoFetch_Linux_x86_64_1.0.0.py",
-            "sha256": "b280a880d9f1471203caa4756c71ab84e4eeaa797e0e8375328f1616ada08c5c",
-            "size_bytes": 29392,
+            "sha256": "df22e3cddb885bb48cc5755529e7c3c41bce0d590e4717686560a0517dcc78a6",
+            "size_bytes": 29285,
             "platform": "Linux",
             "architecture": "x86_64"
           }
@@ -35,13 +47,25 @@
       }
     },
     "PythoFetchUpdater": {
+      "Linux_arm64": {
+        "latest_version": "1.0.0",
+        "versions": {
+          "1.0.0": {
+            "file": "Build_PythoFetchUpdater_Linux_arm64_1.0.0.py",
+            "sha256": "b955a644372fe8cd985d36d4967523d4a6f3e6ed442a567c5463b50b32a54470",
+            "size_bytes": 11875,
+            "platform": "Linux",
+            "architecture": "arm64"
+          }
+        }
+      },
       "Linux_x86_64": {
         "latest_version": "1.0.0",
         "versions": {
           "1.0.0": {
             "file": "Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py",
-            "sha256": "3559cfd6c954d5c1c9054c549755966c4306d9ac40019e60e53879b086f18f29",
-            "size_bytes": 11887,
+            "sha256": "bc70d00a68f0e48d97e7f92f9f97652b21eb32b6f4926a189a0c4ff8542cb56a",
+            "size_bytes": 11894,
             "platform": "Linux",
             "architecture": "x86_64"
           }
@@ -67,8 +91,8 @@
       "versions": {
         "1.0.0": {
           "file": "Build_PythoFetchArtDB_1.0.0.py",
-          "sha256": "0a2b29c0c0a8571b85781aa844b9ea7a6d071659cc98ecd4cb84720889c0809c",
-          "size_bytes": 58413
+          "sha256": "03baa888d286ae02d0a261b92ffe37bb64845bd21cd53858eaf2532cc742c38d",
+          "size_bytes": 60403
         }
       }
     },
@@ -77,8 +101,8 @@
       "versions": {
         "1.0.0": {
           "file": "Build_PythoFetchManifests_1.0.0.py",
-          "sha256": "3d45c183253cf490bbf3572fe593b26c6592864aea16ac725f900e4728c6a5ea",
-          "size_bytes": 45370
+          "sha256": "eabdf6f237c0435924139552fdad1575b323d1ee1dbac4e850ffa123b436a779",
+          "size_bytes": 47520
         }
       }
     }

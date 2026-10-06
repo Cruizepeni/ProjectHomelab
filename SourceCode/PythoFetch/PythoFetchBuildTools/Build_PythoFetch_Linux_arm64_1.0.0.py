@@ -28,31 +28,31 @@ APPIMAGE_RUNTIME_BUILD = "2026-09-28-8f39b89"
 TERMINAL_COLUMNS = 120
 TERMINAL_ROWS = 34
 APPIMAGE_RUNTIME_ASSETS = {
-    "x86_64": {
+    "aarch64": {
         "url": (
             "https://github.com/AppImage/"
             "type2-runtime/releases/download/"
-            "continuous/runtime-x86_64"
+            "continuous/runtime-aarch64"
         ),
         "sha256": (
-            "156f4bdbde9c52d01814600013e0a273"
-            "f0118dc2de98975f3c8c63427ec79074"
+            "b4ff0030242d0c3bb12ce40541828303"
+            "cf167493f4793456f0436edd6255c39d"
         ),
-        "size_bytes": 944632,
+        "size_bytes": 936456,
     },
 }
 APPIMAGETOOL_ASSETS = {
-    "x86_64": {
+    "aarch64": {
         "url": (
             "https://github.com/AppImage/"
             "appimagetool/releases/download/"
-            "1.9.1/appimagetool-x86_64.AppImage"
+            "1.9.1/appimagetool-aarch64.AppImage"
         ),
         "sha256": (
-            "ed4ce84f0d9caff66f50bcca6ff6f35a"
-            "ae54ce8135408b3fa33abfc3cb384eb0"
+            "f0837e7448a0c1e4e650a93bb3e85802"
+            "546e60654ef287576f46c71c126a9158"
         ),
-        "size_bytes": 15092216,
+        "size_bytes": 14678536,
     },
 }
 FOLDER_PATTERN = re.compile(
@@ -308,10 +308,10 @@ def prepare_linux_icon(python_path, icon, work_dir):
 
 def detect_architecture():
     machine = str(platform.machine() or "").strip().lower()
-    if machine in ("x86_64", "amd64", "x64"):
-        return "x86_64", "x86_64"
+    if machine in ("aarch64", "arm64"):
+        return "arm64", "aarch64"
     raise RuntimeError(
-        "This build tool targets Linux x86_64 only. "
+        "This build tool targets Linux arm64 only. "
         f"Detected architecture: {machine or 'Unknown'}"
     )
 
@@ -924,7 +924,7 @@ def build_report(
 
 
 def parse_args():
-    parser = argparse.ArgumentParser(prog="Build_PythoFetch_Linux_x86_64_1.0.0")
+    parser = argparse.ArgumentParser(prog="Build_PythoFetch_Linux_arm64_1.0.0")
     parser.add_argument("--clean-cache", action="store_true")
     parser.add_argument("--keep-work", action="store_true")
     return parser.parse_args()
@@ -967,7 +967,7 @@ def main():
 
     cache_dir = (
         root
-        / ".pythofetch-linux-x86_64-build"
+        / ".pythofetch-linux-arm64-build"
     )
 
     work_dir = (
@@ -1031,7 +1031,7 @@ def main():
     print()
 
     print(
-        "PythoFetch Linux x86_64 Build Tool "
+        "PythoFetch Linux arm64 Build Tool "
         f"{BUILDER_VERSION}"
     )
 

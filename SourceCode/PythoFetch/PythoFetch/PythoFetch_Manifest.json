@@ -7,15 +7,17 @@
     "1.0.0": {
       "source": {
         "file": "PythoFetch_1.0.0.py",
-        "path": "SourceCode/PythoFetch/PythoFetch/PythoFetch_1.0.0/PythoFetch_1.0.0.py",
-        "sha256": "e4dca23d4849ee39275ac1ac67862903c5d5c8f74aa992bcdfd39974a7b7c947",
-        "size_bytes": 103698,
+        "path": "PythoFetch/PythoFetch_1.0.0/PythoFetch_1.0.0.py",
+        "url": "https://github.com/Cruizepeni/ProjectHomelab/blob/main/SourceCode/PythoFetch/PythoFetch/PythoFetch_1.0.0/PythoFetch_1.0.0.py",
+        "sha256": "9babc13830a15202e3f92d421eb25c67a3c3a956aa30f546ef6f05a64c6026e4",
+        "size_bytes": 113308,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetch/PythoFetch_1.0.0/PythoFetch_1.0.0.py"
       },
       "art_database": {
         "file": "PythoFetchArt_1.0.0.db",
-        "path": "SourceCode/PythoFetch/PythoFetch/PythoFetch_1.0.0/PythoFetchArt_1.0.0.db",
-        "sha256": "8278d519b21028afaa85fcc22d0e5bd013143a96e8df37f1a566d2e0110e6a37",
+        "path": "PythoFetch/PythoFetch_1.0.0/PythoFetchArt_1.0.0.db",
+        "url": "https://github.com/Cruizepeni/ProjectHomelab/blob/main/SourceCode/PythoFetch/PythoFetch/PythoFetch_1.0.0/PythoFetchArt_1.0.0.db",
+        "sha256": "5b5b153ac8a71929145d06bb5031c099ccc7f26572cdc427304b4da15f7bd23b",
         "size_bytes": 339968,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetch/PythoFetch_1.0.0/PythoFetchArt_1.0.0.db"
       }

@@ -227,19 +227,30 @@ def detect_platform_asset():
         )
 
     if system == "Linux":
-        if machine not in (
+        if machine in (
             "x86_64",
             "amd64",
             "x64",
         ):
-            raise RuntimeError(
-                "This updater release supports Linux x86_64 only."
+            return (
+                "Linux_x86_64",
+                "PythoFetch.AppImage",
+                "PythoFetchTemp.AppImage",
             )
 
-        return (
-            "Linux_x86_64",
-            "PythoFetch.AppImage",
-            "PythoFetchTemp.AppImage",
+        if machine in (
+            "arm64",
+            "aarch64",
+        ):
+            return (
+                "Linux_arm64",
+                "PythoFetch.AppImage",
+                "PythoFetchTemp.AppImage",
+            )
+
+        raise RuntimeError(
+            "This updater release supports Linux "
+            "x86_64 and arm64 only."
         )
 
     raise RuntimeError(

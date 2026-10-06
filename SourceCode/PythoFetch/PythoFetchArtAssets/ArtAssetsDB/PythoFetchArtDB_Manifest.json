@@ -5,8 +5,10 @@
   "versions": {
     "1.0.0": {
       "file": "PythoFetchArt_1.0.0.db",
+      "path": "PythoFetchArtAssets/ArtAssetsDB/PythoFetchArt_1.0.0.db",
+      "url": "https://github.com/Cruizepeni/ProjectHomelab/blob/main/SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB/PythoFetchArt_1.0.0.db",
       "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB/PythoFetchArt_1.0.0.db",
-      "sha256": "8278d519b21028afaa85fcc22d0e5bd013143a96e8df37f1a566d2e0110e6a37",
+      "sha256": "5b5b153ac8a71929145d06bb5031c099ccc7f26572cdc427304b4da15f7bd23b",
       "size_bytes": 339968,
       "schema_version": 1,
       "artwork_count": 269,
@@ -21,7 +23,7 @@
         "Windows": 3,
         "macOS": 3
       },
-      "created_utc": "2026-09-26T13:46:04.050608+00:00",
+      "created_utc": "2026-10-06T09:35:18.099430+00:00",
       "compiler_version": "1.0.0"
     }
   }

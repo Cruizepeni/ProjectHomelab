@@ -12,6 +12,15 @@ BASE_RAW_URL = (
     "https://raw.githubusercontent.com/"
     "Cruizepeni/ProjectHomelab/main/"
 )
+BASE_REPOSITORY_URL = (
+    "https://github.com/"
+    "Cruizepeni/ProjectHomelab/blob/main/"
+)
+SOURCE_REPO_ROOT = "SourceCode/PythoFetch"
+RELEASE_REPO_ROOT = "Releases/PythoFetch"
+RESOURCES_REPO_ROOT = (
+    "Resources/FirstParty/PythoFetch"
+)
 
 VERSION_PATTERN = re.compile(
     r"^\d+\.\d+\.\d+$"
@@ -203,28 +212,101 @@ def load_json(path):
     return payload
 
 
-def repo_record(path, repo_path):
-    path = Path(path)
-    repo_path = (
-        str(repo_path)
+def normalized_repo_path(value):
+    return (
+        str(value)
         .replace("\\", "/")
-        .lstrip("/")
+        .strip("/")
     )
 
-    return {
+
+def joined_repo_path(
+    repo_root,
+    relative_path,
+):
+    root = normalized_repo_path(
+        repo_root
+    )
+    relative = normalized_repo_path(
+        relative_path
+    )
+
+    if not root:
+        return relative
+
+    if not relative:
+        return root
+
+    return (
+        root
+        + "/"
+        + relative
+    )
+
+
+def repository_url(repo_path):
+    return (
+        BASE_REPOSITORY_URL
+        + normalized_repo_path(
+            repo_path
+        )
+    )
+
+
+def raw_repository_url(repo_path):
+    return (
+        BASE_RAW_URL
+        + normalized_repo_path(
+            repo_path
+        )
+    )
+
+
+def repo_record(
+    path,
+    relative_path,
+    repo_root,
+    download=False,
+    raw=False,
+):
+    path = Path(path)
+    relative_path = normalized_repo_path(
+        relative_path
+    )
+    repo_path = joined_repo_path(
+        repo_root,
+        relative_path,
+    )
+
+    record = {
         "file": path.name,
-        "path": repo_path,
+        "path": relative_path,
+        "url": repository_url(
+            repo_path
+        ),
         "sha256": sha256_file(
             path
         ),
         "size_bytes": (
             path.stat().st_size
         ),
-        "download_url": (
-            BASE_RAW_URL
-            + repo_path
-        ),
     }
+
+    if download:
+        record[
+            "download_url"
+        ] = raw_repository_url(
+            repo_path
+        )
+
+    if raw:
+        record[
+            "raw_url"
+        ] = raw_repository_url(
+            repo_path
+        )
+
+    return record
 
 
 def file_record(path):
@@ -443,15 +525,27 @@ def build_art_database_manifest(root):
         except Exception:
             pythofetch_count = 0
 
+        relative_path = (
+            "PythoFetchArtAssets/"
+            "ArtAssetsDB/"
+            + path.name
+        )
+
+        repo_path = joined_repo_path(
+            SOURCE_REPO_ROOT,
+            relative_path,
+        )
+
         entry = {
             "file": path.name,
-            "download_url": (
-                BASE_RAW_URL
-                + "SourceCode/PythoFetch/"
-                + "PythoFetchArtAssets/"
-                + "ArtAssetsDB/"
-                + path.name
+            "path": relative_path,
+            "url": repository_url(
+                repo_path
             ),
+            "download_url":
+                raw_repository_url(
+                    repo_path
+                ),
             "sha256": sha256_file(
                 path
             ),
@@ -576,8 +670,7 @@ def build_application_source_manifest(root):
                 f"{source}"
             )
 
-        source_repo = (
-            "SourceCode/PythoFetch/"
+        source_path = (
             "PythoFetch/"
             f"PythoFetch_{version}/"
             f"PythoFetch_{version}.py"
@@ -587,7 +680,9 @@ def build_application_source_manifest(root):
             "source":
                 repo_record(
                     source,
-                    source_repo,
+                    source_path,
+                    SOURCE_REPO_ROOT,
+                    download=True,
                 ),
         }
 
@@ -636,8 +731,7 @@ def build_application_source_manifest(root):
                 databases[0][1]
             )
 
-            database_repo = (
-                "SourceCode/PythoFetch/"
+            database_path = (
                 "PythoFetch/"
                 f"PythoFetch_{version}/"
                 + database.name
@@ -647,7 +741,9 @@ def build_application_source_manifest(root):
                 "art_database"
             ] = repo_record(
                 database,
-                database_repo,
+                database_path,
+                SOURCE_REPO_ROOT,
+                download=True,
             )
 
         versions[
@@ -734,8 +830,7 @@ def build_updater_source_manifest(root):
                 f"{source}"
             )
 
-        source_repo = (
-            "SourceCode/PythoFetch/"
+        source_path = (
             "PythoFetchUpdater/"
             f"PythoFetchUpdater_{version}/"
             f"PythoFetchUpdater_{version}.py"
@@ -747,7 +842,9 @@ def build_updater_source_manifest(root):
             "source":
                 repo_record(
                     source,
-                    source_repo,
+                    source_path,
+                    SOURCE_REPO_ROOT,
+                    download=True,
                 ),
         }
 
@@ -817,7 +914,6 @@ def build_art_assets_manifest(root):
 
         record = {
             "path":
-                "SourceCode/PythoFetch/"
                 "PythoFetchArtAssets/"
                 + folder_name,
             "file_count":
@@ -840,8 +936,7 @@ def build_art_assets_manifest(root):
             )
 
             if target.is_file():
-                repo_path = (
-                    "SourceCode/PythoFetch/"
+                relative_path = (
                     "PythoFetchArtAssets/"
                     + folder_name
                     + "/"
@@ -852,7 +947,8 @@ def build_art_assets_manifest(root):
                     "manifest"
                 ] = repo_record(
                     target,
-                    repo_path,
+                    relative_path,
+                    SOURCE_REPO_ROOT,
                 )
 
         catalogue_name = metadata.get(
@@ -866,8 +962,7 @@ def build_art_assets_manifest(root):
             )
 
             if target.is_file():
-                repo_path = (
-                    "SourceCode/PythoFetch/"
+                relative_path = (
                     "PythoFetchArtAssets/"
                     + folder_name
                     + "/"
@@ -878,7 +973,8 @@ def build_art_assets_manifest(root):
                     "catalogue"
                 ] = repo_record(
                     target,
-                    repo_path,
+                    relative_path,
+                    SOURCE_REPO_ROOT,
                 )
 
         folders[
@@ -1155,7 +1251,6 @@ def build_source_root_manifest(
             manifests[
                 "PythoFetch"
             ],
-            "SourceCode/PythoFetch/"
             "PythoFetch/"
             "PythoFetch_Manifest.json",
         ),
@@ -1163,7 +1258,6 @@ def build_source_root_manifest(
             manifests[
                 "PythoFetchUpdater"
             ],
-            "SourceCode/PythoFetch/"
             "PythoFetchUpdater/"
             "PythoFetchUpdater_Manifest.json",
         ),
@@ -1171,7 +1265,6 @@ def build_source_root_manifest(
             manifests[
                 "PythoFetchArtAssets"
             ],
-            "SourceCode/PythoFetch/"
             "PythoFetchArtAssets/"
             "PythoFetchArtAssets_Manifest.json",
         ),
@@ -1179,7 +1272,6 @@ def build_source_root_manifest(
             manifests[
                 "PythoFetchBuildTools"
             ],
-            "SourceCode/PythoFetch/"
             "PythoFetchBuildTools/"
             "PythoFetchBuildTools_Manifest.json",
         ),
@@ -1201,6 +1293,7 @@ def build_source_root_manifest(
                 repo_record(
                     path,
                     repo_path,
+                    SOURCE_REPO_ROOT,
                 ),
         }
 
@@ -1574,6 +1667,12 @@ def build_application_release_manifest(root):
                 )
             )
 
+        relative_path = path.name
+        repo_path = joined_repo_path(
+            RELEASE_REPO_ROOT,
+            relative_path,
+        )
+
         release[
             "assets"
         ][
@@ -1581,10 +1680,16 @@ def build_application_release_manifest(root):
         ] = {
             "file":
                 path.name,
+            "path":
+                relative_path,
+            "url":
+                repository_url(
+                    repo_path
+                ),
             "download_url":
-                BASE_RAW_URL
-                + "Releases/PythoFetch/"
-                + path.name,
+                raw_repository_url(
+                    repo_path
+                ),
             "sha256":
                 sha256_file(
                     path
@@ -1632,8 +1737,8 @@ def build_application_release_manifest(root):
             "readme"
         ] = repo_record(
             readme_path,
-            "Releases/PythoFetch/"
-            + readme_path.name,
+            readme_path.name,
+            RELEASE_REPO_ROOT,
         )
 
     payload[
@@ -1745,6 +1850,15 @@ def build_updater_release_manifest(root):
                 )
             )
 
+        relative_path = (
+            "PythoFetchUpdater/"
+            + path.name
+        )
+        repo_path = joined_repo_path(
+            RESOURCES_REPO_ROOT,
+            relative_path,
+        )
+
         entry[
             "assets"
         ][
@@ -1752,12 +1866,16 @@ def build_updater_release_manifest(root):
         ] = {
             "file":
                 path.name,
+            "path":
+                relative_path,
+            "url":
+                repository_url(
+                    repo_path
+                ),
             "download_url":
-                BASE_RAW_URL
-                + "Resources/FirstParty/"
-                + "PythoFetch/"
-                + "PythoFetchUpdater/"
-                + path.name,
+                raw_repository_url(
+                    repo_path
+                ),
             "sha256":
                 sha256_file(
                     path
@@ -1808,8 +1926,7 @@ def build_resources_manifest(
         / "PythoFetch_Resources_Manifest.json"
     )
 
-    repo_path = (
-        "Resources/FirstParty/PythoFetch/"
+    relative_path = (
         "PythoFetchUpdater/"
         "PythoFetchUpdater_Release_Manifest.json"
     )
@@ -1822,7 +1939,10 @@ def build_resources_manifest(
                 "manifest":
                     repo_record(
                         updater_manifest,
-                        repo_path,
+                        relative_path,
+                        RESOURCES_REPO_ROOT,
+                        download=True,
+                        raw=True,
                     ),
             }
         },

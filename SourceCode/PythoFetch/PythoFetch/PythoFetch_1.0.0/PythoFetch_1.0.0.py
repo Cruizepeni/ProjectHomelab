@@ -1069,6 +1069,42 @@ def collect_linux_snapshot():
     disk = get_primary_disk()
 
     pretty = os_release.get("PRETTY_NAME") or os_release.get("NAME") or "Linux"
+    raspberry_pi_os = False
+
+    try:
+        rpi_issue = Path("/etc/rpi-issue").read_text(
+            encoding="utf-8",
+            errors="replace",
+        )
+        issue_lower = rpi_issue.lower()
+        raspberry_pi_os = (
+            "raspberry pi" in issue_lower
+            and "pi-gen" in issue_lower
+        )
+    except Exception:
+        pass
+
+    if raspberry_pi_os:
+        version_id = compact_spaces(
+            os_release.get("VERSION_ID")
+        )
+        codename = compact_spaces(
+            os_release.get("VERSION_CODENAME")
+        )
+
+        if version_id and codename:
+            pretty = (
+                "Raspberry Pi OS "
+                f"(Debian {version_id} {codename})"
+            )
+        elif version_id:
+            pretty = (
+                "Raspberry Pi OS "
+                f"(Debian {version_id})"
+            )
+        else:
+            pretty = "Raspberry Pi OS"
+
     cpu_name = get_linux_cpu_name() or "Unknown"
     physical, logical = get_cpu_counts()
 
@@ -1111,6 +1147,12 @@ def collect_linux_snapshot():
         "architecture": platform.machine() or None,
         "distro_id": os_release.get("ID"),
         "distro_like": os_release.get("ID_LIKE"),
+        "raspberry_pi_os": raspberry_pi_os,
+        "platform_label": (
+            "Raspberry Pi OS"
+            if raspberry_pi_os
+            else None
+        ),
     }
 
 
@@ -1740,6 +1782,9 @@ def normalize_alias_candidates(snapshot):
         add("Windows")
 
     elif provider == "Linux":
+        if snapshot.get("raspberry_pi_os"):
+            add("Raspbian")
+
         add(os_name)
         add(distro_id)
 
@@ -2273,6 +2318,27 @@ def plain_info_items(snapshot):
     ]
 
 
+def set_terminal_title(title):
+    title = str(title)
+
+    if platform.system() == "Windows":
+        try:
+            ctypes.windll.kernel32.SetConsoleTitleW(
+                title
+            )
+            return
+        except Exception:
+            pass
+
+    if not sys.stdout.isatty():
+        return
+
+    sys.stdout.write(
+        f"\033]0;{title}\007"
+    )
+    sys.stdout.flush()
+
+
 def clear_terminal():
     enable_ansi()
     sys.stdout.write("\033[2J\033[H")
@@ -2380,7 +2446,11 @@ def tui_header_lines():
     ]
 
 
-def tui_side_by_side_layout(logo_lines, info_lines):
+def tui_side_by_side_layout(
+    logo_lines,
+    info_lines,
+    available_width=None,
+):
     logo_width = max(
         (visible_width(line) for line in logo_lines),
         default=0,
@@ -2391,29 +2461,75 @@ def tui_side_by_side_layout(logo_lines, info_lines):
         default=0,
     )
 
-    left_width = max(
+    gap = 2
+
+    natural_left_width = max(
         logo_width + 3,
         30,
     )
 
-    right_width = max(
+    natural_right_width = max(
         info_width + 3,
         44,
     )
 
-    gap = 2
-    terminal_width = (
-        left_width
+    natural_content_width = (
+        natural_left_width
         + gap
-        + right_width
-        + 2
+        + natural_right_width
+    )
+
+    if available_width is None:
+        return (
+            natural_left_width,
+            natural_right_width,
+            gap,
+            natural_content_width + 2,
+        )
+
+    available_content_width = max(
+        34,
+        available_width - 2,
+    )
+
+    content_width = min(
+        natural_content_width,
+        available_content_width,
+    )
+
+    minimum_right_width = min(
+        24,
+        max(
+            16,
+            content_width // 2,
+        ),
+    )
+
+    left_width = min(
+        natural_left_width,
+        max(
+            16,
+            content_width
+            - gap
+            - minimum_right_width,
+        ),
+    )
+
+    right_width = max(
+        16,
+        content_width
+        - left_width
+        - gap,
     )
 
     return (
         left_width,
         right_width,
         gap,
-        terminal_width,
+        left_width
+        + gap
+        + right_width
+        + 2,
     )
 
 
@@ -2429,10 +2545,15 @@ def tui_footer_text(
             "   [Enter] Exit"
         )
 
+    platform_label = (
+        snapshot.get("platform_label")
+        or str(payload.get("id") or "").replace("_", " ")
+    )
+
     return (
         f"PythoFetch {PYTHOFETCH_VERSION}"
         f"   {snapshot.get('provider')}"
-        f" / {str(payload.get('id') or '').replace('_', ' ')}"
+        f" / {platform_label}"
         "   [Enter] Exit"
     )
 
@@ -2443,6 +2564,7 @@ def render_tui_side_by_side(
     palette,
     payload,
     update_version=None,
+    available_width=None,
 ):
     info_lines = tui_info_lines(
         snapshot,
@@ -2457,6 +2579,7 @@ def render_tui_side_by_side(
     ) = tui_side_by_side_layout(
         logo_lines,
         info_lines,
+        available_width=available_width,
     )
 
     full_width = (
@@ -2772,6 +2895,12 @@ def render_tui(
 ):
     enable_ansi()
 
+    terminal_width = (
+        shutil.get_terminal_size(
+            (120, 30)
+        ).columns
+    )
+
     (
         logo_lines,
         palette,
@@ -2780,48 +2909,31 @@ def render_tui(
         snapshot
     )
 
-    info_lines = tui_info_lines(
-        snapshot,
-        palette,
-    )
-
-    (
-        _,
-        _,
-        _,
-        required_width,
-    ) = tui_side_by_side_layout(
-        logo_lines,
-        info_lines,
-    )
-
-    terminal_width = (
-        shutil.get_terminal_size(
-            (120, 30)
-        ).columns
-    )
-
     clear_terminal()
 
-    if terminal_width >= required_width:
-        return render_tui_side_by_side(
-            snapshot,
-            logo_lines,
-            palette,
-            payload,
-            update_version,
-        )
-
-    return render_tui_stacked(
+    return render_tui_side_by_side(
         snapshot,
         logo_lines,
         palette,
         payload,
         update_version,
+        available_width=terminal_width,
+    )
+
+def terminal_dimensions():
+    size = shutil.get_terminal_size(
+        (120, 30)
+    )
+
+    return (
+        size.columns,
+        size.lines,
     )
 
 
-def read_tui_key():
+def read_tui_key(
+    watch_resize=False,
+):
     if not sys.stdin.isatty():
         try:
             value = input()
@@ -2835,10 +2947,27 @@ def read_tui_key():
 
         return value[0]
 
+    initial_size = (
+        terminal_dimensions()
+        if watch_resize
+        else None
+    )
+
     if platform.system() == "Windows":
         import msvcrt
 
         while True:
+            if (
+                watch_resize
+                and terminal_dimensions()
+                != initial_size
+            ):
+                return "resize"
+
+            if not msvcrt.kbhit():
+                time.sleep(0.05)
+                continue
+
             value = msvcrt.getwch()
 
             if value in (
@@ -2860,6 +2989,7 @@ def read_tui_key():
             return value.lower()
 
     try:
+        import select
         import termios
         import tty
 
@@ -2878,7 +3008,29 @@ def read_tui_key():
                 file_descriptor
             )
 
-            value = sys.stdin.read(1)
+            while True:
+                if (
+                    watch_resize
+                    and terminal_dimensions()
+                    != initial_size
+                ):
+                    return "resize"
+
+                readable, _, _ = (
+                    select.select(
+                        [sys.stdin],
+                        [],
+                        [],
+                        0.10,
+                    )
+                )
+
+                if not readable:
+                    continue
+
+                value = sys.stdin.read(1)
+                break
+
         finally:
             termios.tcsetattr(
                 file_descriptor,
@@ -3187,12 +3339,20 @@ def run_headless(args):
 
 
 def run_classic():
+    set_terminal_title(
+        "PythoFetch"
+    )
+
     snapshot = collect_system_snapshot()
     render_neofetch_layout(snapshot)
     return 0
 
 
 def run_tui():
+    set_terminal_title(
+        "PythoFetch"
+    )
+
     snapshot = collect_system_snapshot()
 
     update_info = (
@@ -3475,6 +3635,9 @@ def fetch_verified_json_reference(
 
     url = str(
         reference.get(
+            "raw_url"
+        )
+        or reference.get(
             "download_url"
         )
         or ""
@@ -3753,6 +3916,315 @@ def resolve_updater_release():
     return select_compatible_updater(
         updater_manifest
     )
+
+
+def desktop_exec_value(path):
+    value = str(
+        Path(path).resolve()
+    )
+
+    value = (
+        value.replace(
+            "\\",
+            "\\\\",
+        )
+        .replace(
+            '"',
+            '\\"',
+        )
+        .replace(
+            "`",
+            "\\`",
+        )
+        .replace(
+            "$",
+            "\\$",
+        )
+    )
+
+    return (
+        '"'
+        + value
+        + '"'
+    )
+
+
+def write_if_changed(
+    path,
+    data,
+    mode=None,
+):
+    path = Path(
+        path
+    )
+
+    current = None
+
+    try:
+        if path.is_file():
+            current = path.read_bytes()
+    except Exception:
+        current = None
+
+    changed = (
+        current != data
+    )
+
+    if changed:
+        path.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        temporary = path.with_name(
+            path.name
+            + ".tmp"
+        )
+
+        try:
+            temporary.write_bytes(
+                data
+            )
+
+            if mode is not None:
+                temporary.chmod(
+                    mode
+                )
+
+            os.replace(
+                temporary,
+                path,
+            )
+
+        finally:
+            if temporary.exists():
+                temporary.unlink()
+
+    elif mode is not None:
+        try:
+            path.chmod(
+                mode
+            )
+        except Exception:
+            pass
+
+    return changed
+
+
+def refresh_linux_desktop_integration(
+    applications_dir,
+    icon_root,
+):
+    commands = [
+        (
+            "update-desktop-database",
+            [
+                str(
+                    applications_dir
+                )
+            ],
+        ),
+        (
+            "gtk-update-icon-cache",
+            [
+                "-f",
+                "-t",
+                str(
+                    icon_root
+                ),
+            ],
+        ),
+    ]
+
+    for executable, arguments in commands:
+        path = shutil.which(
+            executable
+        )
+
+        if not path:
+            continue
+
+        try:
+            subprocess.run(
+                [
+                    path,
+                    *arguments,
+                ],
+                stdin=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                timeout=5,
+                check=False,
+            )
+        except Exception:
+            pass
+
+
+def ensure_linux_desktop_integration():
+    if platform.system() != "Linux":
+        return False
+
+    appimage_value = str(
+        os.environ.get(
+            "APPIMAGE"
+        )
+        or ""
+    ).strip()
+
+    if not appimage_value:
+        return False
+
+    try:
+        appimage = Path(
+            appimage_value
+        ).expanduser().resolve()
+
+        if not appimage.is_file():
+            return False
+
+        appdir_value = str(
+            os.environ.get(
+                "APPDIR"
+            )
+            or ""
+        ).strip()
+
+        icon_source = None
+
+        if appdir_value:
+            appdir = Path(
+                appdir_value
+            ).expanduser().resolve()
+
+            for candidate in (
+                appdir
+                / "pythofetch.png",
+                appdir
+                / "usr"
+                / "share"
+                / "icons"
+                / "hicolor"
+                / "256x256"
+                / "apps"
+                / "pythofetch.png",
+            ):
+                if candidate.is_file():
+                    icon_source = candidate
+                    break
+
+        home = Path.home()
+
+        applications_dir = (
+            home
+            / ".local"
+            / "share"
+            / "applications"
+        )
+
+        icon_root = (
+            home
+            / ".local"
+            / "share"
+            / "icons"
+            / "hicolor"
+        )
+
+        icon_destination = (
+            icon_root
+            / "256x256"
+            / "apps"
+            / "pythofetch.png"
+        )
+
+        applications_dir.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        icon_destination.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
+
+        changed = False
+
+        if icon_source is not None:
+            changed = (
+                write_if_changed(
+                    icon_destination,
+                    icon_source.read_bytes(),
+                    0o644,
+                )
+                or changed
+            )
+
+        desktop_path = (
+            applications_dir
+            / "pythofetch.desktop"
+        )
+
+        icon_value = (
+            str(
+                icon_destination
+            )
+            if icon_destination.is_file()
+            else "pythofetch"
+        )
+
+        desktop_text = "\n".join(
+            [
+                "[Desktop Entry]",
+                "Type=Application",
+                "Name=PythoFetch",
+                "Comment=Project HomeLab system information fetcher",
+                (
+                    "Exec="
+                    + desktop_exec_value(
+                        appimage
+                    )
+                ),
+                (
+                    "TryExec="
+                    + str(
+                        appimage
+                    )
+                ),
+                (
+                    "Icon="
+                    + icon_value
+                ),
+                "Terminal=true",
+                "Categories=System;Utility;",
+                "StartupNotify=true",
+                (
+                    "X-AppImage-Version="
+                    + PYTHOFETCH_VERSION
+                ),
+                "",
+            ]
+        ).encode(
+            "utf-8"
+        )
+
+        changed = (
+            write_if_changed(
+                desktop_path,
+                desktop_text,
+                0o644,
+            )
+            or changed
+        )
+
+        if changed:
+            refresh_linux_desktop_integration(
+                applications_dir,
+                icon_root,
+            )
+
+        return True
+
+    except Exception:
+        return False
 
 
 def runtime_application_path():
@@ -4945,6 +5417,8 @@ def main():
     )
 
     try:
+        ensure_linux_desktop_integration()
+
         if args.updated:
             complete_post_update(
                 args.updater_pid,

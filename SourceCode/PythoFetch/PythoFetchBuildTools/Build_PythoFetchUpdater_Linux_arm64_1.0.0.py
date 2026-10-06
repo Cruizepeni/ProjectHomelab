@@ -172,14 +172,13 @@ def detect_architecture():
     ).strip().lower()
 
     if machine in (
-        "x86_64",
-        "amd64",
-        "x64",
+        "arm64",
+        "aarch64",
     ):
-        return "x86_64"
+        return "arm64"
 
     raise RuntimeError(
-        "This build tool targets Linux x86_64 only. "
+        "This build tool targets Linux arm64 only. "
         f"Detected architecture: {machine or 'Unknown'}"
     )
 
@@ -439,7 +438,7 @@ def create_zip(
 
 def parse_args():
     parser = argparse.ArgumentParser(
-        prog="Build_PythoFetchUpdater_Linux_x86_64_1.0.0"
+        prog="Build_PythoFetchUpdater_Linux_arm64_1.0.0"
     )
 
     parser.add_argument(
@@ -480,7 +479,7 @@ def main():
 
     cache_dir = (
         root
-        / ".pythofetch-updater-linux-x86_64-build"
+        / ".pythofetch-updater-linux-arm64-build"
     )
 
     work_dir = (
@@ -518,7 +517,7 @@ def main():
 
     print()
     print(
-        "PythoFetchUpdater Linux x86_64 "
+        "PythoFetchUpdater Linux arm64 "
         f"Build Tool {BUILDER_VERSION}"
     )
     print(
