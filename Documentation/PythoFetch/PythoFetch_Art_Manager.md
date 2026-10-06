@@ -113,6 +113,8 @@ A database entry can contain:
 
 ```text
 file
+path
+url
 download_url
 sha256
 size_bytes
@@ -123,6 +125,29 @@ artwork_count
 source_counts
 family_counts
 ```
+
+## Database Version Selection and Rebuilds
+
+The requested database version must use `X.Y.Z` format.
+
+If the requested version already exists on disk or in `PythoFetchArtDB_Manifest.json`, the Build Tool treats the operation as an intentional rebuild of that version. This allows corrections to an in-progress release such as `1.0.0` without forcing an artificial version bump.
+
+If the requested version does not already exist, it must be greater than the current latest database version. This prevents creation of a new historical version underneath the current latest.
+
+When an existing version is rebuilt, the Build Tool promotes the replacement transactionally:
+
+```text
+1. Build and verify PythoFetchArtNew.db.
+2. Prepare the replacement manifest entry.
+3. Move the existing target DB to a temporary .previous backup.
+4. Promote the verified staging DB to PythoFetchArt_<version>.db.
+5. Replace the manifest.
+6. Remove the backup after the DB and manifest commit successfully.
+```
+
+If promotion fails before the manifest commit completes, the newly promoted target is removed and the previous database is restored from the backup.
+
+Rebuilding an older existing version replaces only that version's record; `latest_version` remains the numerically newest version present.
 
 ## Python-Source Recovery
 
@@ -161,7 +186,7 @@ This recovery path does not use `PythoFetch_Source_Manifest.json`.
 1. Add/edit artwork under ArtAssetsPythoFetch.
 2. Update ArtAssetsPythoFetch/Catalogue.json.
 3. Run Build_PythoFetchArtDB_1.0.0.py from PythoFetchBuildTools.
-4. Choose the intended database version.
+4. Choose an existing database version to rebuild, or a new version greater than the current latest.
 5. Test the generated database.
 6. Run Build_PythoFetchManifests_1.0.0.py from SourceCode/PythoFetch.
 7. Remove the copied manifest Build Tool.

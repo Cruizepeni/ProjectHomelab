@@ -43,7 +43,7 @@ Windows: PythoFetchUpdater.exe
 Linux:   PythoFetchUpdater
 ```
 
-The Linux updater is a standalone PyInstaller-built x86_64 ELF executable.
+The Linux updater is a standalone PyInstaller-built ELF executable with separate builds for x86_64 and arm64.
 
 It is deliberately not packaged as an AppImage. PythoFetch itself remains an AppImage on Linux, while the transient updater runs as a plain executable so the replacement path does not create a second AppImage/FUSE lifecycle.
 
@@ -52,6 +52,7 @@ Updater package names remain versioned:
 ```text
 PythoFetchUpdater_<version>_Windows_x86_64.zip
 PythoFetchUpdater_<version>_Linux_x86_64.zip
+PythoFetchUpdater_<version>_Linux_arm64.zip
 ```
 
 ## Linux Updater Handoff
@@ -117,12 +118,13 @@ Updater releases are built using:
 ```text
 Build_PythoFetchUpdater_Windows_x86_64_1.0.0.py
 Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py
+Build_PythoFetchUpdater_Linux_arm64_1.0.0.py
 ```
 
-Both use folder-authoritative versioning and the temporary copy/run/remove Build Tool workflow.
+All three use folder-authoritative versioning and the temporary copy/run/remove Build Tool workflow.
 
 The Windows updater is packaged as `PythoFetchUpdater.exe`.
 
-The Linux updater is packaged as the plain executable `PythoFetchUpdater`.
+Both Linux updater variants are packaged as the plain executable `PythoFetchUpdater` inside architecture-specific ZIPs. Runtime platform detection supports Linux x86_64/AMD64 and Linux arm64/aarch64.
 
 See `PythoFetch_Build_Tools.md`.

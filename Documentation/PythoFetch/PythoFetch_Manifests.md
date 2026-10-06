@@ -62,6 +62,38 @@ folder
 
 PythoFetch runtime does not use these generic routers to locate its own resources.
 
+These generic ProjectHomelab routers retain the repository-wide router contract and are not converted to the feature-relative PythoFetch contract described below.
+
+## PythoFetch Record Semantics
+
+Within a PythoFetch feature manifest, `path` is relative to the corresponding PythoFetch environment root:
+
+```text
+SourceCode root: SourceCode/PythoFetch/
+Resources root:  Resources/FirstParty/PythoFetch/
+Releases root:   Releases/PythoFetch/
+```
+
+Examples:
+
+```text
+PythoFetch/PythoFetch_Manifest.json
+PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json
+PythoFetch_1.0.0_Linux_arm64.zip
+```
+
+PythoFetch-specific records use URL fields according to purpose:
+
+```text
+url          Human/browser GitHub link.
+raw_url      Raw machine-readable URL for a referenced manifest.
+download_url Raw URL for a payload that software actually downloads.
+```
+
+`download_url` remains correct for application ZIPs, updater ZIPs, source files, and artwork databases because those bytes are genuinely downloaded.
+
+`PythoFetch_Resources_Manifest.json` is a compatibility exception: its `PythoFetchUpdater_Release_Manifest.json` reference exposes `raw_url` as the preferred machine-manifest field and retains `download_url` as a legacy alias for already-built PythoFetch 1.0.0 clients. New source accepts `raw_url` first and falls back to `download_url`.
+
 ## Feature/Component Manifests
 
 A feature or component manifest describes actual inventory.
@@ -102,6 +134,8 @@ Each platform asset includes:
 
 ```text
 file
+path
+url
 download_url
 sha256
 size_bytes
@@ -130,7 +164,7 @@ It currently routes to:
 PythoFetchUpdater_Release_Manifest.json
 ```
 
-The feature resource manifest records the child manifest's integrity metadata.
+The feature resource manifest records the child manifest's integrity metadata. Its child-manifest reference contains the feature-relative `path`, human `url`, preferred machine `raw_url`, SHA-256, and byte size. It also retains a legacy `download_url` alias for PythoFetch 1.0.0 compatibility.
 
 ## Updater Release Manifest
 
@@ -139,7 +173,7 @@ Resources/FirstParty/PythoFetch/PythoFetchUpdater/
 PythoFetchUpdater_Release_Manifest.json
 ```
 
-It contains updater versions, compatibility families, platform assets, and verification data.
+It contains updater versions, compatibility families, platform assets, and verification data for Windows x86_64, Linux x86_64, and Linux arm64 when those packages are present. Updater package records use `path`, `url`, and `download_url` because the ZIP is an actual downloadable payload.
 
 PythoFetch chooses the newest updater whose `X.Y` version family and declared `compatibility_family` both match the running PythoFetch `X.Y` family.
 
@@ -150,6 +184,8 @@ Entry point:
 ```text
 SourceCode/PythoFetch/PythoFetch_Source_Manifest.json
 ```
+
+Its child manifest records use paths relative to `SourceCode/PythoFetch/` and use `url` for normal GitHub navigation.
 
 It routes development/repository navigation to:
 
@@ -169,7 +205,7 @@ SourceCode/PythoFetch/PythoFetchArtAssets/ArtAssetsDB/
 PythoFetchArtDB_Manifest.json
 ```
 
-This is a direct component manifest.
+This is a direct component manifest. Database entries use `path`, `url`, and `download_url`; the database is a genuine downloadable payload.
 
 Python-source PythoFetch can use it directly when no valid local art database is available.
 
@@ -233,7 +269,11 @@ feature/component manifest
     -> inventory and verification where applicable
 
 actual downloadable file/package
-    -> SHA-256 + byte size
+    -> path + url + download_url + SHA-256 + byte size
+
+verified child manifest used by PythoFetch runtime
+    -> path + url + raw_url + SHA-256 + byte size
+    -> legacy download_url alias retained where required for 1.0.0 compatibility
 ```
 
 This keeps top-level traversal simple while preserving verification at the points where bytes actually matter.

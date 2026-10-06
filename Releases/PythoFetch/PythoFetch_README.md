@@ -88,6 +88,7 @@ Current packaged releases are available for:
 ```text
 Windows x86_64
 Linux x86_64
+Linux arm64
 ```
 
 ## Planned Platform Support
@@ -96,7 +97,6 @@ Planned future PythoFetch releases include:
 
 ```text
 macOS
-Linux ARM64
 ```
 
-These platforms are planned for future ProjectHomelab updates.
+macOS packaging remains planned for a future ProjectHomelab update.

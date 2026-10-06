@@ -21,7 +21,7 @@ Generic ProjectHomelab routers such as `Resources_Manifest.json` and `FirstParty
 Documentation:
 
 - `PythoFetch.md` — application/runtime behavior
-- `PythoFetch_Build_Tools.md` — all six Build Tools and build workflow
+- `PythoFetch_Build_Tools.md` — all eight Build Tools and build workflow
 - `PythoFetch_Manifests.md` — manifest architecture and generation
 - `PythoFetch_Updater.md` — update lifecycle
 - `PythoFetch_Art_Manager.md` — artwork and Art DB workflow

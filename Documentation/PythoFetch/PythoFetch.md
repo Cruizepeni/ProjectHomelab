@@ -226,6 +226,7 @@ Release ZIP names remain versioned:
 ```text
 PythoFetch_<version>_Windows_x86_64.zip
 PythoFetch_<version>_Linux_x86_64.zip
+PythoFetch_<version>_Linux_arm64.zip
 ```
 
 Installed/runtime filenames remain stable:
@@ -270,7 +271,7 @@ Windows: PythoFetchUpdater.exe
 Linux:   PythoFetchUpdater
 ```
 
-The Linux updater is a plain PyInstaller-built ELF executable rather than an AppImage. The application itself remains `PythoFetch.AppImage`.
+The Linux updater is a plain PyInstaller-built ELF executable rather than an AppImage. Separate updater packages are built for Linux x86_64 and Linux arm64. The application itself remains `PythoFetch.AppImage`.
 
 ### Linux Updater Launch Behavior
 
@@ -283,6 +284,49 @@ When the AppImage opened PythoFetch through its own temporary terminal, PythoFet
 The updater downloads, extracts, and verifies the new AppImage into a staging path before the installed AppImage is renamed. After the old PythoFetch payload exits, the updater moves the existing AppImage to `PythoFetchTemp.AppImage`, installs the verified staged AppImage at the stable `PythoFetch.AppImage` path, and launches it with the internal post-update arguments.
 
 See `PythoFetch_Updater.md` for the full lifecycle.
+
+## Linux Desktop Integration
+
+Packaged Linux AppImage releases perform best-effort per-user desktop integration when run as an AppImage.
+
+The runtime maintains:
+
+```text
+~/.local/share/applications/pythofetch.desktop
+~/.local/share/icons/hicolor/256x256/apps/pythofetch.png
+```
+
+The desktop entry points to the outer `PythoFetch.AppImage` path, uses `Terminal=true`, and is refreshed when the AppImage is moved and launched from a new location. No `sudo` or system-wide installation is required.
+
+Running `PythoFetch_1.0.0.py` directly from Python source does not create this desktop integration. The updater also does not create an independent application-menu entry.
+
+## PythoFetch Manifest Record Semantics
+
+Within the three PythoFetch feature environments, `path` values are relative to that environment's PythoFetch root rather than to the repository root.
+
+Examples:
+
+```text
+SourceCode/PythoFetch root:
+PythoFetch/PythoFetch_Manifest.json
+PythoFetch/PythoFetch_1.0.0/PythoFetch_1.0.0.py
+
+Resources/FirstParty/PythoFetch root:
+PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json
+
+Releases/PythoFetch root:
+PythoFetch_1.0.0_Linux_arm64.zip
+```
+
+PythoFetch-specific records distinguish URL roles:
+
+```text
+url          Human/browser GitHub link
+raw_url      Raw machine-readable URL for a referenced manifest
+download_url Raw URL for an actual downloadable payload
+```
+
+The updater-manifest reference in `PythoFetch_Resources_Manifest.json` also retains `download_url` as a compatibility alias for already-built PythoFetch 1.0.0 clients. New source prefers `raw_url` and falls back to the legacy field.
 
 ## Generic ProjectHomelab Routers
 
@@ -347,8 +391,10 @@ SourceCode/PythoFetch/
     ├── PythoFetchBuildTools_Manifest.json
     ├── Build_PythoFetch_Windows_x86_64_1.0.0.py
     ├── Build_PythoFetch_Linux_x86_64_1.0.0.py
+    ├── Build_PythoFetch_Linux_arm64_1.0.0.py
     ├── Build_PythoFetchUpdater_Windows_x86_64_1.0.0.py
     ├── Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py
+    ├── Build_PythoFetchUpdater_Linux_arm64_1.0.0.py
     ├── Build_PythoFetchArtDB_1.0.0.py
     └── Build_PythoFetchManifests_1.0.0.py
 ```
@@ -365,13 +411,17 @@ Resources/
         └── PythoFetchUpdater/
             ├── PythoFetchUpdater_Release_Manifest.json
             ├── PythoFetchUpdater_<version>_Windows_x86_64.zip
-            └── PythoFetchUpdater_<version>_Linux_x86_64.zip
+            ├── PythoFetchUpdater_<version>_Linux_x86_64.zip
+            └── PythoFetchUpdater_<version>_Linux_arm64.zip
 ```
 
-The Linux updater ZIP contains the plain executable:
+Each Linux updater ZIP contains the same stable plain-executable name for its target architecture:
 
 ```text
 PythoFetchUpdater_<version>_Linux_x86_64.zip
+└── PythoFetchUpdater
+
+PythoFetchUpdater_<version>_Linux_arm64.zip
 └── PythoFetchUpdater
 ```
 
@@ -381,14 +431,15 @@ PythoFetchUpdater_<version>_Linux_x86_64.zip
 Releases/PythoFetch/
 ├── PythoFetch_Release_Manifest.json
 ├── PythoFetch_<version>_Windows_x86_64.zip
-└── PythoFetch_<version>_Linux_x86_64.zip
+├── PythoFetch_<version>_Linux_x86_64.zip
+└── PythoFetch_<version>_Linux_arm64.zip
 ```
 
 ## Build System
 
-PythoFetch uses six Build Tools.
+PythoFetch uses eight Build Tools.
 
-The four platform build tools are copied temporarily into the matching version folder, run there, then removed.
+The six platform build tools are copied temporarily into the matching version folder, run there, then removed.
 
 The manifest Build Tool is copied temporarily into the SourceCode, Releases, or Resources PythoFetch root, run there, then removed.
 

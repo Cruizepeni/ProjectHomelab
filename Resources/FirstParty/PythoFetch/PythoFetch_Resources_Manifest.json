@@ -5,10 +5,12 @@
     "PythoFetchUpdater": {
       "manifest": {
         "file": "PythoFetchUpdater_Release_Manifest.json",
-        "path": "Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json",
-        "sha256": "d42ce31dc924bab517c93d9de9c0bc9a637320c44d745c37f62305190bb15332",
-        "size_bytes": 1412,
-        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json"
+        "path": "PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json",
+        "url": "https://github.com/Cruizepeni/ProjectHomelab/blob/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json",
+        "sha256": "b07353a4f6ab070a2ae8294f9cbeb5a2c727b47dfefe9782b7beca73f240b3c9",
+        "size_bytes": 2741,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json",
+        "raw_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/PythoFetch/PythoFetchUpdater/PythoFetchUpdater_Release_Manifest.json"
       }
     }
   }

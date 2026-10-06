@@ -170,15 +170,21 @@ The current Build Tool strictly checks `entry_count`.
 
 `family_counts` should also be maintained accurately so the source catalogue remains truthful and useful even though the current validator does not reject a catalogue solely because those counts are stale.
 
-### Step 4: Build a New Database Version
+### Step 4: Build or Rebuild the Database Version
 
-If the current art database is:
+If the current art database is still the in-progress release version:
 
 ```text
 1.0.0
 ```
 
-build a new version, for example:
+you may rebuild that same version after correcting the artwork or catalogue:
+
+```text
+python Build_PythoFetchArtDB_1.0.0.py --version 1.0.0
+```
+
+If you are intentionally creating a new database release, choose a version greater than the current latest, for example:
 
 ```text
 python Build_PythoFetchArtDB_1.0.0.py --version 1.0.1
@@ -191,10 +197,13 @@ validate NeoFetch artwork
 validate ExampleLinux.txt
 validate the new catalogue entry
 merge the two art sources
-build PythoFetchArt_1.0.1.db
+build the requested PythoFetchArt_<version>.db
 verify the database
+replace that version's manifest entry
 update PythoFetchArtDB_Manifest.json
 ```
+
+When rebuilding an existing version, the previous database is temporarily backed up and restored automatically if promotion fails. A same-version rebuild does not create another version number.
 
 ### Step 5: Test the Result
 
@@ -516,7 +525,7 @@ At minimum, that means considering:
 5. Decide whether the existing Other family is sufficient or a new art family is required.
 6. If adding a new family, update the Art Manager FAMILIES and FAMILY_FOLDERS definitions.
 7. Add artwork and Catalogue.json entries.
-8. Build a new art database version.
+8. Build or rebuild the intended art database version.
 9. Test TUI, classic, and headless modes on the target OS.
 10. Add/update release assets and platform naming if the OS will receive packaged builds.
 ```
@@ -541,26 +550,25 @@ Before running the Build Tool, confirm:
 [ ] override is only used for an intentional existing-ID replacement.
 [ ] entry_count matches the entries array.
 [ ] family_counts has been updated.
-[ ] New database version is greater than the existing latest version.
+[ ] Database target is either an existing version being rebuilt or a new version greater than the existing latest version.
 ```
 
 ## Expected Result
 
-After a successful build, the art database folder should contain the new version:
+After a successful same-version rebuild of `1.0.0`, the database folder still contains the same canonical version name:
 
 ```text
 ArtAssetsDB/
 ├── PythoFetchArt_1.0.0.db
-├── PythoFetchArt_1.0.1.db
 └── PythoFetchArtDB_Manifest.json
 ```
 
-The manifest should now report:
+The `1.0.0` manifest entry is replaced with the new checksum, size, timestamp, counts, and other generated metadata, while:
 
 ```text
-latest_version = 1.0.1
+latest_version = 1.0.0
 ```
 
-and retain the previous `1.0.0` entry.
+If you intentionally build a new `1.0.1` release instead, the folder can contain both `1.0.0` and `1.0.1`, and `latest_version` becomes `1.0.1`.
 
 The editable artwork and catalogue should be committed along with the generated database and updated manifest so another developer can reproduce and inspect the art system.

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-PythoFetch uses six raw Python Build Tools.
+PythoFetch uses eight raw Python Build Tools.
 
 Build Tools remain source scripts and are not compiled into permanent builder executables.
 
@@ -29,8 +29,10 @@ Current tools:
 ```text
 Build_PythoFetch_Windows_x86_64_1.0.0.py
 Build_PythoFetch_Linux_x86_64_1.0.0.py
+Build_PythoFetch_Linux_arm64_1.0.0.py
 Build_PythoFetchUpdater_Windows_x86_64_1.0.0.py
 Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py
+Build_PythoFetchUpdater_Linux_arm64_1.0.0.py
 Build_PythoFetchArtDB_1.0.0.py
 Build_PythoFetchManifests_1.0.0.py
 ```
@@ -131,10 +133,11 @@ PythoFetch_<version>_Windows_x86_64.zip
 
 The runtime filename inside the release remains stable.
 
-## Linux Application Build Tool
+## Linux Application Build Tools
 
 ```text
 Build_PythoFetch_Linux_x86_64_1.0.0.py
+Build_PythoFetch_Linux_arm64_1.0.0.py
 ```
 
 Runs on Linux.
@@ -169,12 +172,19 @@ The Build Tool:
 9. creates the versioned release ZIP
 ```
 
-Output:
+Outputs are architecture-specific:
 
 ```text
 PythoFetch_<version>_Linux_x86_64.zip
 └── PythoFetch.AppImage
+
+PythoFetch_<version>_Linux_arm64.zip
+└── PythoFetch.AppImage
 ```
+
+The Linux x86_64 Build Tool only accepts x86_64/AMD64 hosts. The Linux arm64 Build Tool accepts arm64/aarch64 hosts. ProjectHomelab names the release architecture `arm64`; AppImage's upstream architecture token remains `aarch64` where required by AppImage tooling.
+
+On Debian-family systems, including Raspberry Pi OS, `python3-venv` must be available so the isolated build environment can be created.
 
 PythoFetch itself remains an AppImage on Linux.
 
@@ -222,10 +232,11 @@ PythoFetchUpdater_<version>_Windows_x86_64.zip
 └── PythoFetchUpdater.exe
 ```
 
-## Linux Updater Build Tool
+## Linux Updater Build Tools
 
 ```text
 Build_PythoFetchUpdater_Linux_x86_64_1.0.0.py
+Build_PythoFetchUpdater_Linux_arm64_1.0.0.py
 ```
 
 Runs on Linux.
@@ -263,14 +274,35 @@ an AppImage runtime
 FUSE packaging
 ```
 
-Output:
+Outputs are architecture-specific:
 
 ```text
 PythoFetchUpdater_<version>_Linux_x86_64.zip
 └── PythoFetchUpdater
+
+PythoFetchUpdater_<version>_Linux_arm64.zip
+└── PythoFetchUpdater
 ```
 
+The x86_64 updater Build Tool only accepts x86_64/AMD64 hosts. The arm64 updater Build Tool accepts arm64/aarch64 hosts. Both produce the same stable runtime filename, `PythoFetchUpdater`, inside their respective ZIP.
+
 Keeping the transient updater as a plain executable avoids introducing a second AppImage/FUSE lifecycle while it replaces `PythoFetch.AppImage`.
+
+### Current Linux 1.0.0 Targets
+
+The current Linux release matrix is:
+
+```text
+PythoFetch 1.0.0
+├── Linux_x86_64
+└── Linux_arm64
+
+PythoFetchUpdater 1.0.0
+├── Linux_x86_64
+└── Linux_arm64
+```
+
+The Linux application and updater are built natively on their matching architecture.
 
 ## Art Database Build Tool
 
@@ -406,10 +438,10 @@ For an application source change:
 ```text
 1. Update PythoFetch_<version>.py.
 2. Ensure a compatible PythoFetchArt_<version>.db is beside it.
-3. Copy the Windows or Linux application Build Tool into the version folder.
-4. Run the Build Tool.
+3. Copy the required Windows, Linux x86_64, or Linux arm64 application Build Tool into the version folder.
+4. Run the Build Tool on the matching target architecture.
 5. Remove the copied Build Tool.
-6. Move/publish the resulting release ZIP under Releases/PythoFetch.
+6. Move/publish each resulting release ZIP under Releases/PythoFetch.
 7. Run the Manifest Build Tool in Releases/PythoFetch.
 8. Remove the copied Manifest Build Tool.
 9. Run the Manifest Build Tool in SourceCode/PythoFetch after source changes.
@@ -418,7 +450,7 @@ For an application source change:
 
 If updater packages or resource structure have not changed, the updater does not need to be rebuilt just because the PythoFetch application source changed.
 
-If the Linux updater itself changes, rebuild `PythoFetchUpdater_<version>_Linux_x86_64.zip` and rerun the Manifest Build Tool in `Resources/FirstParty/PythoFetch` so the updater package/executable verification data is regenerated.
+If the Linux updater itself changes, rebuild both `PythoFetchUpdater_<version>_Linux_x86_64.zip` and `PythoFetchUpdater_<version>_Linux_arm64.zip`, then rerun the Manifest Build Tool in `Resources/FirstParty/PythoFetch` so both updater package/executable verification records are regenerated.
 
 ## Current 1.0.0 Resource-Entry Correction
 
