@@ -6,7 +6,7 @@
       "manifest": {
         "file": "YouSnipeUpdater_Release_Manifest.json",
         "path": "YouSnipeUpdater/YouSnipeUpdater_Release_Manifest.json",
-        "sha256": "099ba61a7d9f73c587a21eb346bae6968b4c885718375da6c941f9bc89689eb2",
+        "sha256": "c4f092bab3961a3d46c9d4f1a009f80ea143e779a3f716ae0bf8da88d0edbb94",
         "size_bytes": 2007,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/YouSnipe/YouSnipeUpdater/YouSnipeUpdater_Release_Manifest.json"
       }

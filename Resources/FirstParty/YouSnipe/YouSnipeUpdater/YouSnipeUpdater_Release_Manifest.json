@@ -28,11 +28,11 @@
         "Windows_x86_64": {
           "file": "YouSnipeUpdater_1.0.0_Windows_x86_64.zip",
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Resources/FirstParty/YouSnipe/YouSnipeUpdater/YouSnipeUpdater_1.0.0_Windows_x86_64.zip",
-          "sha256": "af9e7701d94522e102e7ae9cbb9d11d3e3932f76c8c13cc556d8fbab224c7292",
-          "size_bytes": 8631508,
+          "sha256": "9ee78ae09f31cf0c3c7d2bb4c2abdd3b88d44411c067401869cdd916071207ce",
+          "size_bytes": 8631810,
           "executable": "YouSnipeUpdater.exe",
-          "executable_sha256": "789b1199d747ec9318d8ec928df1c8772bbdc8c1411d997c737ec861e39778cc",
-          "executable_size_bytes": 8832617
+          "executable_sha256": "1b5433e3889ffbfc51ccc4a20b165c524db93e87ca47181b3ed85a0b1628351f",
+          "executable_size_bytes": 8832606
         }
       }
     }
