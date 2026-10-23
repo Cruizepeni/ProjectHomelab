@@ -1,0 +1,33 @@
+{
+  "schema": 1,
+  "application": "YouSnipe",
+  "components": {
+    "YouSnipe": {
+      "manifest": {
+        "file": "YouSnipe_Manifest.json",
+        "path": "YouSnipe/YouSnipe_Manifest.json",
+        "sha256": "ec5cf8e5483b1d37254f543fa2fa4a2a11e37a7f1e1334ea16fde9409d5eb451",
+        "size_bytes": 10963,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipe/YouSnipe_Manifest.json"
+      }
+    },
+    "YouSnipeUpdater": {
+      "manifest": {
+        "file": "YouSnipeUpdater_Manifest.json",
+        "path": "YouSnipeUpdater/YouSnipeUpdater_Manifest.json",
+        "sha256": "398074ff99c576e17c7f06392d797791079f2c053cf38e733679f2b38c707266",
+        "size_bytes": 655,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeUpdater/YouSnipeUpdater_Manifest.json"
+      }
+    },
+    "YouSnipeBuildTools": {
+      "manifest": {
+        "file": "YouSnipeBuildTools_Manifest.json",
+        "path": "YouSnipeBuildTools/YouSnipeBuildTools_Manifest.json",
+        "sha256": "1c5b9d6659e7845d751e13aaa17e845e0de07d7219d344bd933d399a282e4953",
+        "size_bytes": 3125,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/YouSnipeBuildTools_Manifest.json"
+      }
+    }
+  }
+}

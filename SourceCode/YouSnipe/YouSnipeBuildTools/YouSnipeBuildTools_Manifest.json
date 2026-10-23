@@ -1,0 +1,56 @@
+{
+  "schema": 1,
+  "application": "YouSnipe",
+  "component": "YouSnipe Build Tools",
+  "files": [
+    {
+      "file": "Build_YouSnipe_Linux_arm64_1.0.0.py",
+      "path": "YouSnipeBuildTools/Build_YouSnipe_Linux_arm64_1.0.0.py",
+      "sha256": "cc460c1cb3f5f4f6fc3beec6e6bcd98ec4dd92fdbc8ae0537c901fa28fb40019",
+      "size_bytes": 18728,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/Build_YouSnipe_Linux_arm64_1.0.0.py"
+    },
+    {
+      "file": "Build_YouSnipe_Linux_x86_64_1.0.0.py",
+      "path": "YouSnipeBuildTools/Build_YouSnipe_Linux_x86_64_1.0.0.py",
+      "sha256": "43aaa979bf45950adc36ac7b41fce59a42378954efcc2db09f6078370969f6b1",
+      "size_bytes": 18729,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/Build_YouSnipe_Linux_x86_64_1.0.0.py"
+    },
+    {
+      "file": "Build_YouSnipe_Windows_x86_64_1.0.0.py",
+      "path": "YouSnipeBuildTools/Build_YouSnipe_Windows_x86_64_1.0.0.py",
+      "sha256": "daf13a1bdedbb6523ae1b7c717af5701394b6bc4bc9514f58ff78f1c9a9ee7cb",
+      "size_bytes": 15021,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/Build_YouSnipe_Windows_x86_64_1.0.0.py"
+    },
+    {
+      "file": "Build_YouSnipeManifests_1.0.0.py",
+      "path": "YouSnipeBuildTools/Build_YouSnipeManifests_1.0.0.py",
+      "sha256": "6bfa6660c1120ff885ca3dfd945094620601d40df2062bbaa07d3c5c3268ca88",
+      "size_bytes": 10219,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/Build_YouSnipeManifests_1.0.0.py"
+    },
+    {
+      "file": "Build_YouSnipeUpdater_Linux_arm64_1.0.0.py",
+      "path": "YouSnipeBuildTools/Build_YouSnipeUpdater_Linux_arm64_1.0.0.py",
+      "sha256": "a9d5b974634ecd21466c05a875ace8b269c1ad800ce429b61577348f057da336",
+      "size_bytes": 8109,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/Build_YouSnipeUpdater_Linux_arm64_1.0.0.py"
+    },
+    {
+      "file": "Build_YouSnipeUpdater_Linux_x86_64_1.0.0.py",
+      "path": "YouSnipeBuildTools/Build_YouSnipeUpdater_Linux_x86_64_1.0.0.py",
+      "sha256": "d14ecc085d48f025b97c3e66af82af8e2eaa9b2d4eda1902e9fd0f57988c5555",
+      "size_bytes": 8120,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/Build_YouSnipeUpdater_Linux_x86_64_1.0.0.py"
+    },
+    {
+      "file": "Build_YouSnipeUpdater_Windows_x86_64_1.0.0.py",
+      "path": "YouSnipeBuildTools/Build_YouSnipeUpdater_Windows_x86_64_1.0.0.py",
+      "sha256": "6778f70cca747eef86db933c78d7ac85311845ce7ca4f44608dcc88e4a70c8c4",
+      "size_bytes": 8807,
+      "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/Build_YouSnipeUpdater_Windows_x86_64_1.0.0.py"
+    }
+  ]
+}
