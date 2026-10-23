@@ -44,9 +44,7 @@ def _load_manifest(source: str) -> dict:
         raise ValueError('Manifest exceeds size limit')
     obj = json.loads(raw)
     if not isinstance(obj, dict):
-        raise ValueError('Release manifest must be an object')
-    if 'releases' not in obj:
-        _version_key(str(obj.get('version') or ''))
+        raise ValueError('Manifest must be a JSON object')
     return obj
 
 
@@ -64,21 +62,31 @@ def _platform_key():
 
 def check_update(source: str = RELEASE_MANIFEST_URL) -> dict:
     obj = _load_manifest(source)
-    if isinstance(obj.get('releases'), dict):
-        version = str(obj.get('latest_version') or CURRENT_VERSION)
-        available = _version_key(version) > _version_key(CURRENT_VERSION)
-        asset = obj['releases'].get(version, {}).get('assets', {}).get(_platform_key(), {}) if available else {}
-        if available and not asset:
-            raise RuntimeError('The latest YouSnipe release does not provide an update for this OS/architecture.')
-        return {'currentVersion': CURRENT_VERSION, 'releaseVersion': version,
-                'updateAvailable': available, 'url': asset.get('download_url', ''),
-                'sha256': asset.get('sha256', ''), 'sizeBytes': asset.get('size_bytes'),
-                'source': source}
-    version = str(obj['version'])
+    if obj.get('schema') != 1 or obj.get('application') != 'YouSnipe':
+        raise ValueError('Invalid YouSnipe release manifest identity or schema')
+    releases = obj.get('releases')
+    if not isinstance(releases, dict) or not releases:
+        raise ValueError('YouSnipe release manifest has no releases')
+    version = str(obj.get('latest_version') or '')
+    _version_key(version)
+    release = releases.get(version)
+    if not isinstance(release, dict):
+        raise ValueError('The latest release is missing from the release manifest')
+    family = '.'.join(version.split('.')[:2])
+    if release.get('compatibility_family') != family:
+        raise ValueError('The latest release has an invalid compatibility family')
+    assets = release.get('assets')
+    if not isinstance(assets, dict):
+        raise ValueError('The latest release has no valid assets')
+    available = _version_key(version) > _version_key(CURRENT_VERSION)
+    asset = assets.get(_platform_key()) if available else None
+    if available and not isinstance(asset, dict):
+        raise RuntimeError('The latest YouSnipe release does not provide an update for this OS/architecture.')
     return {'currentVersion': CURRENT_VERSION, 'releaseVersion': version,
-            'updateAvailable': _version_key(version) > _version_key(CURRENT_VERSION),
-            'url': obj.get('url') or '', 'sha256': obj.get('sha256') or '',
-            'sizeBytes': obj.get('size_bytes'), 'source': source}
+            'updateAvailable': available, 'url': asset.get('download_url', '') if asset else '',
+            'sha256': asset.get('sha256', '') if asset else '',
+            'sizeBytes': asset.get('size_bytes') if asset else None,
+            'source': source}
 
 
 def stage_update(source: str = RELEASE_MANIFEST_URL, destination: Path | None = None) -> dict:
@@ -162,9 +170,13 @@ def _verified_json(reference: dict, label: str) -> dict:
 
 def _updater_release(current_version: str) -> tuple[str, dict]:
     resources = _load_manifest(RESOURCES_MANIFEST_URL)
+    if resources.get('schema') != 1 or resources.get('application') != 'YouSnipe':
+        raise RuntimeError('YouSnipe resources manifest has an invalid identity or schema')
     components = resources.get('components')
     entry = components.get('YouSnipeUpdater') if isinstance(components, dict) else None
     updater_manifest = _verified_json((entry or {}).get('manifest'), 'YouSnipeUpdater')
+    if updater_manifest.get('schema') != 1 or updater_manifest.get('application') != 'YouSnipe' or updater_manifest.get('component') != 'YouSnipeUpdater':
+        raise RuntimeError('YouSnipeUpdater release manifest has an invalid identity or schema')
     versions = updater_manifest.get('versions')
     if not isinstance(versions, dict):
         raise RuntimeError('YouSnipeUpdater release manifest has no versions')

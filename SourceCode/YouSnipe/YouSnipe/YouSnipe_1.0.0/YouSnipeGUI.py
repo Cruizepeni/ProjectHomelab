@@ -856,10 +856,11 @@ class YouSnipeGUI(tk.Tk):
             self.status_value.set('Newer release available')
         else:
             self.status_value.set('No newer release found')
-        messagebox.showinfo('YouSnipe updates',
+        heading = 'Update Available' if result['updateAvailable'] else 'YouSnipe Is Up to Date'
+        messagebox.showinfo('YouSnipe Update',
+            f'{heading}\n'
             f'Installed: {result["currentVersion"]}\n'
-            f'Latest: {result["releaseVersion"]}\n'
-            f'Update available: {result["updateAvailable"]}')
+            f'Latest: {result["releaseVersion"]}')
 
     def _start_update(self):
         if not self._verified_update or not self._verified_update.get('updateAvailable'):
@@ -872,7 +873,7 @@ class YouSnipeGUI(tk.Tk):
         if active:
             messagebox.showwarning('YouSnipe update', 'Please finish or cancel active downloads before updating.')
             return
-        if not messagebox.askyesno('Update YouSnipe', 'Check for a newer release, download the verified external updater, then close YouSnipe to complete the update?'):
+        if not messagebox.askyesno('Update YouSnipe', f'Install Latest Version {self._verified_update["releaseVersion"]}?'):
             return
         self.status_value.set('Checking update and preparing verified updater...')
         async def execute():
