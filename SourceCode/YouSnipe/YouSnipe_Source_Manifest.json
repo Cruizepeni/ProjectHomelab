@@ -6,8 +6,8 @@
       "manifest": {
         "file": "YouSnipe_Manifest.json",
         "path": "YouSnipe/YouSnipe_Manifest.json",
-        "sha256": "b49f3005424ddc9877514dce278a0e776adf081dcedd38919a7d625d688e6886",
-        "size_bytes": 10963,
+        "sha256": "b715948085ca9eced0fd399d01e6b3f3f04331b22b1d0512ef6f76dbd0051a12",
+        "size_bytes": 10767,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipe/YouSnipe_Manifest.json"
       }
     },
@@ -15,8 +15,8 @@
       "manifest": {
         "file": "YouSnipeUpdater_Manifest.json",
         "path": "YouSnipeUpdater/YouSnipeUpdater_Manifest.json",
-        "sha256": "398074ff99c576e17c7f06392d797791079f2c053cf38e733679f2b38c707266",
-        "size_bytes": 655,
+        "sha256": "411be0313d9b0177295cdc88c6d956409d074406f4d60f54505accb4d4b27a5b",
+        "size_bytes": 637,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeUpdater/YouSnipeUpdater_Manifest.json"
       }
     },
@@ -24,8 +24,8 @@
       "manifest": {
         "file": "YouSnipeBuildTools_Manifest.json",
         "path": "YouSnipeBuildTools/YouSnipeBuildTools_Manifest.json",
-        "sha256": "1c5b9d6659e7845d751e13aaa17e845e0de07d7219d344bd933d399a282e4953",
-        "size_bytes": 3125,
+        "sha256": "0d022f2816d1d511d50b5baf68d352223aa4a65405b1c464eda9953d610a6fbf",
+        "size_bytes": 3069,
         "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeBuildTools/YouSnipeBuildTools_Manifest.json"
       }
     }
