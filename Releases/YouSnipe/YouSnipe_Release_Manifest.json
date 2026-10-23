@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "application": "YouSnipe",
+  "latest_version": "1.0.1",
+  "releases": {
+    "1.0.1": {
+      "compatibility_family": "1.0",
+      "assets": {
+        "Linux_arm64": {
+          "file": "YouSnipe_1.0.1_Linux_arm64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/YouSnipe/YouSnipe_1.0.1_Linux_arm64.zip",
+          "sha256": "3c8e6ed2d51fea7a7ded30f5933bbefbbf442d9828a0932dacc4e0d8b5c52420",
+          "size_bytes": 23244962,
+          "executable": "YouSnipe.AppImage",
+          "executable_sha256": "4d09b37fdd895685b7e4e1c3f2ef7fa8db55c3467e49226e6abaa75c18bb5b43",
+          "executable_size_bytes": 23751176
+        },
+        "Linux_x86_64": {
+          "file": "YouSnipe_1.0.1_Linux_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/YouSnipe/YouSnipe_1.0.1_Linux_x86_64.zip",
+          "sha256": "f80f06891ebaed07074b146da1fc887ec7c612160cf4f46449047d218015dc93",
+          "size_bytes": 24813273,
+          "executable": "YouSnipe.AppImage",
+          "executable_sha256": "2e2e06f90ec2b92e5a8c8f9793ebdca80b8d0833109a4ab1c138eec997ff49e5",
+          "executable_size_bytes": 25319928
+        },
+        "Windows_x86_64": {
+          "file": "YouSnipe_1.0.1_Windows_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/YouSnipe/YouSnipe_1.0.1_Windows_x86_64.zip",
+          "sha256": "da5032acfee78b1aae041cde2cc0a95d937ae2cdf92221fc066a9dfc2e858e95",
+          "size_bytes": 20253853,
+          "executable": "YouSnipe.exe",
+          "executable_sha256": "54f7934885cc7a1d12d4ff7faa3cb9849732382d99564f5860d3ce0d873c081e",
+          "executable_size_bytes": 20529939
+        }
+      }
+    },
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "assets": {
+        "Linux_arm64": {
+          "file": "YouSnipe_1.0.0_Linux_arm64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/YouSnipe/YouSnipe_1.0.0_Linux_arm64.zip",
+          "sha256": "5ddae30d30af49920ed243c3d37d674f1158f76b056600b1efc44c65aa9f618d",
+          "size_bytes": 23245756,
+          "executable": "YouSnipe.AppImage",
+          "executable_sha256": "ed588b0eae8ed24578d7f92ce1ef0a5befa062a9eb0010a35ae2c5485bd8de5d",
+          "executable_size_bytes": 23751176
+        },
+        "Linux_x86_64": {
+          "file": "YouSnipe_1.0.0_Linux_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/YouSnipe/YouSnipe_1.0.0_Linux_x86_64.zip",
+          "sha256": "d6cf4bb40325ec90ab96252b49347d496a2aa686065e61342d0a28b1d6ee5e2a",
+          "size_bytes": 24813991,
+          "executable": "YouSnipe.AppImage",
+          "executable_sha256": "77148763f86c32d125ccd219c3dd377b77886ca881638704b5bb2a9975b95889",
+          "executable_size_bytes": 25319928
+        },
+        "Windows_x86_64": {
+          "file": "YouSnipe_1.0.0_Windows_x86_64.zip",
+          "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/Releases/YouSnipe/YouSnipe_1.0.0_Windows_x86_64.zip",
+          "sha256": "e944d801c7a949d8672ef106b94460144d73d5dbe8ae3d033d6a8422e6814bec",
+          "size_bytes": 20253915,
+          "executable": "YouSnipe.exe",
+          "executable_sha256": "c320be06da8dd82899dd4047f29f7bf2f2559a83e3cb48dc1ac87e90cc93070f",
+          "executable_size_bytes": 20529880
+        }
+      }
+    }
+  }
+}
