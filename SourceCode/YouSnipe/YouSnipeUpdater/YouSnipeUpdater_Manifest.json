@@ -1,0 +1,18 @@
+{
+  "schema": 1,
+  "application": "YouSnipe",
+  "component": "YouSnipeUpdater Source",
+  "latest_version": "1.0.0",
+  "versions": {
+    "1.0.0": {
+      "compatibility_family": "1.0",
+      "source": {
+        "file": "YouSnipeUpdater_1.0.0.py",
+        "path": "YouSnipeUpdater/YouSnipeUpdater_1.0.0/YouSnipeUpdater_1.0.0.py",
+        "sha256": "24402a4361aea9b0dad886686bb91c85129fcea1d8ba5f5d495e12f87eb13aab",
+        "size_bytes": 21386,
+        "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipeUpdater/YouSnipeUpdater_1.0.0/YouSnipeUpdater_1.0.0.py"
+      }
+    }
+  }
+}
