@@ -11,8 +11,8 @@
         {
           "file": "YouSnipe.py",
           "path": "YouSnipe/YouSnipe_1.0.0/YouSnipe.py",
-          "sha256": "6d84c2425285e43b285b874e797031e341c1c1093be94ed3da21d3ee2284ea29",
-          "size_bytes": 28592,
+          "sha256": "96e36bc0e7a58ffa1e066975f566329124cf233fa1f100180f83b89559614789",
+          "size_bytes": 29161,
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipe/YouSnipe_1.0.0/YouSnipe.py"
         },
         {
@@ -179,8 +179,8 @@
         {
           "file": "YouSnipeUpdater.py",
           "path": "YouSnipe/YouSnipe_1.0.0/YouSnipeUpdater.py",
-          "sha256": "a206391c4deebb5973c91e15f2a1810839b683b83bb5132e6f7612d5a48e66e7",
-          "size_bytes": 15928,
+          "sha256": "facb5cd2d87cceb21c672bc444fab1fda81cb146353706c81c81ecabe7daaa9f",
+          "size_bytes": 16263,
           "download_url": "https://raw.githubusercontent.com/Cruizepeni/ProjectHomelab/main/SourceCode/YouSnipe/YouSnipe/YouSnipe_1.0.0/YouSnipeUpdater.py"
         },
         {

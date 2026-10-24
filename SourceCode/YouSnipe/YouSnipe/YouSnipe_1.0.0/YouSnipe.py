@@ -454,51 +454,62 @@ def _updater_process_alive(pid: int) -> bool:
         return True
 
 
+def _remove_completed_update_file(path: Path, description: str) -> None:
+    if not path.is_file() or path.is_symlink():
+        return
+    deadline = time.monotonic() + 20
+    while True:
+        try:
+            path.unlink()
+            return
+        except OSError as exc:
+            if time.monotonic() >= deadline:
+                print(f'Could not remove {description}: {exc}')
+                return
+            time.sleep(0.25)
+
+
 def _finish_updated_startup(pid: int | None, updater_path: str | None = None, previous_version: str | None = None) -> None:
-    from YouSnipeUpdater import _version_key
-    if previous_version and _version_key(previous_version) > _version_key(CURRENT_VERSION):
-        raise RuntimeError('Previous YouSnipe version is newer than the installed application')
+    from YouSnipeUpdater import _version_key, expected_updater_name
+    if previous_version and _version_key(previous_version) >= _version_key(CURRENT_VERSION):
+        raise RuntimeError('Replacement version must be newer than the previously installed version')
     if pid:
         deadline = time.monotonic() + 30
         while _updater_process_alive(pid) and time.monotonic() < deadline:
             time.sleep(0.15)
         if _updater_process_alive(pid):
-            print('Updater is still running; keeping the rollback runtime for safety.')
+            print('Updater is still running; keeping the rollback files for safety.')
             return
     appimage = os.environ.get('APPIMAGE') if sys.platform.startswith('linux') else None
     target = Path(appimage or sys.executable if getattr(sys, 'frozen', False) else __file__).resolve()
     if not getattr(sys, 'frozen', False):
         return
     backup = target.with_name('YouSnipeTemp' + target.suffix)
-    if backup.is_file():
-        try:
-            backup.unlink()
-        except OSError as exc:
-            print('Could not remove the previous runtime backup: ' + str(exc))
+    _remove_completed_update_file(backup, 'previous YouSnipe executable')
     if updater_path:
-        from YouSnipeUpdater import expected_updater_name
         candidate = Path(updater_path).expanduser().resolve()
-        if candidate == target.parent / expected_updater_name() and candidate.is_file():
-            try:
-                candidate.unlink()
-            except OSError as exc:
-                print('Updater executable was retained for safety: ' + str(exc))
+        if candidate == target.parent / expected_updater_name():
+            _remove_completed_update_file(candidate, 'YouSnipe updater executable')
 
 
 def _updated_ready_callback(args):
     def acknowledge():
         if args.update_health_token:
             import re
-            from YouSnipeUpdater import runtime_application_path
+            from YouSnipeUpdater import _version_key, runtime_application_path
             if not re.fullmatch(r'[0-9a-f]{32}', args.update_health_token):
                 raise RuntimeError('Update health token is invalid')
+            if _version_key(args.previous_version) >= _version_key(CURRENT_VERSION):
+                raise RuntimeError('Replacement version must be newer than the previously installed version')
             target = runtime_application_path()
             path = target.parent / f'.YouSnipeUpdateHealth_{args.updater_pid}.json'
             pending = path.with_suffix('.tmp')
             pending.write_text(json.dumps({'token': args.update_health_token,
                                            'pid': os.getpid(), 'version': CURRENT_VERSION}), encoding='utf-8')
             os.replace(pending, path)
-        _finish_updated_startup(args.updater_pid, args.updater_path, args.previous_version)
+        threading.Thread(target=_finish_updated_startup,
+                         args=(args.updater_pid, args.updater_path, args.previous_version),
+                         name='YouSnipeUpdateCleanup', daemon=False).start()
     return acknowledge
 
 
@@ -517,7 +528,7 @@ def main(argv: list[str] | None = None) -> int:
         gui_main()
         return 0
     args, remainder = parser.parse_known_args(raw)
-    if args.updated and (not args.updater_pid or not args.updater_path or not args.previous_version or not args.update_health_token):
+    if args.updated and (not args.updater_pid or args.updater_pid <= 0 or not args.updater_path or not args.previous_version or not args.update_health_token):
         parser.error('--updated requires valid updater PID, updater path, previous version and health token')
     if args.mode == 'check-image-support':
         try:

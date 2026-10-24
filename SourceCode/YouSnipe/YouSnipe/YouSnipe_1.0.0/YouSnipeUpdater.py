@@ -292,13 +292,19 @@ def _launch_updater(executable: Path, target: Path, new_version: str, launch_mod
     arguments = [str(executable), '--parent-pid', str(os.getpid()), '--target', str(target),
                  '--current-version', CURRENT_VERSION, '--target-version', new_version,
                  '--restart-mode', launch_mode, '--release-manifest-url', RELEASE_MANIFEST_URL]
-    options = {'cwd': str(executable.parent), 'env': _clean_launch_environment(), 'close_fds': True}
+    options = {'cwd': str(executable.parent), 'env': _clean_launch_environment(),
+               'close_fds': True, 'stdin': subprocess.DEVNULL}
     if platform.system() == 'Windows':
-        options['creationflags'] = getattr(subprocess, 'CREATE_NEW_CONSOLE', 0) | getattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 0)
+        options['creationflags'] = (getattr(subprocess, 'CREATE_NO_WINDOW', 0)
+                                    | getattr(subprocess, 'CREATE_NEW_PROCESS_GROUP', 0))
     else:
         options['start_new_session'] = True
-        options['stdin'] = subprocess.DEVNULL
-    subprocess.Popen(arguments, **options)
+    log_dir = appdata_subdirectory('Logs')
+    log_dir.mkdir(parents=True, exist_ok=True)
+    with (log_dir / 'YouSnipeUpdater.log').open('a', encoding='utf-8') as log:
+        log.write(f'\nYouSnipe updater launched for {new_version}\n')
+        log.flush()
+        subprocess.Popen(arguments, stdout=log, stderr=subprocess.STDOUT, **options)
 
 
 def start_external_update(launch_mode: str = 'gui') -> dict:

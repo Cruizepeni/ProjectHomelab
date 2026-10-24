@@ -6,6 +6,7 @@ import os
 import platform
 import re
 import secrets
+import signal
 import shutil
 import stat
 import subprocess
@@ -43,7 +44,7 @@ def version_key(value):
 
 
 def show(label, value=""):
-    print(f"[{label}] {value}" if value else f"[{label}]")
+    print(f"[{label}] {value}" if value else f"[{label}]", flush=True)
 
 
 def sha256_file(path):
@@ -319,8 +320,10 @@ def wait_for_application_ready(process, marker_path, token, target_version):
         if marker_path.is_file():
             try:
                 message = json.loads(marker_path.read_text(encoding='utf-8'))
-                if (message.get('token') == token and message.get('pid') == process.pid
-                    and message.get('version') == target_version):
+                reported_pid = message.get('pid')
+                if (message.get('token') == token and type(reported_pid) is int
+                    and reported_pid > 0 and message.get('version') == target_version
+                    and process.poll() is None):
                     show('READY', 'Replacement startup verified')
                     return
             except (OSError, ValueError, TypeError):
@@ -334,11 +337,32 @@ def wait_for_application_ready(process, marker_path, token, target_version):
 def terminate_failed_application(process):
     if process is None or process.poll() is not None:
         return
-    process.terminate()
+    if platform.system() == "Windows":
+        try:
+            subprocess.run(["taskkill", "/PID", str(process.pid), "/T", "/F"],
+                           capture_output=True, timeout=20,
+                           creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    else:
+        try:
+            if os.getpgid(process.pid) == process.pid:
+                os.killpg(process.pid, signal.SIGTERM)
+            else:
+                process.terminate()
+        except (OSError, ProcessLookupError):
+            pass
     try:
         process.wait(timeout=15)
     except subprocess.TimeoutExpired:
-        process.kill()
+        if platform.system() != "Windows":
+            try:
+                if os.getpgid(process.pid) == process.pid:
+                    os.killpg(process.pid, signal.SIGKILL)
+            except (OSError, ProcessLookupError):
+                pass
+        if process.poll() is None:
+            process.kill()
         process.wait(timeout=10)
 
 
